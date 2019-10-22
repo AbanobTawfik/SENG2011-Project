@@ -1,0 +1,118 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs} % for "\midrule" macro
+\usepackage{lipsum} % for filler text
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{lplfitch}
+\usepackage{hyperref}
+\usepackage{caption}
+\renewcommand{\labelitemii}{$\star$}
+\newcommand*\moveToRight[1]{\hspace*{0em plus 1fill}\makebox{(#1)}}
+\newcommand*\fixindent{ \hspace{1pt}\\}
+%this command below is not my work was used for quality of life
+%link to original post 
+%https://tex.stackexchange.com/questions/330588/how-to-produce-given-number-of-quad-in-math
+\newcommand{\myquad}[1][1]{\hspace*{#1em}\ignorespaces}
+\title{SENG2011\\Project Report}        
+
+\author{Abanob Tawfik z5075490\\
+        Kevin Luxa z5074984\\
+        Lucas Pok z5122535\\
+        Michael Yoo z5165635\\
+        Rason Chia z5084566
+}
+\date{October 2019}
+
+\begin{document}
+
+\maketitle
+\section{Executive Summary}
+Project Vampire is an electronic records management system for the handling of medical blood inventories.
+
+\fixindent{}The project aims to replace paper-based records systems, with the usual benefits of digital records management - such as reducing costs and improving usability. However, there are some concerns as to whether a digital system can be relied upon to manage a critical resource with human lives at stake. To provide assurance, our system uses formal verification techniques to ensure that it conforms to safety requirements.
+
+\fixindent{}Our system integrates with pre-existing business processes of blood inventory management. For example, there are built-in processes for the expiration of blood, distinction between blood types, requests and acceptance of donated blood, to list a few.
+
+\fixindent{}Our system comprises of a graphical interface that interacts with a verified data store service. The implementation details will be detailed in their respective sections.
+
+\fixindent{}Our final project and report will describe a minimum viable product to demonstrate that safety and assurance requirements can be met with a digital records management system.
+
+\newpage
+
+\section{Requirements}
+\subsection{Stakeholders}
+\begin{itemize}
+    \item \textbf{Blood inventory staff [Vampire employee]}
+        \begin{itemize}
+            \item Handles the physical delivery of requested blood to hospitals.
+            \item Physically disposes of expired blood by sending it to a blood disposal service.
+        \end{itemize}
+    \item \textbf{Hospital staff}
+        \begin{itemize}
+            \item Can request blood to treat patients.
+            \item Can query the level of different types of blood in Vampire’s inventory.
+        \end{itemize}
+    \item \textbf{Batmobile admin [Vampire employee]}
+        \begin{itemize}
+            \item Deposits blood into the system.
+        \end{itemize}
+    \item \textbf{Pathology staff}
+        \begin{itemize}
+            \item Tests all blood within the system.
+        \end{itemize}
+    \item \textbf{Blood donor}
+        \begin{itemize}
+            \item Donates blood to the Batmobile.
+            \item Can see the outcome of their blood donation.
+        \end{itemize}
+    \item \textbf{Emergency donor}
+        \begin{itemize}
+            \item Upon hitting a critically low supply of blood in the system, these people will donate blood via the Batmobile.
+        \end{itemize}
+    \item \textbf{Headquarters}
+        \begin{itemize}
+            \item Business owners.
+            \item Manage all critical and sensitive actions.
+        \end{itemize}
+    \item \textbf{Blood dump}
+        \begin{itemize}
+            \item Will eliminate blood in a medically suitable fashion.
+        \end{itemize}
+    \item \textbf{Blood donation facility}
+        \begin{itemize}
+            \item Will work in conjunction with the Batmobile to offer a venue in which blood donors  are able to visit to donate blood.
+        \end{itemize}
+\end{itemize}
+
+\newpage
+\subsection{Priority Description}
+\begin{itemize}
+    \item \textbf{P1 (Priority 1, Must have)}
+        \begin{itemize}
+            \item All these requirements form the minimum viable product, crucial to launch.
+        \end{itemize}
+    \item \textbf{P2 (Priority 2, Should have)}
+        \begin{itemize}
+            \item All these requirements should be done in the time frame, but are not critical to launch, can be delayed for future release.
+        \end{itemize}
+    \item \textbf{P3 (Priority 3, Could have)}
+        \begin{itemize}
+            \item All these requirements are features we would like, but in the time frame we may delay them to future releases to focus on priority 1 and priority 2.
+        \end{itemize}
+    \item \textbf{P4 (Priority 4, Would have)}
+        \begin{itemize}
+            \item Features we do not expect to have but show the road map of where we see our product down the line.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Requirements List}
+\begin{enumerate}
+    \item \textbf{Hospital staff are able to query the inventory [P1]}
+\end{enumerate}
+\end{document}
