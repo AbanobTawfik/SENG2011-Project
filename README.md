@@ -14,7 +14,7 @@ If you have any questions or doubt, do not hesitate to ask anyone!
   I use OpenSUSE Tumbleweed.
 - Latest version of `mono` installed. `mono-core` should be
   sufficient.
-- Dafny 1.9.7 installed as `dafny1.9.7`.
+- Dafny 1.9.7 installed as `dafny`.
   - Alternatively, set `DAFNY` environment variable to the
     dafny executable.
   - The `Makefile` will check your `dafny` version and

@@ -1,4 +1,4 @@
-DAFNY ?= dafny1.9.7
+DAFNY ?= dafny
 
 .PHONY: all check clean
 
