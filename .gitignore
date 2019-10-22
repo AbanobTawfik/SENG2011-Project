@@ -2,3 +2,4 @@
 *.mdb
 *.dll
 *.exe
+.vs
