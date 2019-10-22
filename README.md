@@ -10,7 +10,7 @@ If you have any questions or doubt, do not hesitate to ask anyone!
 
 ### Build Requirements
 
-- Some variant of Linux with recent mono available.
+- Some variant of Linux with recent `mono` available.
   I use OpenSUSE Tumbleweed.
 - Latest version of `mono` installed. `mono-core` should be
   sufficient.
@@ -45,7 +45,7 @@ make clean
 ```
 
 
-### Contribution
+## Contribution
 
 Here are some thoughts for programming as a team.
 
