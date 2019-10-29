@@ -40,11 +40,11 @@ class Blood
         donorName
     }
 
-    function GetDateDonated() string
+    function GetDateDonated(): string
     requires Valid() ensures Valid()
     ensures GetDateDonated() == dateDonated
     {
-        dateDonated;
+        dateDonated
     }
 
     method PrettyPrint()
@@ -57,16 +57,10 @@ class Blood
 method Main()
 {
     var bobsBlood := new Blood("A-", "bob", "16/06/1997");
-    var bobsBloodType, bobsName, dateBobDonatedBlood;
     
-    bobsBloodType := bobsBlood.GetBloodType();
-    assert bobsBloodType == "A-";
-
-    bobsName := bobsBlood.GetDonorName();
-    assert bobsName == "bob";
-
-    dateBobDonatedBlood := bobsBlood.GetDateDonated();
-    assert dateBobDonatedBlood == "16/06/1997";
+    assert bobsBlood.GetBloodType() == "A-";
+    assert bobsBlood.GetDonorName() == "bob";
+    assert bobsBlood.GetDateDonated() == "16/06/1997";
     
     bobsBlood.PrettyPrint();
 }
