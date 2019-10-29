@@ -9,7 +9,6 @@ class BloodInventory
     predicate Valid()
     requires shadowBloodInventory != null
     requires bloodInventory != null
-
     requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
     reads this, this.shadowBloodInventory, this.bloodInventory, set i | 0 <= i < bloodInventory.Length :: bloodInventory[i]
     {
@@ -32,5 +31,4 @@ predicate validBloodType(bloodType: string)
 {
         bloodType == "A+" || bloodType == "A-" || bloodType == "B+" || bloodType == "B-" ||
         bloodType == "O+" || bloodType == "O-" || bloodType == "AB+" || bloodType == "AB-"
-
 }
