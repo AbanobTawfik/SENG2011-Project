@@ -27,21 +27,18 @@ class Blood
     }
 
     function GetBloodType(): string
-    requires Valid() ensures Valid()
     ensures GetBloodType() == bloodType
     {
         bloodType
     }
 
     function GetDonorName(): string
-    requires Valid() ensures Valid()
     ensures GetDonorName() == donorName
     {
         donorName
     }
 
     function GetDateDonated(): string
-    requires Valid() ensures Valid()
     ensures GetDateDonated() == dateDonated
     {
         dateDonated

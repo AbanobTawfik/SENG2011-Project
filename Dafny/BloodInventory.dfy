@@ -8,9 +8,14 @@ class BloodInventory
 
     predicate Valid()
     requires shadowBloodInventory != null
-    reads this, this.shadowBloodInventory
+    requires bloodInventory != null
+
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    reads this, this.shadowBloodInventory, this.bloodInventory, set i | 0 <= i < bloodInventory.Length :: bloodInventory[i]
     {
+        shadowBloodInventory.Length == bloodInventory.Length &&
         forall i :: 0 <= i < shadowBloodInventory.Length ==> validBloodType(shadowBloodInventory[i]) && 
+        forall i  :: 0 <= i < shadowBloodInventory.Length ==> shadowBloodInventory[i] == bloodInventory[i].GetDonorName() && 
         alert ==> (threshold >= multiset(shadowBloodInventory[..])["A+"]) &&
         alert ==> (threshold >= multiset(shadowBloodInventory[..])["A-"]) &&
         alert ==> (threshold >= multiset(shadowBloodInventory[..])["B+"]) &&
