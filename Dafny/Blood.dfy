@@ -26,25 +26,25 @@ class Blood
         dateDonated := cdateDonated;
     }
 
-    method GetBloodType() returns (cbloodType: string)
+    function GetBloodType(): string
     requires Valid() ensures Valid()
-    ensures cbloodType == bloodType
+    ensures GetBloodType() == bloodType
     {
-        cbloodType := bloodType;
+        bloodType
     }
 
-    method GetDonorName() returns (cdonorName: string)
+    function GetDonorName(): string
     requires Valid() ensures Valid()
-    ensures cdonorName == donorName
+    ensures GetDonorName() == donorName
     {
-        cdonorName := donorName;
+        donorName
     }
 
-    method GetDateDonated() returns (cdateDonated: string)
+    function GetDateDonated() string
     requires Valid() ensures Valid()
-    ensures cdateDonated == dateDonated
+    ensures GetDateDonated() == dateDonated
     {
-        cdateDonated := dateDonated;
+        dateDonated;
     }
 
     method PrettyPrint()
