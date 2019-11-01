@@ -30,6 +30,7 @@ class BloodInventory
     requires blood != null
     requires validBloodType(blood.GetBloodType())
     requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory != null
     ensures bloodInventory.Length == old(bloodInventory.Length) + 1
     ensures forall i :: 0 <= i < old(bloodInventory.Length) ==> (bloodInventory[i] == old(bloodInventory[i]))
     requires Valid() ensures Valid()
@@ -43,6 +44,24 @@ class BloodInventory
         addedToInventory[bloodInventory.Length] := blood;
         bloodInventory := addedToInventory;
         shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
+        // we need to now check if we have alert as true or false
+        var count := 0;
+        var i := 0;
+        while i < bloodInventory.Length
+        invariant 0 <= i <= bloodInventory.Length
+        invariant count == multiset(shadowBloodInventory[0..i])[blood.GetBloodType()]
+        {
+            if(bloodInventory[i].GetBloodType() == blood.GetBloodType())
+            {
+                count := count + 1;
+            }
+            i := i + 1;
+        }
+
+        if  threshold >= count
+        {
+            alert := true;
+        }
     }
 
 } // end of BloodInventory class
