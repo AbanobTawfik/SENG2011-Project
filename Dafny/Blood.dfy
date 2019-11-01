@@ -26,19 +26,19 @@ class Blood
         dateDonated := cdateDonated;
     }
 
-    function GetBloodType(): string
+    function method GetBloodType(): string
     ensures GetBloodType() == bloodType
     {
         bloodType
     }
 
-    function GetDonorName(): string
+    function method GetDonorName(): string
     ensures GetDonorName() == donorName
     {
         donorName
     }
 
-    function GetDateDonated(): string
+    function method GetDateDonated(): string
     ensures GetDateDonated() == dateDonated
     {
         dateDonated
