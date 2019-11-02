@@ -88,6 +88,24 @@ class BloodInventory
         }
     }
 
+    function GetSizeVerificaiton(): int
+    requires bloodInventory != null
+    reads this, this.bloodInventory
+    {
+        bloodInventory.Length
+    }
+
+    method GetSize() returns (count: int)
+    requires bloodInventory != null
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory != null
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures count == bloodInventory.Length
+    requires Valid() ensures Valid()
+    {
+        count := bloodInventory.Length;
+    }
+
     method AddBlood(blood: Blood) returns (b: bool)
     modifies this, this.bloodInventory
     requires bloodInventory != null
