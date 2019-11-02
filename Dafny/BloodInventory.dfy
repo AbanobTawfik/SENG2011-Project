@@ -4,7 +4,6 @@ class BloodInventory
     var bloodInventory: array<Blood>;
     ghost var shadowBloodInventory: seq<string>;
     var threshold: int;
-    var alert: bool;
 
     predicate Valid()
     requires bloodInventory != null
@@ -16,8 +15,23 @@ class BloodInventory
         forall i  :: 0 <= i < |shadowBloodInventory| ==> shadowBloodInventory[i] == bloodInventory[i].GetBloodType()
     } 
 
+    constructor()
+    modifies this
+    ensures bloodInventory != null
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures Valid()
+    ensures shadowBloodInventory == []
+    ensures fresh(bloodInventory)
+    ensures bloodInventory.Length == 0
+    {
+        bloodInventory := new Blood[0];
+        shadowBloodInventory := [];
+        threshold := 0;
+    }
+
+
     method AddBlood(blood: Blood) returns (b: bool)
-    modifies this, this`threshold, this`shadowBloodInventory, this.bloodInventory
+    modifies this, this.bloodInventory
     requires bloodInventory != null
     requires blood != null
     requires validBloodType(blood.GetBloodType())
@@ -39,6 +53,29 @@ class BloodInventory
         addedToInventory[bloodInventory.Length] := blood;
         bloodInventory := addedToInventory;
         shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
+    }
+
+    method removeBlood(bloodType: string) returns (b: bool)
+    modifies this, this.bloodInventory
+    requires bloodInventory != null
+    requires bloodInventory.Length > 0
+    requires |shadowBloodInventory| > 0
+    requires validBloodType(bloodType)
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory != null 
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory.Length == old(bloodInventory.Length) - 1
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] == old(bloodInventory[i]))
+    ensures shadowBloodInventory == old(shadowBloodInventory)[0..|old(shadowBloodInventory)| - 1]
+    requires Valid() ensures Valid()
+    {
+        var removedFromInventory : array<Blood> := new Blood[bloodInventory.Length - 1];
+        forall i | 0 <= i < bloodInventory.Length - 1
+        {
+            removedFromInventory[i] := bloodInventory[i];
+        }
+        bloodInventory := removedFromInventory; 
+        shadowBloodInventory := shadowBloodInventory[0..|shadowBloodInventory| - 1];
     }
 
 } // end of BloodInventory class
