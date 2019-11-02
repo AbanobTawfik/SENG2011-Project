@@ -44,11 +44,21 @@ class BloodInventory
     }
 
     function GetBloodCountForBloodTypeVerification(bloodType: string, indexToCountTo: int ): int
-    reads this
-    requires  0 <= indexToCountTo <= |shadowBloodInventory|
+    reads this, this.bloodInventory
+    requires bloodInventory != null
+    requires indexToCountTo < bloodInventory.Length
     requires validBloodType(bloodType)
     {
-        multiset(shadowBloodInventory[0..indexToCountTo])[bloodType]
+        if indexToCountTo < 0 || bloodInventory[indexToCountTo] == null
+        then 
+            0
+        else
+            if bloodInventory[indexToCountTo].GetBloodType() == bloodType
+            then
+                1 + GetBloodCountForBloodTypeVerification(bloodType, indexToCountTo - 1)
+            else
+                GetBloodCountForBloodTypeVerification(bloodType, indexToCountTo - 1)
+
     }
 
     method GetBloodCountForBloodTypeExecution(bloodType: string) returns (count: int)
@@ -60,7 +70,7 @@ class BloodInventory
     ensures bloodInventory != null
     ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
     ensures bloodInventory == old(bloodInventory)
-    ensures count == GetBloodCountForBloodTypeVerification(bloodType, bloodInventory.Length)
+    ensures count == GetBloodCountForBloodTypeVerification(bloodType, bloodInventory.Length - 1)
     requires Valid() ensures Valid()
     {
         count := 0;
@@ -68,7 +78,7 @@ class BloodInventory
 
         while i < bloodInventory.Length
         invariant 0 <= i <= bloodInventory.Length
-        invariant count == GetBloodCountForBloodTypeVerification(bloodType, i)
+        invariant count == GetBloodCountForBloodTypeVerification(bloodType, i - 1)
         {
             if(bloodInventory[i].GetBloodType() == bloodType)
             {
