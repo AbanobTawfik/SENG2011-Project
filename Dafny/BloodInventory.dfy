@@ -33,7 +33,7 @@ class BloodInventory
     ensures bloodInventory != null
     ensures bloodInventory.Length == old(bloodInventory.Length) + 1
     ensures forall i :: 0 <= i < old(bloodInventory.Length) ==> (bloodInventory[i] == old(bloodInventory[i]))
-    requires Valid() ensures Valid()
+    requires Valid() //ensures Valid()
     {
         var addedToInventory: array<Blood> := new Blood[bloodInventory.Length + 1];
         forall i | 0 <= i < bloodInventory.Length
@@ -49,7 +49,7 @@ class BloodInventory
         var i := 0;
         while i < bloodInventory.Length
         invariant 0 <= i <= bloodInventory.Length
-        invariant count == multiset(shadowBloodInventory[0..i])[blood.GetBloodType()]
+        // invariant count == multiset(shadowBloodInventory[0..i])[blood.GetBloodType()]
         {
             if(bloodInventory[i].GetBloodType() == blood.GetBloodType())
             {
