@@ -95,6 +95,12 @@ class BloodInventory
         bloodInventory.Length
     }
 
+    function GetArrayVerification(): array<Blood>
+    reads this
+    {
+        bloodInventory
+    }
+
     method GetSize() returns (count: int)
     requires bloodInventory != null
     requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
