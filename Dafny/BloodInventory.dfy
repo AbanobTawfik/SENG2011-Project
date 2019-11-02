@@ -23,9 +23,10 @@ class BloodInventory
     requires validBloodType(blood.GetBloodType())
     requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
     ensures bloodInventory != null
-    ensures bloodInventory.Length == old(bloodInventory.Length) + 1
     ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
     ensures forall i :: 0 <= i < old(bloodInventory.Length) ==> (bloodInventory[i] == old(bloodInventory[i]))
+    ensures bloodInventory.Length == old(bloodInventory.Length) + 1
+    ensures shadowBloodInventory == shadowBloodInventory + [blood.GetBloodType()]
     requires Valid() ensures Valid()
     {
         var addedToInventory: array<Blood> := new Blood[bloodInventory.Length + 1];
