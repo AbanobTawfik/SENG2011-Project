@@ -13,15 +13,7 @@ class BloodInventory
     {
         |shadowBloodInventory| == bloodInventory.Length &&
         forall i :: 0 <= i < |shadowBloodInventory| ==> validBloodType(shadowBloodInventory[i]) && 
-        forall i  :: 0 <= i < |shadowBloodInventory| ==> shadowBloodInventory[i] == bloodInventory[i].GetBloodType() && 
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["A+"]) &&
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["A-"]) &&
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["B+"]) &&
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["B-"]) &&
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["O+"]) &&
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["O-"]) &&
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["AB+"]) &&
-        alert ==> (threshold >= multiset(shadowBloodInventory[..])["AB-"])
+        forall i  :: 0 <= i < |shadowBloodInventory| ==> shadowBloodInventory[i] == bloodInventory[i].GetBloodType()
     } 
 
     method AddBlood(blood: Blood) returns (b: bool)
@@ -32,8 +24,9 @@ class BloodInventory
     requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
     ensures bloodInventory != null
     ensures bloodInventory.Length == old(bloodInventory.Length) + 1
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
     ensures forall i :: 0 <= i < old(bloodInventory.Length) ==> (bloodInventory[i] == old(bloodInventory[i]))
-    requires Valid() //ensures Valid()
+    requires Valid() ensures Valid()
     {
         var addedToInventory: array<Blood> := new Blood[bloodInventory.Length + 1];
         forall i | 0 <= i < bloodInventory.Length
@@ -44,24 +37,6 @@ class BloodInventory
         addedToInventory[bloodInventory.Length] := blood;
         bloodInventory := addedToInventory;
         shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
-        // we need to now check if we have alert as true or false
-        var count := 0;
-        var i := 0;
-        while i < bloodInventory.Length
-        invariant 0 <= i <= bloodInventory.Length
-        // invariant count == multiset(shadowBloodInventory[0..i])[blood.GetBloodType()]
-        {
-            if(bloodInventory[i].GetBloodType() == blood.GetBloodType())
-            {
-                count := count + 1;
-            }
-            i := i + 1;
-        }
-
-        if  threshold >= count
-        {
-            alert := true;
-        }
     }
 
 } // end of BloodInventory class
