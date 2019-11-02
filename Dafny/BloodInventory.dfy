@@ -19,16 +19,64 @@ class BloodInventory
     modifies this
     ensures bloodInventory != null
     ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
-    ensures Valid()
     ensures shadowBloodInventory == []
     ensures fresh(bloodInventory)
     ensures bloodInventory.Length == 0
+    ensures threshold == 0
+    ensures Valid()
     {
         bloodInventory := new Blood[0];
         shadowBloodInventory := [];
         threshold := 0;
     }
 
+    method ModifyThreshold(newThreshold: int)
+    modifies this`threshold
+    requires newThreshold >= 0
+    requires bloodInventory != null
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory != null
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures threshold == newThreshold
+    requires Valid() ensures Valid()
+    {
+        threshold := newThreshold;
+    }
+
+    function GetBloodCountForBloodTypeVerification(bloodType: string, indexToCountTo: int ): int
+    reads this
+    requires  0 <= indexToCountTo <= |shadowBloodInventory|
+    requires validBloodType(bloodType)
+    {
+        multiset(shadowBloodInventory[0..indexToCountTo])[bloodType]
+    }
+
+    method GetBloodCountForBloodTypeExecution(bloodType: string) returns (count: int)
+    requires validBloodType(bloodType)
+    requires bloodInventory != null
+    requires bloodInventory.Length == |shadowBloodInventory|
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i].GetBloodType() == shadowBloodInventory[i])
+    ensures bloodInventory != null
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory == old(bloodInventory)
+    ensures count == GetBloodCountForBloodTypeVerification(bloodType, bloodInventory.Length)
+    requires Valid() ensures Valid()
+    {
+        count := 0;
+        var i := 0;
+
+        while i < bloodInventory.Length
+        invariant 0 <= i <= bloodInventory.Length
+        invariant count == GetBloodCountForBloodTypeVerification(bloodType, i)
+        {
+            if(bloodInventory[i].GetBloodType() == bloodType)
+            {
+                count := count + 1;
+            }
+            i := i + 1;
+        }
+    }
 
     method AddBlood(blood: Blood) returns (b: bool)
     modifies this, this.bloodInventory
