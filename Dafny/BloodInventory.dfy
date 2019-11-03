@@ -151,14 +151,16 @@ class BloodInventory
 
     ensures blood == null ==> !(exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType)
     ensures blood != null ==> blood.GetBloodType() == bloodType && (exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType)
-    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] == old(bloodInventory[i]))
-    ensures shadowBloodInventory == old(shadowBloodInventory)[0..|old(shadowBloodInventory)| - 1]
+    // neeed to fix this to explain what happens to the array
+    // ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] == old(bloodInventory[i]))
+    // ensures shadowBloodInventory == old(shadowBloodInventory)[0..|old(shadowBloodInventory)| - 1]
     requires Valid() ensures Valid()
     {
         blood := null;
         // we will find the blood with matching type
         var removedFromInventory : array<Blood> := new Blood[bloodInventory.Length - 1];
         var i := 0;
+        var count2 := 0;
         while i < bloodInventory.Length
         invariant 0 <= i <= bloodInventory.Length
         invariant forall j :: 0 <= j < i ==> (bloodInventory[j].GetBloodType() != bloodType) 
@@ -167,9 +169,8 @@ class BloodInventory
             {
                 blood := bloodInventory[i];
                 // we will remove it from the array
-
-                // we will then rejoin the array together
-                
+                shadowBloodInventory := shadowBloodInventory[0..i] + shadowBloodInventory[i.. |shadowBloodInventory| - 1];
+                forall i :: 0 
                 return;
             }
             i := i + 1;
