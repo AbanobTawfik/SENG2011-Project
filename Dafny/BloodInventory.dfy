@@ -137,21 +137,48 @@ class BloodInventory
         shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
     }
 
-    method removeBlood(bloodType: string) returns (b: bool)
+    method removeBlood(bloodType: string) returns (blood: Blood)
     modifies this, this.bloodInventory
     requires bloodInventory != null
     requires bloodInventory.Length > 0
     requires |shadowBloodInventory| > 0
     requires validBloodType(bloodType)
     requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    requires exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType
     ensures bloodInventory != null 
     ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
     ensures bloodInventory.Length == old(bloodInventory.Length) - 1
+
+    ensures blood == null ==> !(exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType)
+    ensures blood != null ==> blood.GetBloodType() == bloodType && (exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType)
     ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] == old(bloodInventory[i]))
     ensures shadowBloodInventory == old(shadowBloodInventory)[0..|old(shadowBloodInventory)| - 1]
     requires Valid() ensures Valid()
     {
+        blood := null;
+        // we will find the blood with matching type
         var removedFromInventory : array<Blood> := new Blood[bloodInventory.Length - 1];
+        var i := 0;
+        while i < bloodInventory.Length
+        invariant 0 <= i <= bloodInventory.Length
+        invariant forall j :: 0 <= j < i ==> (bloodInventory[j].GetBloodType() != bloodType) 
+        {
+            if(bloodInventory[i].GetBloodType() == bloodType)
+            {
+                blood := bloodInventory[i];
+                // we will remove it from the array
+
+                // we will then rejoin the array together
+                
+                return;
+            }
+            i := i + 1;
+        }
+        // we will then remove it from the array
+
+        // we will then rejoin the array together
+
+        
         forall i | 0 <= i < bloodInventory.Length - 1
         {
             removedFromInventory[i] := bloodInventory[i];
