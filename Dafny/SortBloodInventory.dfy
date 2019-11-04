@@ -84,11 +84,11 @@ function method compareBloodItemLt(a: BloodItem, b: BloodItem): bool
 function method compareBloodItemLe(a: BloodItem, b: BloodItem): bool
 {
     // Either less-than relation
-    compareBloodTypeLt(a.bloodType, b.bloodType)
+    compareBloodItemLt(a, b)
     || (
         // Or equivalency relation
-           !compareBloodTypeLt(a.bloodType, b.bloodType)
-        && !compareBloodTypeLt(b.bloodType, a.bloodType)
+           !compareBloodItemLt(a, b)
+        && !compareBloodItemLt(b, a)
     )
 }
 
