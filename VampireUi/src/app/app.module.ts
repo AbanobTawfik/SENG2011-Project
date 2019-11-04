@@ -1,30 +1,42 @@
+﻿import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { ReactiveFormsModule }    from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { HospitalComponent } from './Components/hospital/hospital.component';
-import { VampireComponent } from './Components/vampire/vampire.component';
-import { BatmobileComponent } from './Components/batmobile/batmobile.component';
-import { PathologyComponent } from './Components/pathology/pathology.component';
-import { DonorComponent } from './Components/donor/donor.component';
-import { VampireHeadquartersComponent } from './Components/vampire-headquarters/vampire-headquarters.component';
+// used to create fake backend
+import { fakeBackendProvider } from './_helpers';
+
+import { AppComponent }  from './app.component';
+import { routing }        from './app.routing';
+
+import { AlertComponent } from './_components';
+import { JwtInterceptor, ErrorInterceptor } from './_helpers';
+import { HomeComponent } from './home';
+import { LoginComponent } from './login';
+import { RegisterComponent } from './register';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HospitalComponent,
-    VampireComponent,
-    BatmobileComponent,
-    PathologyComponent,
-    DonorComponent,
-    VampireHeadquartersComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    imports: [
+        BrowserModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        routing
+    ],
+    declarations: [
+        AppComponent,
+        AlertComponent,
+        HomeComponent,
+        LoginComponent,
+        RegisterComponent
+    ],
+    providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+
+        // provider used to create fake backend
+        fakeBackendProvider
+    ],
+    bootstrap: [AppComponent]
 })
+
 export class AppModule { }
