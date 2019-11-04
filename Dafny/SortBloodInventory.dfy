@@ -30,10 +30,10 @@ function method refineBloodType(a: BloodType): int
         case AMinus  => 1
         case BPlus   => 2
         case BMinus  => 3
-        case OPlus   => 4
-        case OMinus  => 5
-        case ABPlus  => 6
-        case ABMinus => 7
+        case ABPlus  => 4
+        case ABMinus => 5
+        case OPlus   => 6
+        case OMinus  => 7
     }
 }
 
