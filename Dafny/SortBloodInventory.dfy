@@ -78,6 +78,9 @@ function method compareBloodItemLt(a: BloodItem, b: BloodItem): bool
     )
 }
 
+/**
+ * Less than or equals version of compareBloodItemLt().
+ */
 function method compareBloodItemLe(a: BloodItem, b: BloodItem): bool
 {
     // Either less-than relation
@@ -104,6 +107,9 @@ predicate sortedGroupBloodInventory(inv: array<BloodItem>)
     ==> compareBloodItemLe(inv[i], inv[j])
 }
 
+/**
+ * Predicate that the two inventories are permutations of each other.
+ */
 predicate permutationBloodInventory(xs: array<BloodItem>, ys: array<BloodItem>)
     reads xs, ys
     requires xs != null && ys != null
