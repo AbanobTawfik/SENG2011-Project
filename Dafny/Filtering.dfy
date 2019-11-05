@@ -30,7 +30,6 @@ method Main()
   
   a := new int[0];
   print "\noriginal: ", b[..], "\n";
-  
   b := Filter(a, testEven);
   assert b[..] == [];
   print "even    : ", b[..], "\n";
@@ -87,7 +86,7 @@ decreases end // (fails asserts without this, does anyone know why?)
   else  Matches(a, end-1, test) + (if test(a[end-1]) then 1 else 0)
 }
 
-// Verifies the filtered array given a specified test & array slice [0..end).
+// Verifies the filtered array given a specified test and array slice [0..end).
 function VerifyFilter(a: array<int>, end: nat, test: int -> bool): seq<int>
 reads a
 requires a != null
