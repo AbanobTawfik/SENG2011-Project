@@ -137,7 +137,7 @@ class BloodInventory
         shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
     }
 
-    method removeBlood(bloodType: string) returns (blood: Blood)
+    method removeBlood(bloodType: string) returns (blood: Blood, indexOfRemoval: int)
     modifies this, this.bloodInventory
     requires bloodInventory != null
     requires bloodInventory.Length > 0
@@ -147,45 +147,49 @@ class BloodInventory
     requires exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType
     ensures bloodInventory != null 
     ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
-    ensures bloodInventory.Length == old(bloodInventory.Length) - 1
     ensures blood == null ==> !(exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType)
-    ensures blood != null ==> blood.GetBloodType() == bloodType && (exists i :: 0 <= i < bloodInventory.Length && bloodInventory[i].GetBloodType() == bloodType)
+    ensures blood == null ==> bloodInventory.Length == old(bloodInventory.Length) 
+    ensures blood == null ==> indexOfRemoval == -1
+    ensures blood != null ==> bloodInventory.Length == old(bloodInventory.Length) - 1
+    ensures blood != null ==> blood.GetBloodType() == bloodType
+    ensures blood != null && (0 <= indexOfRemoval < bloodInventory.Length) ==> shadowBloodInventory == old(shadowBloodInventory)[..indexOfRemoval] + old(shadowBloodInventory)[indexOfRemoval + 1..]
+    ensures blood != null && (0 <= indexOfRemoval < bloodInventory.Length) ==> ((forall i :: 0 <= i < indexOfRemoval ==> bloodInventory[i] == old(bloodInventory[i])) && 
+                                                                               (forall i :: indexOfRemoval < i < bloodInventory.Length ==> bloodInventory[i - 1] == old(bloodInventory[i])))
     // neeed to fix this to explain what happens to the array
     // ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] == old(bloodInventory[i]))
     // ensures shadowBloodInventory == old(shadowBloodInventory)[0..|old(shadowBloodInventory)| - 1]
     requires Valid() ensures Valid()
     {
         blood := null;
-        // we will find the blood with matching type
+        indexOfRemoval := -1;
         var removedFromInventory : array<Blood> := new Blood[bloodInventory.Length - 1];
-        var i := 0;
+        var i := 0;        
         while i < bloodInventory.Length
         invariant 0 <= i <= bloodInventory.Length
         invariant forall j :: 0 <= j < i ==> (bloodInventory[j].GetBloodType() != bloodType) 
         {
             if(bloodInventory[i].GetBloodType() == bloodType)
             {
-                blood := bloodInventory[i];
                 // we will remove it from the array
-                shadowBloodInventory := shadowBloodInventory[..i-1] + shadowBloodInventory[i+1..];
-                var count := 0;
-                var count2 := 0;
-                while count <= bloodInventory.Length 
-                invariant 0 <= count <= bloodInventory.Length
-                invariant count2 <= count
+                shadowBloodInventory := shadowBloodInventory[..i] + shadowBloodInventory[i+1..];
+                blood := bloodInventory[i];
+                indexOfRemoval := i;
+                var addLower := 0;
+                var addUpper := i;
+                forall k | 0 <= k < i 
                 {
-                    if(count != i)
-                    {
-                        removedFromInventory[count2] := bloodInventory[count];
-                        count2 := count2 + 1;
-                    }
-                    count := count + 1;
+                    removedFromInventory[k] := bloodInventory[k];
+                }
+                forall k | i < k < bloodInventory.Length 
+                {
+                    removedFromInventory[k - 1] := bloodInventory[k];
                 }
                 bloodInventory := removedFromInventory;
                 return;
             }
             i := i + 1;
         }
+
     }
 
 } // end of BloodInventory class
