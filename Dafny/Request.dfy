@@ -49,7 +49,7 @@ ensures newResizedArray[arr.Length] == blood
 function GetCountOfBloodTypeInArray(a: array<Blood>, bloodType: string, indexToCountTo: int): int
 requires a != null
 requires forall i :: 0 <= i < a.Length ==> (a[i] != null)
-reads a
+reads a, set i | 0 <= i < a.Length :: a[i]
 requires indexToCountTo < a.Length
 requires validBloodType(bloodType)
 {

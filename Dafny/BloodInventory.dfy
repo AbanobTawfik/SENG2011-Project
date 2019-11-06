@@ -44,7 +44,8 @@ class BloodInventory
     }
 
     function GetBloodCountForBloodTypeVerification(bloodType: string, indexToCountTo: int ): int
-    reads this, this.bloodInventory
+    decreases indexToCountTo
+    reads this, this.bloodInventory, set i | 0 <= i < this.bloodInventory.Length :: bloodInventory[i]
     requires bloodInventory != null
     requires indexToCountTo < bloodInventory.Length
     requires validBloodType(bloodType)
@@ -137,6 +138,8 @@ class BloodInventory
         shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
     }
 
+    // we can assume that we remove from our array sorted by date using our merge sort
+    // to take out the oldest blood to minimise wastage
     method removeBlood(bloodType: string) returns (blood: Blood, indexOfRemoval: int)
     modifies this, this.bloodInventory
     requires bloodInventory != null
