@@ -62,6 +62,19 @@ class BloodInventory
 
     }
 
+    predicate VerifyLengths()
+    requires bloodInventory != null
+    reads this
+    {
+        bloodInventory.Length == |shadowBloodInventory|
+    }
+
+    function GetShadowArray(): seq<string>
+    reads this
+    {
+        shadowBloodInventory
+    }
+
     method GetBloodCountForBloodTypeExecution(bloodType: string) returns (count: int)
     requires validBloodType(bloodType)
     requires bloodInventory != null
@@ -94,6 +107,13 @@ class BloodInventory
     reads this, this.bloodInventory
     {
         bloodInventory.Length
+    }
+
+    function method GetThreshold(): int
+    requires bloodInventory != null
+    reads this, this.bloodInventory
+    {
+        threshold
     }
 
     function GetArrayVerification(): array<Blood>

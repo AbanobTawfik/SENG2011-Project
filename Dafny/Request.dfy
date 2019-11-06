@@ -16,6 +16,7 @@ ensures bloodInventory == old(bloodInventory)
 ensures forall i :: 0 <= i < batchRequest.Length ==> (batchRequest[i].volume == GetCountOfBloodTypeInArray(requestResult, batchRequest[i].bloodType, requestResult.Length - 1))
 {
     var i := 0;
+    var threshold := bloodInventory.GetThreshold();
     requestResult := new Blood[1];
     while i < batchRequest.Length
     {
@@ -26,9 +27,18 @@ ensures forall i :: 0 <= i < batchRequest.Length ==> (batchRequest[i].volume == 
             requestResult := AddBloodToArrayResizing(requestResult, addblood);
             count := count + 1;
         }
+        // before we move on check for alert for sake of checking
+        var checkAlert := new Alert();
+        var newBloodCount := bloodInventory.GetBloodCountForBloodTypeExecution(batchRequest[i].bloodType);
+        var alertOn := checkAlert.CheckForAlert(threshold, newBloodCount);
+        if alertOn
+        {
+            print "banana";
+        }
         i := i + 1;
     }
 }
+
 
 method AddBloodToArrayResizing(arr: array<Blood>, blood: Blood) returns (newResizedArray: array<Blood>)
 requires arr != null
