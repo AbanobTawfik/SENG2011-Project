@@ -1,6 +1,6 @@
-// Assuming Array is Object Blood.
-// Blood Array<int> 
-// index 
+// Assuming Array is Object Blood
+// Blood Array<int>
+// index
 
 method Find(blood: array<int>, key: int) returns (index: int)
    ensures 0 <= index ==> index < blood.Length && blood[index] == key

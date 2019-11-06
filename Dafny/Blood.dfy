@@ -3,8 +3,8 @@ class Blood
     // add more fields if need be
     var bloodType: string;
     var donorName: string;
-    // string for date?
-    var dateDonated: string;
+    // linux epoch time, using integer to represent seconds from 1980? 
+    var dateDonated: int;
     
     // blood must be of valid type
     predicate Valid()
@@ -14,7 +14,7 @@ class Blood
          bloodType == "O+" || bloodType == "O-" || bloodType == "AB+" || bloodType == "AB-")
     }
 
-    constructor(cbloodType: string, cdonorName: string, cdateDonated: string)
+    constructor(cbloodType: string, cdonorName: string, cdateDonated: int)
     modifies this
     requires (cbloodType == "A+" || cbloodType == "A-" || cbloodType == "B+" || cbloodType == "B-" ||
          cbloodType == "O+" || cbloodType == "O-" || cbloodType == "AB+" || cbloodType == "AB-")
@@ -27,18 +27,21 @@ class Blood
     }
 
     function method GetBloodType(): string
+    reads this
     ensures GetBloodType() == bloodType
     {
         bloodType
     }
 
     function method GetDonorName(): string
+    reads this
     ensures GetDonorName() == donorName
     {
         donorName
     }
 
-    function method GetDateDonated(): string
+    function method GetDateDonated(): int
+    reads this
     ensures GetDateDonated() == dateDonated
     {
         dateDonated
@@ -53,11 +56,11 @@ class Blood
 
 method Main()
 {
-    var bobsBlood := new Blood("A-", "bob", "16/06/1997");
+    var bobsBlood := new Blood("A-", "bob", 12);
     
     assert bobsBlood.GetBloodType() == "A-";
     assert bobsBlood.GetDonorName() == "bob";
-    assert bobsBlood.GetDateDonated() == "16/06/1997";
+    assert bobsBlood.GetDateDonated() == 12;
     
     bobsBlood.PrettyPrint();
 }
