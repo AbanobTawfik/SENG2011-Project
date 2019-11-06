@@ -210,48 +210,6 @@ class BloodInventory
         bloodInventory := addedToInventory;
         shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
     }
-
-    method FixAlertState(bloodType: string) returns (amountAdded: int)
-    modifies this, this.bloodInventory
-    requires bloodInventory != null
-    requires validBloodType(bloodType)
-    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
-    requires threshold >= GetBloodCountForBloodTypeVerification(bloodType, bloodInventory.Length - 1)
-    ensures bloodInventory !=  null
-    ensures threshold <= GetBloodCountForBloodTypeVerification(bloodType, bloodInventory.Length - 1)
-    ensures bloodInventory.Length == old(bloodInventory).Length + amountAdded
-    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
-    ensures bloodInventory.Length >= old(bloodInventory).Length
-    ensures forall i :: 0 <= i < old(bloodInventory.Length) ==> (bloodInventory[i] == old(bloodInventory[i]))
-    // ensures bloodInventory.GetThreshold() < bloodInventory.GetBloodCountForBloodTypeVerification(bloodType, bloodInventory.GetArrayVerification().Length - 1)
-    requires Valid() ensures Valid()
-    {
-        var belowThreshold := GetBloodCountForBloodTypeExecution(bloodType);
-        var amountToAdd := threshold - belowThreshold + 1; 
-        amountAdded := amountToAdd;
-        var addedToInventory: array<Blood> := new Blood[bloodInventory.Length + amountToAdd + 1];
-        var emergencyDonor := new Blood(bloodType, "EMERGENCY DONOR", 0);
-        forall i | 0 <= i < bloodInventory.Length
-        {
-            addedToInventory[i] := bloodInventory[i];
-        }
-
-        var count := 0;
-        while count < amountToAdd
-        invariant 0 <= count <= amountToAdd
-        invariant addedToInventory != null
-        invariant bloodInventory != null
-        invariant emergencyDonor != null
-        invariant addedToInventory.Length == bloodInventory.Length + amountToAdd + 1
-        //invariant forall i :: 0 <= i < bloodInventory.Length + count ==> (addedToInventory[i] != null)
-        {
-            addedToInventory[bloodInventory.Length + count] := emergencyDonor;
-            shadowBloodInventory := shadowBloodInventory + [bloodType];
-            count := count + 1;
-        }
-        bloodInventory := addedToInventory;
-    }
-
 } // end of BloodInventory class
 
 predicate validBloodType(bloodType: string)
