@@ -2,6 +2,8 @@ include "BloodInventory.dfy"
 include "Alert.dfy"
 datatype request = bloodRequest(bloodType: string, volume: int)
 
+// note we don't really need to say what happens to the inventory, since the blood inventory itself
+// ensures what happens to it whenever we access its methods
 method Request(batchRequest:array<request>, bloodInventory: BloodInventory) returns(requestResult: array<Blood>)
 requires batchRequest != null
 requires bloodInventory != null
@@ -13,7 +15,35 @@ requires forall i :: 0 <= i < batchRequest.Length ==> (batchRequest[i].volume >=
 ensures bloodInventory == old(bloodInventory)
 ensures forall i :: 0 <= i < batchRequest.Length ==> (batchRequest[i].volume == GetCountOfBloodTypeInArray(requestResult, batchRequest[i].bloodType, requestResult.Length - 1))
 {
-    
+    var i := 0;
+    requestResult := new Blood[1];
+    while i < batchRequest.Length
+    {
+        var count := 0;
+        while count < batchRequest[i].volume
+        {
+            var addblood, indexusedonlyforverification := bloodInventory.removeBlood(batchRequest[i].bloodType);
+            requestResult := AddBloodToArrayResizing(requestResult, addblood);
+            count := count + 1;
+        }
+        i := i + 1;
+    }
+}
+
+method AddBloodToArrayResizing(arr: array<Blood>, blood: Blood) returns (newResizedArray: array<Blood>)
+requires arr != null
+requires blood != null
+ensures newResizedArray != null
+ensures newResizedArray.Length == arr.Length + 1
+ensures forall i :: 0 <= i < arr.Length ==> newResizedArray[i] == arr[i]
+ensures newResizedArray[arr.Length] == blood
+{
+    newResizedArray := new Blood[arr.Length + 1];
+    forall i | 0 <= i < arr.Length
+    {
+        newResizedArray[i] := arr[i];
+    }
+    newResizedArray[arr.Length] := blood;
 }
 
 function GetCountOfBloodTypeInArray(a: array<Blood>, bloodType: string, indexToCountTo: int): int
