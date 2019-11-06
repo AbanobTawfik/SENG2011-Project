@@ -31,6 +31,45 @@ export class RegisterComponent implements OnInit {
             username: ['', Validators.required],
             password: ['', [Validators.required, Validators.minLength(6)]]
         });
+        // this.registerForm = this.formBuilder.group({
+        //     firstName: ['Rason', Validators.required],
+        //     lastName: ['admin', Validators.required],
+        //     username: ['admin', Validators.required],
+        //     password: ['123456', [Validators.required, Validators.minLength(6)]]
+        // });
+
+        // this.userService.register(this.registerForm.value)
+        //     .pipe(first())
+        //     .subscribe(
+        //         data => {
+        //             this.alertService.success('Registration successful', true);
+        //             // this.router.navigate(['/login']);
+        //         },
+        //         error => {
+        //             this.alertService.error(error);
+        //             this.loading = false;
+        //         });
+
+
+        // this.registerForm = this.formBuilder.group({
+        //     firstName: ['Jason', Validators.required],
+        //     lastName: ['hospital', Validators.required],
+        //     username: ['hospital', Validators.required],
+        //     password: ['123456', [Validators.required, Validators.minLength(6)]]
+        // });
+
+        // this.userService.register(this.registerForm.value)
+        //     .pipe(first())
+        //     .subscribe(
+        //         data => {
+        //             this.alertService.success('Registration successful', true);
+        //             this.router.navigate(['/login']);
+        //         },
+        //         error => {
+        //             this.alertService.error(error);
+        //             this.loading = false;
+        //         });
+
     }
 
     // convenience getter for easy access to form fields

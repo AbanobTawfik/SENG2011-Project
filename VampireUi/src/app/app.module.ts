@@ -14,6 +14,10 @@ import { JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
+import { AddBloodComponent } from './AddBlood/AddBlood.component';
+import { DeliveryOrdersComponent } from './DeliveryOrders/DeliveryOrders.component';
+import { RequestBloodComponent } from './RequestBlood/RequestBlood.component';
+import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
 
 @NgModule({
     imports: [
@@ -27,7 +31,11 @@ import { RegisterComponent } from './register';
         AlertComponent,
         HomeComponent,
         LoginComponent,
-        RegisterComponent
+        RegisterComponent,
+        AddBloodComponent,
+        DeliveryOrdersComponent, 
+        RequestBloodComponent,
+        SearchBloodComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
