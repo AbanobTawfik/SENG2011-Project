@@ -9,10 +9,10 @@ namespace VampireBackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VampireController : ControllerBase
+    public class RequestController : ControllerBase
     {
         private BloodInventoryService _bloodInventoryService;
-        public VampireController(BloodInventoryService bloodInventoryService)
+        public RequestController(BloodInventoryService bloodInventoryService)
         {
             this._bloodInventoryService = bloodInventoryService;
         }

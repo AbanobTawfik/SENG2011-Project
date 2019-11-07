@@ -28,3 +28,17 @@ C:/Users/pizza/source/repos/VampireBackEnd/VampireBackEnd/obj/Debug/netcoreapp2.
 /Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/obj/Debug/netcoreapp2.2/VampireBackEnd.RazorTargetAssemblyInfo.cache
 /Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/obj/Debug/netcoreapp2.2/VampireBackEnd.dll
 /Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/obj/Debug/netcoreapp2.2/VampireBackEnd.pdb
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\bin\Debug\netcoreapp2.2\VampireBackEnd.deps.json
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\bin\Debug\netcoreapp2.2\VampireBackEnd.runtimeconfig.json
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\bin\Debug\netcoreapp2.2\VampireBackEnd.runtimeconfig.dev.json
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\bin\Debug\netcoreapp2.2\VampireBackEnd.dll
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\bin\Debug\netcoreapp2.2\VampireBackEnd.pdb
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.csprojAssemblyReference.cache
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.csproj.CoreCompileInputs.cache
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.RazorAssemblyInfo.cache
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.RazorAssemblyInfo.cs
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.AssemblyInfoInputs.cache
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.AssemblyInfo.cs
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.RazorTargetAssemblyInfo.cache
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.dll
+C:\Users\pizza\source\repos\SENG2011-Project\VampireBackEnd\VampireBackEnd\obj\Debug\netcoreapp2.2\VampireBackEnd.pdb
