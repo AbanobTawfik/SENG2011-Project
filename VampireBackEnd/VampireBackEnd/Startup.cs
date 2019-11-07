@@ -28,6 +28,16 @@ namespace VampireBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllHeaders",
+                      builder =>
+                      {
+                          builder.AllowAnyOrigin()
+                                 .AllowAnyHeader()
+                                 .AllowAnyMethod();
+                      });
+            });
             // i will add data binding so we have pre-defined blood inventory and bind it to the blood inventory service
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             // injecting the blood inventory service to constructor of our vampire controller
@@ -48,7 +58,7 @@ namespace VampireBackEnd
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseCors("AllowAllHeaders");
             app.UseHttpsRedirection();
             app.UseMvc();
         }

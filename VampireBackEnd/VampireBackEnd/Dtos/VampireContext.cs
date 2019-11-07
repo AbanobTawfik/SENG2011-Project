@@ -9,6 +9,7 @@ namespace VampireBackEnd.Dtos
     public class VampireContext : DbContext
     {
         public DbSet<User> users { get; set; }
+        public DbSet<Blood> bloodInventory { get; set; }
         public VampireContext(DbContextOptions<VampireContext> options) : base(options)
         {
         }
