@@ -133,31 +133,6 @@ class BloodInventory
         count := bloodInventory.Length;
     }
 
-    method AddBlood(blood: Blood) returns (b: bool)
-    modifies this, this.bloodInventory
-    requires bloodInventory != null
-    requires blood != null
-    requires validBloodType(blood.GetBloodType())
-    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
-    ensures bloodInventory != null
-    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
-    ensures bloodInventory.Length == old(bloodInventory.Length) + 1
-    ensures forall i :: 0 <= i < old(bloodInventory.Length) ==> (bloodInventory[i] == old(bloodInventory[i]))
-    ensures shadowBloodInventory == old(shadowBloodInventory) + [blood.GetBloodType()]
-    ensures bloodInventory[old(bloodInventory.Length)] == blood
-    requires Valid() ensures Valid()
-    {
-        var addedToInventory: array<Blood> := new Blood[bloodInventory.Length + 1];
-        forall i | 0 <= i < bloodInventory.Length
-        {
-            addedToInventory[i] := bloodInventory[i];
-        }
-        // add the new blood to the inventory
-        addedToInventory[bloodInventory.Length] := blood;
-        bloodInventory := addedToInventory;
-        shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
-    }
-
     // we can assume that we remove from our array sorted by date using our merge sort
     // to take out the oldest blood to minimise wastage
     method removeBlood(bloodType: string) returns (blood: Blood, indexOfRemoval: int)
@@ -178,9 +153,6 @@ class BloodInventory
     ensures blood != null && (0 <= indexOfRemoval < bloodInventory.Length) ==> shadowBloodInventory == old(shadowBloodInventory)[..indexOfRemoval] + old(shadowBloodInventory)[indexOfRemoval + 1..]
     ensures blood != null && (0 <= indexOfRemoval < bloodInventory.Length) ==> ((forall i :: 0 <= i < indexOfRemoval ==> bloodInventory[i] == old(bloodInventory[i])) && 
                                                                                (forall i :: indexOfRemoval < i < bloodInventory.Length ==> bloodInventory[i - 1] == old(bloodInventory[i])))
-    // neeed to fix this to explain what happens to the array
-    // ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] == old(bloodInventory[i]))
-    // ensures shadowBloodInventory == old(shadowBloodInventory)[0..|old(shadowBloodInventory)| - 1]
     requires Valid() ensures Valid()
     {
         blood := null;
@@ -212,9 +184,32 @@ class BloodInventory
             }
             i := i + 1;
         }
-
     }
 
+    method AddBlood(blood: Blood) returns (b: bool)
+    modifies this, this.bloodInventory
+    requires bloodInventory != null
+    requires blood != null
+    requires validBloodType(blood.GetBloodType())
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory != null
+    ensures forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures bloodInventory.Length == old(bloodInventory.Length) + 1
+    ensures forall i :: 0 <= i < old(bloodInventory.Length) ==> (bloodInventory[i] == old(bloodInventory[i]))
+    ensures shadowBloodInventory == old(shadowBloodInventory) + [blood.GetBloodType()]
+    ensures bloodInventory[old(bloodInventory.Length)] == blood
+    requires Valid() ensures Valid()
+    {
+        var addedToInventory: array<Blood> := new Blood[bloodInventory.Length + 1];
+        forall i | 0 <= i < bloodInventory.Length
+        {
+            addedToInventory[i] := bloodInventory[i];
+        }
+        // add the new blood to the inventory
+        addedToInventory[bloodInventory.Length] := blood;
+        bloodInventory := addedToInventory;
+        shadowBloodInventory := shadowBloodInventory + [blood.GetBloodType()];
+    }
 } // end of BloodInventory class
 
 predicate validBloodType(bloodType: string)

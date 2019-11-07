@@ -31,14 +31,23 @@ ensures forall i :: 0 <= i < batchRequest.Length ==> (batchRequest[i].volume == 
         var checkAlert := new Alert();
         var newBloodCount := bloodInventory.GetBloodCountForBloodTypeExecution(batchRequest[i].bloodType);
         var alertOn := checkAlert.CheckForAlert(threshold, newBloodCount);
+        // THIS IS THE CALL TO HQ WEO WEO FIX THE THING
         if alertOn
         {
-            print "banana";
+            var count := 0;
+            var bloodType := batchRequest[i].bloodType;
+            var emergencyDonor := new Blood(bloodType, "EMERGENCY DONOR", 0);
+            while count < (threshold - newBloodCount)
+            invariant 0 <= count <= (threshold - newBloodCount)
+            invariant emergencyDonor != null
+            {
+                var dummy := bloodInventory.AddBlood(emergencyDonor);
+                count := count + 1;
+            }
         }
         i := i + 1;
     }
 }
-
 
 method AddBloodToArrayResizing(arr: array<Blood>, blood: Blood) returns (newResizedArray: array<Blood>)
 requires arr != null
