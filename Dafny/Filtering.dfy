@@ -1,8 +1,8 @@
 /* Filtering
  * Lucas and Rason
  *
- * Currently filters an array of integers given a specified test.
- * Can later extend to filter blood objects by blood type.
+ * Currently cannot compile this file directly - won't verify.
+ * Compile QueryBloodInventory.dfy or Blood.dfy instead.
  */
 
 // Some sample filters with integers
@@ -10,7 +10,7 @@ predicate method testEven(x: int) { x % 2 == 0 }
 predicate method testPositive(x: int) { x > 0 }
 predicate method testEnormous(x: int) { x > 9000 }
 
-method Main()
+/* method Main() // (commented out to speed up verification)
 {
   var a := new int[10];
   a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9] := -1, 2, -5, -4, 1, -2, -3, 3, 0, 4;
@@ -29,16 +29,16 @@ method Main()
   print "enormous: ", b[..], "\n";
   
   a := new int[0];
-  print "\noriginal: ", b[..], "\n";
+  print "\noriginal: ", a[..], "\n";
   b := Filter(a, testEven);
   assert b[..] == [];
   print "even    : ", b[..], "\n";
-}
+} */
 
 // Returns a new array containing only those elements that pass a specified test
 method Filter<T>(a: array<T>, test: T -> bool) returns (b: array<T>)
-requires a != null
-requires forall i :: test.requires(i)
+requires a != null // Uncomment line below when running this file directly!
+// requires forall i | 0 <= i < a.Length :: test.requires(a[i])
 ensures b != null
 ensures b.Length == Matches(a, a.Length, test) // (unnecessary; for performance)
 ensures b[..] == VerifyFilter(a, a.Length, test)
@@ -74,11 +74,11 @@ ensures b[..] == VerifyFilter(a, a.Length, test)
 }
 
 // Verifies the number of matches given a specified test and array [0..end).
-function Matches<T>(a: array<T>, end: nat, test: T -> bool): nat
+function method Matches<T>(a: array<T>, end: nat, test: T -> bool): nat
 reads a
 requires a != null
-requires end <= a.Length
-requires forall i | 0 <= i < a.Length :: test.requires(a[i])
+requires end <= a.Length // Uncomment line below when running this file directly!
+// requires forall i | 0 <= i < a.Length :: test.requires(a[i])
 reads set i, o | 0 <= i < a.Length && o in test.reads(a[i]) :: o
 decreases end // (fails asserts without this, does anyone know why?)
 {
@@ -86,11 +86,11 @@ decreases end // (fails asserts without this, does anyone know why?)
   else Matches(a, end-1, test) + (if test(a[end-1]) then 1 else 0)
 }
 // Verifies the filtered array given a specified test and array slice [0..end).
-function VerifyFilter<T>(a: array<T>, end: nat, test: T -> bool): seq<T>
+function method VerifyFilter<T>(a: array<T>, end: nat, test: T -> bool): seq<T>
 reads a
 requires a != null
-requires end <= a.Length
-requires forall i | 0 <= i < a.Length :: test.requires(a[i])
+requires end <= a.Length // Uncomment line below when running this file directly!
+// requires forall i | 0 <= i < a.Length :: test.requires(a[i])
 reads set i, o | 0 <= i < a.Length && o in test.reads(a[i]) :: o
 decreases end
 {
