@@ -36,9 +36,9 @@ method Main()
 }
 
 // Returns a new array containing only those elements that pass a specified test
-method Filter(a: array<int>, test: int -> bool) returns (b: array<int>)
+method Filter<T>(a: array<T>, test: T -> bool) returns (b: array<T>)
 requires a != null
-requires forall i :: test.requires(i) && |test.reads(i)| == 0
+requires forall i :: test.requires(i)
 ensures b != null
 ensures b.Length == Matches(a, a.Length, test) // (unnecessary; for performance)
 ensures b[..] == VerifyFilter(a, a.Length, test)
@@ -51,8 +51,7 @@ ensures b[..] == VerifyFilter(a, a.Length, test)
     if test(a[i]) { count := count + 1; }
     i := i + 1;
   }
-  b := new int[count]; // Create an array large enough to hold filtered elements
-  
+  b := new T[count]; // Create an array large enough to hold filtered elements
   // Copy the filtered elements to the new resulting array
   var j := 0; i := 0;
   while i < a.Length
@@ -75,23 +74,24 @@ ensures b[..] == VerifyFilter(a, a.Length, test)
 }
 
 // Verifies the number of matches given a specified test and array [0..end).
-function Matches(a: array<int>, end: nat, test: int -> bool): nat
+function Matches<T>(a: array<T>, end: nat, test: T -> bool): nat
 reads a
 requires a != null
 requires end <= a.Length
-requires forall i :: test.requires(i) && |test.reads(i)| == 0
+requires forall i | 0 <= i < a.Length :: test.requires(a[i])
+reads set i, o | 0 <= i < a.Length && o in test.reads(a[i]) :: o
 decreases end // (fails asserts without this, does anyone know why?)
 {
   if end < 1 then 0
-  else  Matches(a, end-1, test) + (if test(a[end-1]) then 1 else 0)
+  else Matches(a, end-1, test) + (if test(a[end-1]) then 1 else 0)
 }
-
 // Verifies the filtered array given a specified test and array slice [0..end).
-function VerifyFilter(a: array<int>, end: nat, test: int -> bool): seq<int>
+function VerifyFilter<T>(a: array<T>, end: nat, test: T -> bool): seq<T>
 reads a
 requires a != null
 requires end <= a.Length
-requires forall i :: test.requires(i) && |test.reads(i)| == 0
+requires forall i | 0 <= i < a.Length :: test.requires(a[i])
+reads set i, o | 0 <= i < a.Length && o in test.reads(a[i]) :: o
 decreases end
 {
   if end < 1 then []
