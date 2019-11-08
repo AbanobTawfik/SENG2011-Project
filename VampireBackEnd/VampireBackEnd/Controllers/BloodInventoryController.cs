@@ -24,7 +24,7 @@ namespace VampireBackEnd.Controllers
 
         [HttpPost]
         [Route("AddBlood")]
-        public ActionResult Get([FromBody] BloodDto blood)
+        public ActionResult AddBlood([FromBody] BloodDto blood)
         {
             Guid bloodId = new Guid();
             Blood addingBlood = new Blood()
