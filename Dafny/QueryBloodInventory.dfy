@@ -11,7 +11,6 @@ method queryBloodByType(inv: array<Blood>, bloodType: string) returns (result: a
 requires inv != null
 requires forall i | 0 <= i < inv.Length :: inv[i] != null
 ensures result != null
-ensures result.Length == Matches(inv, inv.Length, (b: Blood) requires b != null reads b => b.GetBloodType() == bloodType)
 ensures result[..] == VerifyFilter(inv, inv.Length, (b: Blood) requires b != null reads b => b.GetBloodType() == bloodType)
 { result := Filter(inv, (b: Blood) requires b != null reads b => b.GetBloodType() == bloodType); }
 
@@ -20,7 +19,6 @@ method queryBloodByAge(inv: array<Blood>, start: int, end: int) returns (result:
 requires inv != null
 requires forall i | 0 <= i < inv.Length :: inv[i] != null
 ensures result != null
-ensures result.Length == Matches(inv, inv.Length, (b: Blood) requires b != null reads b => start <= b.GetDateDonated() <= end)
 ensures result[..] == VerifyFilter(inv, inv.Length, (b: Blood) requires b != null reads b => start <= b.GetDateDonated() <= end)
 { result := Filter(inv, (b: Blood) requires b != null reads b => start <= b.GetDateDonated() <= end); }
 
