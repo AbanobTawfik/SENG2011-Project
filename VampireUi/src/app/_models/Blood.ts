@@ -1,17 +1,15 @@
 export class Blood {
 
 	donorName: String;
-	id: String;
 	bloodtype: String;
 	status: String;
-	dateDonated: Date;
+	dateDonated: string;
     location: String;
 
-    constructor(name: String, id: String, status: String, type: String,
-    	dateDonatedOn: Date, donatedAt: String) {
+    constructor(name: String, status: String, type: String,
+    	dateDonatedOn: string, donatedAt: String) {
     
     	this.donorName = name;
-    	this.id = id;
     	this.bloodtype = type;
     	this.status = status;
     	this.dateDonated = dateDonatedOn;

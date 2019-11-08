@@ -1,16 +1,15 @@
 /* Filtering
  * Lucas and Rason
  *
- * Currently filters an array of integers given a specified test.
- * Can later extend to filter blood objects by blood type.
+ * Filters an array of any type, given a specified test.
  */
 
-// Some sample filters with integers
+// Some test filters with integers
 predicate method testEven(x: int) { x % 2 == 0 }
 predicate method testPositive(x: int) { x > 0 }
 predicate method testEnormous(x: int) { x > 9000 }
 
-method Main()
+method main() // Capitalise 'main' before running /compile:3
 {
   var a := new int[10];
   a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9] := -1, 2, -5, -4, 1, -2, -3, 3, 0, 4;
@@ -18,7 +17,7 @@ method Main()
   
   var b := Filter(a, testEven);
   assert b[..] == [2, -4, -2, 0, 4];
-  print "even    : ", b[..], "\n";
+  print "even:     ", b[..], "\n";
   
   b := Filter(a, testPositive);
   assert b[..] == [2, 1, 3, 4];
@@ -29,7 +28,7 @@ method Main()
   print "enormous: ", b[..], "\n";
   
   a := new int[0];
-  print "\noriginal: ", b[..], "\n";
+  print "\noriginal: ", a[..], "\n";
   b := Filter(a, testEven);
   assert b[..] == [];
   print "even    : ", b[..], "\n";
@@ -38,7 +37,7 @@ method Main()
 // Returns a new array containing only those elements that pass a specified test
 method Filter<T>(a: array<T>, test: T -> bool) returns (b: array<T>)
 requires a != null
-requires forall i :: test.requires(i)
+requires forall i | 0 <= i < a.Length :: test.requires(a[i])
 ensures b != null
 ensures b.Length == Matches(a, a.Length, test) // (unnecessary; for performance)
 ensures b[..] == VerifyFilter(a, a.Length, test)
@@ -74,7 +73,7 @@ ensures b[..] == VerifyFilter(a, a.Length, test)
 }
 
 // Verifies the number of matches given a specified test and array [0..end).
-function Matches<T>(a: array<T>, end: nat, test: T -> bool): nat
+function method Matches<T>(a: array<T>, end: nat, test: T -> bool): nat
 reads a
 requires a != null
 requires end <= a.Length
@@ -85,6 +84,7 @@ decreases end // (fails asserts without this, does anyone know why?)
   if end < 1 then 0
   else Matches(a, end-1, test) + (if test(a[end-1]) then 1 else 0)
 }
+
 // Verifies the filtered array given a specified test and array slice [0..end).
 function VerifyFilter<T>(a: array<T>, end: nat, test: T -> bool): seq<T>
 reads a
