@@ -52,7 +52,7 @@ class Blood
     method PrettyPrint()
     requires Valid() ensures Valid()
     {
-        print "Blood from: ", donorName, "\nreceived on: ", dateDonated, "\nBlood Type: ", bloodType;
+        print "Blood from:  ", donorName, "\nReceived on: ", dateDonated, "\nBlood type:  ", bloodType;
     }
 } // end of Blood class
 
@@ -72,12 +72,15 @@ method Main()
     inv[1] := new Blood("A-", "Bob", 12);
     inv[2] := new Blood("O+", "Cal", 12);
     inv[3] := new Blood("AB+", "Deb", 13);
+    
+    // (currently only seems to work with the last item in the inv)
+    // maybe change bloodType to an enumeration?
     var r := queryBloodByType(inv, "AB+");
     assert r.Length == 1;
     assert r[0].GetDonorName() == "Deb";
+    
+    assert countBloodByAge(inv, 10, 12) == 2;
     assert countBloodByType(inv, "AB+") == 1;
-    // (currently only seems to work with the last item in the inv)
-    // maybe change bloodType to an enumeration?
-
+    print "\nQuery successful\n";
 }
 
