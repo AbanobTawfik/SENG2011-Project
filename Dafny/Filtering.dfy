@@ -10,7 +10,7 @@ predicate method testEven(x: int) { x % 2 == 0 }
 predicate method testPositive(x: int) { x > 0 }
 predicate method testEnormous(x: int) { x > 9000 }
 
-/* method Main() // (commented out to speed up verification)
+method main() // Capitalise Main to run /compile:3
 {
   var a := new int[10];
   a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9] := -1, 2, -5, -4, 1, -2, -3, 3, 0, 4;
@@ -18,7 +18,7 @@ predicate method testEnormous(x: int) { x > 9000 }
   
   var b := Filter(a, testEven);
   assert b[..] == [2, -4, -2, 0, 4];
-  print "even    : ", b[..], "\n";
+  print "even:     ", b[..], "\n";
   
   b := Filter(a, testPositive);
   assert b[..] == [2, 1, 3, 4];
@@ -33,12 +33,12 @@ predicate method testEnormous(x: int) { x > 9000 }
   b := Filter(a, testEven);
   assert b[..] == [];
   print "even    : ", b[..], "\n";
-} */
+}
 
 // Returns a new array containing only those elements that pass a specified test
 method Filter<T>(a: array<T>, test: T -> bool) returns (b: array<T>)
-requires a != null // Uncomment line below when running this file directly!
-// requires forall i | 0 <= i < a.Length :: test.requires(a[i])
+requires a != null
+requires forall i | 0 <= i < a.Length :: test.requires(a[i])
 ensures b != null
 ensures b.Length == Matches(a, a.Length, test) // (unnecessary; for performance)
 ensures b[..] == VerifyFilter(a, a.Length, test)
@@ -77,8 +77,8 @@ ensures b[..] == VerifyFilter(a, a.Length, test)
 function method Matches<T>(a: array<T>, end: nat, test: T -> bool): nat
 reads a
 requires a != null
-requires end <= a.Length // Uncomment line below when running this file directly!
-// requires forall i | 0 <= i < a.Length :: test.requires(a[i])
+requires end <= a.Length
+requires forall i | 0 <= i < a.Length :: test.requires(a[i])
 reads set i, o | 0 <= i < a.Length && o in test.reads(a[i]) :: o
 decreases end // (fails asserts without this, does anyone know why?)
 {
@@ -86,11 +86,11 @@ decreases end // (fails asserts without this, does anyone know why?)
   else Matches(a, end-1, test) + (if test(a[end-1]) then 1 else 0)
 }
 // Verifies the filtered array given a specified test and array slice [0..end).
-function method VerifyFilter<T>(a: array<T>, end: nat, test: T -> bool): seq<T>
+function VerifyFilter<T>(a: array<T>, end: nat, test: T -> bool): seq<T>
 reads a
 requires a != null
-requires end <= a.Length // Uncomment line below when running this file directly!
-// requires forall i | 0 <= i < a.Length :: test.requires(a[i])
+requires end <= a.Length
+requires forall i | 0 <= i < a.Length :: test.requires(a[i])
 reads set i, o | 0 <= i < a.Length && o in test.reads(a[i]) :: o
 decreases end
 {
