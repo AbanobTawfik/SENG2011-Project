@@ -13,6 +13,7 @@ export class RequestBloodComponent {
 
 	RequestBloodForm: FormGroup;
     newRequest: Request;
+    requests: Array<Request>;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -30,13 +31,22 @@ export class RequestBloodComponent {
             DateRequired: ['', Validators.required],
         });
 
+        this.requests = [];
+
 
     }
     get f() { return this.RequestBloodForm.controls; }
 
 
+    SubmitAll() {
+
+
+    	alert("Requests Submitted.");
+    	console.log(this.requests[0].bloodType);
+    }
+
     onSubmit() {
-    	
+
     	if (this.f.destination.value == "") {
     		alert("Destionation Required");
     	} else if (this.f.amountRequired.value == "") {
@@ -47,11 +57,22 @@ export class RequestBloodComponent {
     		alert("Date Required By");
     	} else {
     		// Add into blood Object
+    		console.log("Adding");
+    		console.log(this.f.amountRequired.value);
     		this.newRequest = new Request (this.f.destination.value, this.f.amountRequired.value, 
     			this.f.BloodType.value, this.f.DateRequired.value);
-
+    		
+    		this.requests.push(this.newRequest);
+			console.log(this.requests.length);
     		// Do Something with it
-    		alert("Submitted");
+
+    		this.RequestBloodForm = this.formBuilder.group({
+            destination: ['', Validators.required],
+            amountRequired: ['', Validators.required],
+            BloodType: ['', Validators.required],
+            DateRequired: ['', Validators.required],
+        });
+
     	}
 
 
