@@ -39,4 +39,3 @@ requires inv != null
 requires forall i | 0 <= i < inv.Length :: inv[i] != null
 reads set i | 0 <= i < inv.Length :: inv[i]
 { Matches(inv, inv.Length, (b: Blood) requires b != null reads b => start <= b.GetDateDonated() <= end) }
-
