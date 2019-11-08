@@ -1,16 +1,15 @@
 /* Filtering
  * Lucas and Rason
  *
- * Currently cannot compile this file directly - won't verify.
- * Compile QueryBloodInventory.dfy or Blood.dfy instead.
+ * Filters an array of any type, given a specified test.
  */
 
-// Some sample filters with integers
+// Some test filters with integers
 predicate method testEven(x: int) { x % 2 == 0 }
 predicate method testPositive(x: int) { x > 0 }
 predicate method testEnormous(x: int) { x > 9000 }
 
-method main() // Capitalise Main to run /compile:3
+method main() // Capitalise 'main' before running /compile:3
 {
   var a := new int[10];
   a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9] := -1, 2, -5, -4, 1, -2, -3, 3, 0, 4;
@@ -85,6 +84,7 @@ decreases end // (fails asserts without this, does anyone know why?)
   if end < 1 then 0
   else Matches(a, end-1, test) + (if test(a[end-1]) then 1 else 0)
 }
+
 // Verifies the filtered array given a specified test and array slice [0..end).
 function VerifyFilter<T>(a: array<T>, end: nat, test: T -> bool): seq<T>
 reads a
