@@ -6,3 +6,8 @@
 Dafny/output.txt
 VampireBackEnd/VampireBackEnd/obj
 VampireBackEnd/VampireBackEnd/bin
+VampireBackEnd/VampireBackEnd/obj/Debug/netcoreapp2.2/VampireBackEnd.pdb
+VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj.user
+VampireBackEnd/VampireBackEnd/obj/Debug/netcoreapp2.2/VampireBackEnd.csprojAssemblyReference.cache
+VampireBackEnd/VampireBackEnd/obj/Debug/*
+VampireBackEnd/VampireBackEnd/bin/Debug/netcoreapp2.2/VampireBackEnd.pdb
