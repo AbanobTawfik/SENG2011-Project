@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using VampireBackEnd.Dtos;
+using VampireBackEnd.Models;
 
-namespace VampireBackEnd.Dtos.Migrations
+namespace VampireBackEnd.Models.Migrations
 {
     [DbContext(typeof(VampireContext))]
-    partial class VampireContextModelSnapshot : ModelSnapshot
+    [Migration("20191109171852_2")]
+    partial class _2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,16 +21,16 @@ namespace VampireBackEnd.Dtos.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("VampireBackEnd.Dtos.Blood", b =>
+            modelBuilder.Entity("VampireBackEnd.Models.Blood", b =>
                 {
                     b.Property<Guid>("bloodId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("DateDonated");
-
                     b.Property<string>("bloodStatus");
 
                     b.Property<string>("bloodType");
+
+                    b.Property<string>("dateDonated");
 
                     b.Property<string>("donorName");
 
@@ -39,7 +41,21 @@ namespace VampireBackEnd.Dtos.Migrations
                     b.ToTable("bloodInventory");
                 });
 
-            modelBuilder.Entity("VampireBackEnd.Dtos.User", b =>
+            modelBuilder.Entity("VampireBackEnd.Models.Setting", b =>
+                {
+                    b.Property<Guid>("settingId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("settingType");
+
+                    b.Property<int>("settingValue");
+
+                    b.HasKey("settingId");
+
+                    b.ToTable("settings");
+                });
+
+            modelBuilder.Entity("VampireBackEnd.Models.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd();

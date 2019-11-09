@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace VampireBackEnd.Dtos.Migrations
+namespace VampireBackEnd.Models.Migrations
 {
     public partial class _0 : Migration
     {

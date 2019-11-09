@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VampireBackEnd.Dtos;
+using VampireBackEnd.Models;
 using VampireBackEnd.Services;
 
 namespace VampireBackEnd

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VampireBackEnd.Dtos
+namespace VampireBackEnd.Models
 {
     public class BloodDto
     {
