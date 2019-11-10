@@ -1,5 +1,26 @@
 ﻿<h1>Hi {{currentUser.firstName}}!</h1>
 <p>You're logged in with Angular 7!!</p>
+
+<hr>
+<h2>Blood Expiring Today:</h2>
+<button class="btn btn-success" (click)="disposeOfExpiringBlood($event)">Dispose Expiring Blood</button>
+<ul>
+  <li *ngFor="let blood of expiringBlood">
+    {{blood.destination}} | {{blood.amountRequired}} | {{blood.bloodType}} | {{blood.dateRequired}}
+  </li>
+</ul>
+
+<hr>
+
+<h2>Low Inventory Blood Types:</h2>
+<ul>
+  <li *ngFor="let blood of lowLevelBlood">
+    {{blood.destination}} | {{blood.amountRequired}} | {{blood.bloodType}} | {{blood.dateRequired}}
+  </li>
+</ul>
+
+<hr>
+
 <h3>All registered users:</h3>
 <ul>
     <li *ngFor="let user of users">

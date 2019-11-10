@@ -28,7 +28,6 @@ export class RequestBloodComponent {
             destination: ['', Validators.required],
             amountRequired: ['', Validators.required],
             BloodType: ['', Validators.required],
-            DateRequired: ['', Validators.required],
         });
 
         this.requests = [];
@@ -53,14 +52,12 @@ export class RequestBloodComponent {
     		alert("Number of Blood Bags Required");
     	} else if (this.f.BloodType.value == "") {
     		alert("Blood Type Required");
-    	} else if (this.f.DateRequired.value == "") {
-    		alert("Date Required By");
     	} else {
     		// Add into blood Object
     		console.log("Adding");
     		console.log(this.f.amountRequired.value);
     		this.newRequest = new Request (this.f.destination.value, this.f.amountRequired.value, 
-    			this.f.BloodType.value, this.f.DateRequired.value);
+    			this.f.BloodType.value);
     		
     		this.requests.push(this.newRequest);
 			console.log(this.requests.length);
@@ -70,7 +67,6 @@ export class RequestBloodComponent {
             destination: ['', Validators.required],
             amountRequired: ['', Validators.required],
             BloodType: ['', Validators.required],
-            DateRequired: ['', Validators.required],
         });
 
     	}

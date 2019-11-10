@@ -1,5 +1,5 @@
 ﻿<h1>Search Blood Page</h1>
-<form [formGroup]="AddBloodForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="SearchBloodForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
         <label for="username">Donor Name</label>
         <input placeholder="First Name, Last Name" type="text" formControlName="DonorName" class="form-control"/>
@@ -39,6 +39,18 @@
         <label for="Location">Location</label>
         <input placeholder="Location" type="text" formControlName="Location" class="form-control"/>
         
+    </div>
+
+    <div class="form-group">
+        <label for="BloodType">Sort By</label>
+        <select class="form-control" formControlName="sortBy">
+          <option>Donor Name</option>
+          <option>Blood Id</option>
+          <option>Blood Type</option>
+          <option>Blood Status</option>
+          <option>Date Donated</option>
+          <option>Location</option>
+        </select>
     </div>
     
     <div class="form-group">

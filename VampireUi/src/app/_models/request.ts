@@ -6,13 +6,11 @@ export class Request {
 	bloodBags: Array<Blood>;
     numBloodBags: Number;
     bloodType: String;
-    dateRequired: Date;
 
-    constructor(destination: String, BloodBags: Array<Blood>, numBloodBags: Number, DateRequired: Date) {
+    constructor(destination: String, BloodBags: Array<Blood>, numBloodBags: Number) {
     
     	this.destination = destination;
     	this.bloodBags = BloodBags;
     	this.numBloodBags = numBloodBags;
-    	this.dateRequired = DateRequired;
     }
 }

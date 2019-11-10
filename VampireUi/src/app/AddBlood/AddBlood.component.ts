@@ -60,6 +60,8 @@ export class AddBloodComponent implements OnInit {
         dateDonated: this.f.DateDonated.value,
         locationAcquired: this.f.Location.value
       };
+
+      // Error
       console.log(newBlood);
       this.http
         .post(
