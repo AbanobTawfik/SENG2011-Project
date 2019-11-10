@@ -49,6 +49,12 @@ class Blood
         dateDonated
     }
 
+    predicate method IsExpired(currentDate: int)
+    reads this
+    {
+        currentDate > dateDonated + 42
+    }
+
     method PrettyPrint()
     requires Valid() ensures Valid()
     {

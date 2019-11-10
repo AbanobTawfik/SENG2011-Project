@@ -133,6 +133,87 @@ class BloodInventory
         count := bloodInventory.Length;
     }
 
+    method RemoveExpiredBlood(currentDate: int)
+    modifies this, this.bloodInventory
+    requires bloodInventory != null
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures  bloodInventory != null
+    ensures  forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures  forall i :: 0 <= i < old(bloodInventory.Length) ==> (old(bloodInventory[i]) != null)
+    // ensures  bloodInventory[..] == FilterExpiredBlood(old(bloodInventory), old(bloodInventory.Length), currentDate)
+    requires Valid()
+    ensures  Valid()
+    {
+        var nonExpiredBlood := new Blood[bloodInventory.Length];
+        ghost var nonExpiredShadow: seq<string> := [];
+
+        var i := 0; // index for old blood inventory
+        var j := 0; // index for new blood inventory
+        while i < bloodInventory.Length
+            invariant bloodInventory != null
+            invariant 0 <= j <= i <= bloodInventory.Length
+            invariant forall k :: 0 <= k < bloodInventory.Length ==> (bloodInventory[k] != null)
+            invariant Valid()
+            invariant bloodInventory == old(bloodInventory)
+            invariant bloodInventory[..] == old(bloodInventory[..])
+            invariant nonExpiredBlood[..j] == FilterExpiredBlood(bloodInventory, i, currentDate)
+            invariant forall k :: 0 <= k < j ==> nonExpiredBlood[k] != null
+            invariant |nonExpiredShadow| == j
+            invariant forall k :: 0 <= k < |nonExpiredShadow| ==> validBloodType(nonExpiredShadow[k])
+            invariant forall k :: 0 <= k < |nonExpiredShadow| ==> nonExpiredShadow[k] == nonExpiredBlood[k].GetBloodType() 
+        {
+            if !bloodInventory[i].IsExpired(currentDate) {
+                nonExpiredBlood[j] := bloodInventory[i];
+                nonExpiredShadow := nonExpiredShadow + [shadowBloodInventory[i]];
+                j := j + 1;
+            }
+            i := i + 1;
+        }
+
+        var newBloodInventory := new Blood[j];
+        forall k | 0 <= k < j
+        {
+            newBloodInventory[k] := nonExpiredBlood[k];
+        }
+
+        bloodInventory := newBloodInventory;
+        shadowBloodInventory := nonExpiredShadow;
+
+        assert bloodInventory[..] == FilterExpiredBlood(old(bloodInventory), old(bloodInventory.Length), currentDate);
+    }
+
+    method RemoveBloodAtIndex(idx: int) returns (blood: Blood)
+    modifies this, this.bloodInventory
+    requires bloodInventory != null
+    requires forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    requires 0 <= idx < bloodInventory.Length
+    ensures  bloodInventory != null
+    ensures  forall i :: 0 <= i < bloodInventory.Length ==> (bloodInventory[i] != null)
+    ensures  bloodInventory.Length == old(bloodInventory.Length) - 1
+    ensures  forall i :: 0 <= i < idx ==> bloodInventory[i] == old(bloodInventory[i])
+    ensures  forall i :: idx < i < bloodInventory.Length ==> bloodInventory[i - 1] == old(bloodInventory[i])
+    ensures  blood == old(bloodInventory[idx])
+    ensures  fresh(bloodInventory)
+    requires Valid()
+    ensures  Valid()
+    {
+        var newBloodInventory := new Blood[bloodInventory.Length - 1];
+        blood := bloodInventory[idx];
+
+        forall i | 0 <= i < idx
+        {
+            newBloodInventory[i] := bloodInventory[i];
+        }
+
+        forall i | idx < i < bloodInventory.Length
+        {
+            newBloodInventory[i - 1] := bloodInventory[i];
+        }
+        
+        bloodInventory := newBloodInventory;
+        shadowBloodInventory := shadowBloodInventory[..idx] + shadowBloodInventory[idx + 1..];
+    }
+
     // we can assume that we remove from our array sorted by date using our merge sort
     // to take out the oldest blood to minimise wastage
     method removeBlood(bloodType: string) returns (blood: Blood, indexOfRemoval: int)
@@ -214,6 +295,22 @@ class BloodInventory
 
 predicate validBloodType(bloodType: string)
 {
-        bloodType == "A+" || bloodType == "A-" || bloodType == "B+" || bloodType == "B-" ||
-        bloodType == "O+" || bloodType == "O-" || bloodType == "AB+" || bloodType == "AB-"
+    bloodType == "A+" || bloodType == "B+" || bloodType == "O+" || bloodType == "AB+" ||
+    bloodType == "A-" || bloodType == "B-" || bloodType == "O-" || bloodType == "AB-"
+}
+
+function FilterExpiredBlood(a: array<Blood>, end: nat, currentDate: int): seq<Blood>
+reads     a
+reads     set i | 0 <= i < end :: a[i]
+requires  a != null
+requires  0 <= end <= a.Length
+requires  forall i :: 0 <= i < end ==> a[i] != null
+decreases end
+{
+    if end < 1 then
+        []
+    else if !a[end - 1].IsExpired(currentDate) then
+        FilterExpiredBlood(a, end - 1, currentDate) + [a[end - 1]]
+    else
+        FilterExpiredBlood(a, end - 1, currentDate)
 }
