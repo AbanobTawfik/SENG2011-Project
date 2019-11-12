@@ -36,7 +36,32 @@ namespace VampireBackEnd.Services
         }
         public Blood[] GetBloodInventory()
         {
-            return this._bloodInventory.bloodInventory.ToArray();
+            if (_bloodInventory != null)
+            {
+                return this._bloodInventory.bloodInventory.ToArray();
+            }
+            return null;
+        }
+        public List<KeyValuePair<string, int>> GetAlerts()
+        {
+            var result = new List<KeyValuePair<string, int>>();
+            var bloodInventory = this._bloodInventory.bloodInventory.ToList();
+            var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
+            var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
+            if (threshold != null && bloodInventory != null && bloodTypes != null) 
+            {
+                var thresholdValue = threshold.settingValue;
+                foreach(var bloodType in bloodTypes)
+                {
+                    var count = bloodInventory.Where(x => x.bloodType == bloodType).Count();
+                    if(count < thresholdValue)
+                    {
+                        result.Add(new KeyValuePair<string, int>(bloodType, thresholdValue - count));
+                    }
+                }
+                return result;
+            }
+            return null;
         }
 
         public void setDbContext(VampireContext bloodInventory)

@@ -49,5 +49,19 @@ namespace VampireBackEnd.Controllers
             return Ok(bloodInventory);
         }
        
+        [HttpGet]
+        [Route("GetAlerts")]
+        public ActionResult GetAlerts()
+        {
+            var allAlerts = _bloodInventoryService.GetAlerts();
+            return Ok(allAlerts);
+        }
+
+        [HttpPost]
+        [Route("FixAlerts")]
+        public ActionResult FixAlerts()
+        {
+            var oldAndNewInventory
+        }
     }
 }
