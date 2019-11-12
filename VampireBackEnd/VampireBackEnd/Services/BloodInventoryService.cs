@@ -34,10 +34,15 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
+        public Blood[] GetBloodInventory()
+        {
+            return this._bloodInventory.bloodInventory.ToArray();
+        }
 
         public void setDbContext(VampireContext bloodInventory)
         {
             this._bloodInventory = bloodInventory;
         }
+
     }
 }

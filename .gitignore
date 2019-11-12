@@ -3,6 +3,7 @@
 *.dll
 *.exe
 .vs
+*.pdb
 Dafny/output.txt
 VampireBackEnd/VampireBackEnd/obj
 VampireBackEnd/VampireBackEnd/bin

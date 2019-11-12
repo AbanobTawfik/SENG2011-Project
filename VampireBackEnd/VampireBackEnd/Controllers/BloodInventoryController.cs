@@ -41,6 +41,13 @@ namespace VampireBackEnd.Controllers
             return Ok(oldAndNewInventory);
         }
 
+        [HttpGet]
+        [Route("GetInventory")]
+        public ActionResult GetBloodInventory()
+        {
+            var bloodInventory = _bloodInventoryService.GetBloodInventory();
+            return Ok(bloodInventory);
+        }
        
     }
 }
