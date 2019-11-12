@@ -15,6 +15,10 @@ module.exports = {
                 test: /\.(html|css)$/,
                 loader: 'raw-loader'
             },
+            {
+                test: /[\/\\]@angular[\/\\].+\.js$/,
+                parser: { system: true }
+            }
         ]
     },
     resolve: {
@@ -34,7 +38,13 @@ module.exports = {
             config: JSON.stringify({
                 apiUrl: 'http://localhost:4000'
             })
-        })
+        }),
+        // workaround for https://github.com/angular/angular/issues/11580
+        new webpack.ContextReplacementPlugin(
+            // the (\\|\/) piece accounts for path separators in *nix and Windows
+            /\@angular(\\|\/)core(\\|\/)fesm5/,
+            path.resolve(__dirname, 'src')
+        )
     ],
     optimization: {
         splitChunks: {

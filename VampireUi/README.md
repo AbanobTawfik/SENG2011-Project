@@ -38,6 +38,6 @@ This will install the packages from `package.json` into a `node_modules` folder.
 ## Run Server
 
 ```
-ng serve
+npm start
 ```
 
