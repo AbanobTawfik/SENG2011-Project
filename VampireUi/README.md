@@ -21,7 +21,7 @@ Hopefully this guide will help you successfully run the Angular app!
   - Run `ng version`. If it shows something like `Angular CLI: 7.3.9`, you're good! Otherwise, run:
     - `npm install -g @angular/cli@7.3.9`
   - g stands for global installation. We include it so we can use the CLI in any Angular project later.  
-    After the installation is completed, run `ng version` to verify whether the installation has successful.
+    After the installation is completed, run `ng version` to verify whether the installation was successful.
 
 
 If you are using Microsoft Windows, then figuring out
