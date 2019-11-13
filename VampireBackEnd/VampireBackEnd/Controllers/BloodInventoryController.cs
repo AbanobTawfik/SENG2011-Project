@@ -24,7 +24,7 @@ namespace VampireBackEnd.Controllers
 
         [HttpPost]
         [Route("AddBlood")]
-        public ActionResult AddBlood([FromBody] BloodDto blood)
+        public async Task<ActionResult> AddBlood([FromBody] BloodDto blood)
         {
             Guid bloodId = new Guid();
             Blood addingBlood = new Blood()
@@ -37,7 +37,7 @@ namespace VampireBackEnd.Controllers
                 locationAcquired = blood.locationAcquired
 
             };
-            var oldAndNewInventory = _bloodInventoryService.AddBlood(addingBlood);
+            var oldAndNewInventory = await _bloodInventoryService.AddBlood(addingBlood);
             return Ok(oldAndNewInventory);
         }
 
@@ -59,9 +59,10 @@ namespace VampireBackEnd.Controllers
 
         [HttpPost]
         [Route("FixAlerts")]
-        public ActionResult FixAlerts()
+        public async Task<ActionResult> FixAlerts()
         {
-            var oldAndNewInventory
+            var updatedInventoryAndMessages = await _bloodInventoryService.FixAlerts();
+            return Ok(updatedInventoryAndMessages);
         }
     }
 }
