@@ -4,7 +4,7 @@ using System.Text;
 
 namespace VampireBackEnd.Models
 {
-    class RequestDto
+    public class RequestDto
     {
         public string bloodType { get; set; }
         public int volume { get; set; }

@@ -35,6 +35,92 @@ namespace VampireBackEnd.Services
             return null;
         }
 
+        public async Task<Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>> Request(Request[] batchRequest)
+        {
+            if (_bloodInventory != null)
+            {
+                var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
+
+                var alertMessages = new List<string>();
+                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
+                var thresholdValue = threshold.settingValue;
+                
+                UpdatedBloodInventoryReturn inventoryUpdate = new UpdatedBloodInventoryReturn()
+                {
+                    oldBloodInventory = oldBloodArray,
+                    newBloodInventory = oldBloodArray,
+                };
+
+                var i = 0;
+                var requestResult = new Blood[0];
+                // for each request for a blood type
+                while (i < batchRequest.Length)
+                {
+                    var count = 0;
+                    // for each unit of blood of that blood type requested
+                    while (count < batchRequest[i].volume)
+                    {
+                        var removeResult = await this.RemoveBlood(batchRequest[i].bloodType);
+                        _ = removeResult.Item1;
+                        var addBlood = removeResult.Item2;
+                        requestResult = this.AddBloodToArrayResizing(requestResult, addBlood);
+                        count = count + 1;
+                    }
+
+                    // check for alert
+                    var bloodType = batchRequest[i].bloodType;
+
+                    var bloodCount = bloodInventory.Where(x => x.bloodType == bloodType).Count();
+                    if (bloodCount < thresholdValue)
+                    {
+                        // same code in request for fixing alert
+                        var addCount = 0;
+                        while (addCount <= thresholdValue - bloodCount)
+                        {
+                            var emergencyDonor = new Blood()
+                            {
+                                bloodId = new Guid(),
+                                bloodStatus = "Tested",
+                                bloodType = bloodType,
+                                dateDonated = DateTime.Now.ToString(),
+                                donorName = "EMERGENCY DONOR",
+                                locationAcquired = "Hospital"
+                            };
+                            inventoryUpdate = await AddBlood(emergencyDonor);
+                            addCount++;
+                        }
+                        alertMessages.Add("Vampire Headquarters has fixed the alert on the blood type \"" + bloodType + "\" by adding " +
+                                          (thresholdValue - bloodCount) + " bags of blood to the inventory.\n The threshold is at " +
+                                          thresholdValue + " bags of blood");
+                    }
+
+                    i = i + 1;
+                }
+
+                return new Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>(
+                    new UpdatedBloodInventoryReturn() {
+                        oldBloodInventory = oldBloodArray,
+                        newBloodInventory = inventoryUpdate.newBloodInventory
+                    },
+                    requestResult,
+                    alertMessages
+                );
+            }
+            return null;
+        }
+
+        public Blood[] AddBloodToArrayResizing(Blood[] arr, Blood blood)
+        {
+            var newResizedArray = new Blood[arr.Length + 1];
+            for (var i = 0; i < arr.Length; i++)
+            {
+                newResizedArray[i] = arr[i];
+            }
+            newResizedArray[arr.Length] = blood;
+            return newResizedArray;
+        }
+
         public async Task<Tuple<UpdatedBloodInventoryReturn, Blood>> RemoveBlood(string bloodType)
         {
             if (_bloodInventory != null)
