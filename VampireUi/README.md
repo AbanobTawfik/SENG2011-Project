@@ -22,7 +22,7 @@ Hopefully this guide will help you successfully run the Vampire web server!
   - Run `dotnet --version`. If it outputs something like `2.2.402`, you're good! Otherwise:
     - Follow the installation instructions here: [Ubuntu/Linux](https://dotnet.microsoft.com/download/linux-package-manager/ubuntu18-04/sdk-2.2.402 "SDK 2.2.402") | [Windows/macOS](https://dotnet.microsoft.com/download/dotnet-core/2.2 "SDK 2.2.402")
   - After the installation has completed, run `dotnet --version` to verify whether the installation was successful.
-- Microsoft SQL Server 2017 running (not tested with 2019 or other servers).
+- Microsoft SQL Server 2017 Express running (not tested with 2019 or other servers).
   - If you prefer to run the server in a container, first install Docker: [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04) | [macOS](https://database.guide/how-to-install-sql-server-on-a-mac/)
     - If you have &lt; 2GB RAM (like me :disappointed:), use: [mssql_server_tiny](https://github.com/justin2004/mssql_server_tiny#how-to-use)
     - Otherwise, run: `sudo docker pull microsoft/mssql-server-linux:2017-latest`
