@@ -63,7 +63,6 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
-
         public async Task<KeyValuePair<UpdatedBloodInventoryReturn, List<string>>> FixAlerts()
         {
             if (_bloodInventory != null)
@@ -109,6 +108,46 @@ namespace VampireBackEnd.Services
                 return new KeyValuePair<UpdatedBloodInventoryReturn, List<string>>(oldAndNewBloodInventory, alertMessages);
             }
             return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
+        }
+        public async Task<UpdatedBloodInventoryReturn> RemoveExpired()
+        {
+            if (_bloodInventory != null)
+            {
+                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var updatedInventory = new Blood[bloodInventory.Length];
+                var i = 0; // index for old array
+                var j = 0; // index for new array
+                while (i < bloodInventory.Length)
+                {
+                    // if the blood is younger than 43 days before expiry, add it
+                    if(!(DateTime.Now.Subtract(DateTime.Parse(bloodInventory[i].dateDonated)).TotalDays >= 43))
+                    {
+                        updatedInventory[j] = bloodInventory[i];
+                        j++;
+                    }
+                    else
+                    {
+                        // remove from db aswell
+                        this._bloodInventory.bloodInventory.Remove(bloodInventory[i]);
+                    }
+                    i++;
+                }
+                var finalUpdatedInventory = new Blood[j];
+                var k = 0;
+                foreach (var blood in updatedInventory)
+                {
+                    finalUpdatedInventory[k] = blood;
+                    k++;
+                }
+                await _bloodInventory.SaveChangesAsync();
+                var oldAndNewBloodInventory = new UpdatedBloodInventoryReturn()
+                {
+                    oldBloodInventory = bloodInventory,
+                    newBloodInventory = finalUpdatedInventory
+                };
+                return oldAndNewBloodInventory;
+            }
+            return null;
         }
 
         public void setDbContext(VampireContext bloodInventory)
