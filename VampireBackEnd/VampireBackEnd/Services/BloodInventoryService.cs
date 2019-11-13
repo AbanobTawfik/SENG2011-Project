@@ -34,6 +34,58 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
+
+        public async Task<Tuple<UpdatedBloodInventoryReturn, Blood>> RemoveBlood(string bloodType)
+        {
+            if (_bloodInventory != null)
+            {
+                // dafny logic
+                var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
+                
+                Blood blood = null;
+                var removedFromInventory = new Blood[oldBloodArray.Length - 1];
+                var i = 0;
+                while (i < oldBloodArray.Length)
+                {
+                    if (oldBloodArray[i].bloodType == bloodType)
+                    {
+                        blood = oldBloodArray[i];
+                        for (var k = 0; k < i; k++)
+                        {
+                            removedFromInventory[k] = oldBloodArray[k];
+                        }
+                        for (var k = i + 1; k < oldBloodArray.Length; k++)
+                        {
+                            removedFromInventory[k - 1] = oldBloodArray[k];
+                        }
+
+                        this._bloodInventory.bloodInventory.Remove(blood);
+                        await this._bloodInventory.SaveChangesAsync();
+                        return new Tuple<UpdatedBloodInventoryReturn, Blood>(
+                            new UpdatedBloodInventoryReturn()
+                            {
+                                oldBloodInventory = oldBloodArray,
+                                newBloodInventory = removedFromInventory
+                            },
+                            blood
+                        );
+                    }
+                    i = i + 1;
+                }
+                
+                // if there is no blood of the given type
+                return new Tuple<UpdatedBloodInventoryReturn, Blood>(
+                    new UpdatedBloodInventoryReturn()
+                    {
+                        oldBloodInventory = oldBloodArray,
+                        newBloodInventory = oldBloodArray,
+                    },
+                    blood
+                );
+            }
+            return null;
+        }
+
         public Blood[] GetBloodInventory()
         {
             if (_bloodInventory != null)
@@ -42,6 +94,7 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
+
         public List<KeyValuePair<string, int>> GetAlerts()
         {
             if (_bloodInventory != null)
@@ -109,7 +162,7 @@ namespace VampireBackEnd.Services
                 return new KeyValuePair<UpdatedBloodInventoryReturn, List<string>>(oldAndNewBloodInventory, alertMessages);
             }
             return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
-        }
+        } 
 
         public void setDbContext(VampireContext bloodInventory)
         {
