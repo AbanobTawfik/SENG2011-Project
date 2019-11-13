@@ -64,5 +64,13 @@ namespace VampireBackEnd.Controllers
             var updatedInventoryAndMessages = await _bloodInventoryService.FixAlerts();
             return Ok(updatedInventoryAndMessages);
         }
+
+        [HttpPost]
+        [Route("RemoveExpired")]
+        public async Task<ActionResult> RemoveExpired()
+        {
+            var oldAndNewInventory = await _bloodInventoryService.RemoveExpired();
+            return Ok(oldAndNewInventory);
+        }
     }
 }
