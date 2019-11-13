@@ -111,21 +111,9 @@ namespace VampireBackEnd.Services
             return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
         }
 
-        public Blood[] AddBloodToArray(Blood blood, Blood[] oldInventory)
-        {
-            var addedToInventory = new Blood[oldInventory.Length + 1];
-            for (var i = 0; i < oldInventory.Length; i++)
-            {
-                addedToInventory[i] = oldInventory[i];
-            }
-            addedToInventory[oldInventory.Length] = blood;
-            return addedToInventory;
-        }
-
         public void setDbContext(VampireContext bloodInventory)
         {
             this._bloodInventory = bloodInventory;
         }
-
     }
 }
