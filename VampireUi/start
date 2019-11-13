@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Ensure that you have installed NPM and .NET Core 2.2!
+
+printf "\nRemember to periodically run\n"
+echo "dotnet ef --project ../VampireBackEnd/VampireBackEnd database update"
+
+printf "\nStarting \e[1;31mAngular\e[0m front end server\n"
+npm start &
+
+printf "Starting \e[1;35mASP.NET\e[0m back end server\n\n"
+echo "Note: Output from both servers will appear below"
+echo "Note: The front end server may take a while to start"
+echo "      (\"Compiled successfully.\" will be displayed)"
+echo "Note: Interrupting the Angular build may cause the"
+echo "      front end server's port to move (e.g. to 8081)"
+dotnet run --project ../VampireBackEnd/VampireBackEnd
