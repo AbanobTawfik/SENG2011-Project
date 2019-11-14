@@ -34,6 +34,13 @@ export class AddBloodComponent implements OnInit {
     return this.AddBloodForm.controls;
   }
 
+
+  alertSubmitted(result) {
+    console.log(result);
+    alert("Added Blood to Inventory.");
+    
+  }
+
   onSubmit() {
     if (this.f.DonorName.value == "") {
       alert("DonorName Required");
@@ -69,7 +76,7 @@ export class AddBloodComponent implements OnInit {
           newBlood,
           httpOptions
         )
-        .subscribe(result => console.log(result));
+        .subscribe(result => this.alertSubmitted(result));
 
       // Do Something with it
       //alert("Submitted");
