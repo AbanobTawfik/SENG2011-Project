@@ -45,7 +45,7 @@ namespace VampireBackEnd.Services
                 var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var thresholdValue = threshold.settingValue;
-                
+
                 UpdatedBloodInventoryReturn inventoryUpdate = new UpdatedBloodInventoryReturn()
                 {
                     oldBloodInventory = oldBloodArray,
@@ -99,7 +99,8 @@ namespace VampireBackEnd.Services
                 }
 
                 return new Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>(
-                    new UpdatedBloodInventoryReturn() {
+                    new UpdatedBloodInventoryReturn()
+                    {
                         oldBloodInventory = oldBloodArray,
                         newBloodInventory = inventoryUpdate.newBloodInventory
                     },
@@ -127,7 +128,7 @@ namespace VampireBackEnd.Services
             {
                 // dafny logic
                 var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
-                
+
                 Blood blood = null;
                 var removedFromInventory = new Blood[oldBloodArray.Length - 1];
                 var i = 0;
@@ -158,7 +159,7 @@ namespace VampireBackEnd.Services
                     }
                     i = i + 1;
                 }
-                
+
                 // if there is no blood of the given type
                 return new Tuple<UpdatedBloodInventoryReturn, Blood>(
                     new UpdatedBloodInventoryReturn()
@@ -202,6 +203,7 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
+
         public async Task<KeyValuePair<UpdatedBloodInventoryReturn, List<string>>> FixAlerts()
         {
             if (_bloodInventory != null)
@@ -247,7 +249,8 @@ namespace VampireBackEnd.Services
                 return new KeyValuePair<UpdatedBloodInventoryReturn, List<string>>(oldAndNewBloodInventory, alertMessages);
             }
             return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
-        } 
+        }
+
         public async Task<UpdatedBloodInventoryReturn> RemoveExpired()
         {
             if (_bloodInventory != null)
@@ -258,11 +261,20 @@ namespace VampireBackEnd.Services
                 var j = 0; // index for new array
                 while (i < bloodInventory.Length)
                 {
-                    // if the blood is younger than 43 days before expiry, add it
-                    if(!(DateTime.Now.Subtract(DateTime.Parse(bloodInventory[i].dateDonated)).TotalDays >= 43))
+                    DateTime bloodDate;
+                    var check = DateTime.TryParse(bloodInventory[i].dateDonated, out bloodDate);
+                    if (check)
                     {
-                        updatedInventory[j] = bloodInventory[i];
-                        j++;
+                        if (!(DateTime.Now.Subtract(DateTime.Parse(bloodInventory[i].dateDonated)).TotalDays >= 43))
+                        {
+                            updatedInventory[j] = bloodInventory[i];
+                            j++;
+                        }
+                        else
+                        {
+                            // remove from db aswell
+                            this._bloodInventory.bloodInventory.Remove(bloodInventory[i]);
+                        }
                     }
                     else
                     {
