@@ -2,10 +2,11 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
     <div class="navbar-nav">
         <a class="nav-item nav-link" routerLink="/">Home</a>
-        <a class="nav-item nav-link" routerLink="/AddBlood">AddBlood</a>
-        <a class="nav-item nav-link" routerLink="/RequestBlood">RequestBlood</a>
-        <a class="nav-item nav-link" routerLink="/SearchBlood">SearchBlood</a>
-        <a class="nav-item nav-link" routerLink="/DeliveryOrders">DeliveryOrders</a>
+        <a class="nav-item nav-link" routerLink="/blood/add">Add Blood</a>
+        <a class="nav-item nav-link" routerLink="/blood/query">Query Blood</a>
+        <a class="nav-item nav-link" routerLink="/blood/request">Request Blood</a>
+        <a class="nav-item nav-link" routerLink="/blood/search">Search Blood</a>
+        <a class="nav-item nav-link" routerLink="/orders">Delivery Orders</a>
         <a class="nav-item nav-link" (click)="logout()">Logout</a>
     </div>
 </nav>

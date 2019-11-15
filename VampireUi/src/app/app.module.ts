@@ -1,7 +1,8 @@
-﻿import { NgModule }      from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule }    from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // used to create fake backend
 import { fakeBackendProvider } from './_helpers';
@@ -15,6 +16,7 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { AddBloodComponent } from './AddBlood/AddBlood.component';
+import { QueryBloodComponent } from './QueryBlood/QueryBlood.component';
 import { DeliveryOrdersComponent } from './DeliveryOrders/DeliveryOrders.component';
 import { RequestBloodComponent } from './RequestBlood/RequestBlood.component';
 import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
@@ -22,8 +24,10 @@ import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
 @NgModule({
     imports: [
         BrowserModule,
+        FormsModule,
         ReactiveFormsModule,
         HttpClientModule,
+        NgbModule,
         routing
     ],
     declarations: [
@@ -33,7 +37,8 @@ import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
         LoginComponent,
         RegisterComponent,
         AddBloodComponent,
-        DeliveryOrdersComponent, 
+        DeliveryOrdersComponent,
+        QueryBloodComponent,
         RequestBloodComponent,
         SearchBloodComponent
     ],

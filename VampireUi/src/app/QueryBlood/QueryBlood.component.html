@@ -1,0 +1,32 @@
+<h1>Query Blood</h1>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover table-sm table-striped">
+      <thead>
+        <tr>
+          <th *ngFor="let col of cols" class="px-3 py-2">
+            {{ col.head }}
+          </th>
+        <tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of inventory">
+          <td *ngFor="let col of cols" class="px-3">
+            {{ entry[col.key] }}
+          </td>
+        <tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between p-2">
+    <ngb-pagination [collectionSize]="inv.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true">
+    </ngb-pagination>
+
+    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+      <option [ngValue]="10">10 items per page</option>
+      <option [ngValue]="20">20 items per page</option>
+      <option [ngValue]="50">50 items per page</option>
+    </select>
+  </div>
+</div>
