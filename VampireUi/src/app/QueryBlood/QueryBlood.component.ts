@@ -56,6 +56,7 @@ export class QueryBloodComponent implements OnInit {
 
   page = 1;
   pageSize = 10;
+  model = 1;
 
   get inventory(): Entry[] {
     if (!this.inv) return [];
