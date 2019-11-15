@@ -7,36 +7,43 @@ label {
 <h1>Query Blood</h1>
 <div class="card p-3 my-2">
   <form class="form-row">
-    <div class="form-group col-md-8 mb-0">
+    <div class="form-group col-md-9 mb-0">
       <label>Filter blood by</label>
       <div class="form-row">
         <div class="form-group col-md-5 mb-0">
-          <div class="btn-group btn-group-toggle w-100 pr-2" ngbRadioGroup name="radioBasic" [(ngModel)]="model">
-            <label ngbButtonLabel class="btn-primary">
-              <input ngbButton type="radio" [value]="1"> Type
+          <div class="btn-group btn-group-toggle w-100 pr-2" ngbRadioGroup name="radioFilter" [(ngModel)]="filterAge">
+            <label ngbButtonLabel class="btn-secondary">
+              <input ngbButton type="radio" [value]="false"> Type
             </label>
-            <label ngbButtonLabel class="btn-primary">
-              <input ngbButton type="radio" [value]="false"> Age
+            <label ngbButtonLabel class="btn-secondary">
+              <input ngbButton type="radio" [value]="true"> Age
             </label>
           </div>
         </div>
-        <div class="form-row form-inline col-md-7">
+        <div *ngIf="filterAge" class="form-row form-inline col-md-7">
           <input class="form-control col-md-3" type="number" max="99" min="0" step="1">
           <label class="col-md-1 mb-0"> - </label>
           <input class="form-control col-md-3" type="number" max="99" min="0" step="1">
-          <label class="col-md-5 mb-0"> days old</label>
+          <label class="col-md-5 mb-0 pl-2 d-block"> days old</label>
         </div>
       </div>
     </div>
-    <div class="form-group col-md-4 mb-0">
+    <div class="form-group col-md-3 mb-0">
       <label>Sort blood by</label>
-      <div class="form-row">
-        <div ngbDropdown class="d-inline-block">
-          <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>Field</button>
+      <div class="btn-group d-flex">
+        <div ngbDropdown class="form-group d-inline-block mb-0 w-100">
+          <button class="btn btn-outline-primary w-100" id="dropdownBasic1" ngbDropdownToggle>Field</button>
           <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-            <button ngbDropdownItem>Blood Type</button>
-            <button ngbDropdownItem>Date Donated</button>
+            <button ngbDropdownItem (click)="sortDate()" [ngClass]="{'active': sortActive=='d'}">Date Donated</button>
+            <button ngbDropdownItem (click)="sortType()" [ngClass]="{'active': sortActive=='t'}">Blood Type</button>
           </div>
+        </div>
+        <div class="btn-group btn-group-toggle" role="group">
+          <label class="btn-primary" ngbButtonLabel>
+            <input type="checkbox" ngbButton name="radioSort" [(ngModel)]="sortDesc" (change)="sortInv()">
+            <div *ngIf="!sortDesc">&#9650;</div>
+            <div *ngIf="sortDesc">&#9660;</div>
+          </label>
         </div>
       </div>
     </div>

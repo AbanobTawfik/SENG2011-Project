@@ -9,7 +9,7 @@ import { UserService, AuthenticationService } from "@/_services";
 import { HttpClient } from "@angular/common/http";
 import { HttpHeaders } from "@angular/common/http";
 
-import { filterByMinAge, sortByType } from "../Dafny";
+import { filterByMinAge, sortByDate, sortByType } from "../Dafny";
 
 interface Entry {
   bloodType: String,
@@ -48,15 +48,15 @@ export class QueryBloodComponent implements OnInit {
     )
     .subscribe(result => {
       this.inv = result;
-      sortByType(this.inv, true);
-      this.inv = filterByMinAge(this.inv, 0);
-      console.log(result);
     });
   }
 
-  page = 1;
-  pageSize = 10;
-  model = 1;
+  page: number = 1;
+  pageSize: number = 10;
+  filterAge: boolean = false;
+  sortActive: string = "d";
+  sortByField: any = sortByDate;
+  sortDesc: boolean = false;
 
   get inventory(): Entry[] {
     if (!this.inv) return [];
@@ -65,4 +65,22 @@ export class QueryBloodComponent implements OnInit {
         .reduce((e, k) => { e[k] = entry[k]; return e }, {}))
       .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
   }
+
+  sortDate() {
+    if (this.sortByField == sortByDate) return;
+    this.sortByField = sortByDate;
+    this.sortActive = "d";
+    this.sortInv();
+  }
+  sortType() {
+    if (this.sortByField == sortByType) return;
+    this.sortByField = sortByType;
+    this.sortActive = "t";
+    this.sortInv();
+  }
+  sortInv() {
+    console.log(this.sortDesc);
+    this.sortByField(this.inv, this.sortDesc);
+  }
+
 }
