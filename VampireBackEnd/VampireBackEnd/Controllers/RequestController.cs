@@ -12,16 +12,19 @@ namespace VampireBackEnd.Controllers
     [ApiController]
     public class RequestController : ControllerBase
     {
+        private VampireContext _vampireContext;
         private BloodInventoryService _bloodInventoryService;
-        public RequestController(BloodInventoryService bloodInventoryService)
+        public RequestController(VampireContext vampireContext, BloodInventoryService bloodInventoryService)
         {
+            this._vampireContext = vampireContext;
             this._bloodInventoryService = bloodInventoryService;
+            this._bloodInventoryService.setDbContext(vampireContext);
         }
 
         // example of GET api/Vampire
-        [HttpGet]
+        [HttpPost]
         // can change routes 
-        [Route("Request")]
+        [Route("Blood")]
         public async Task<ActionResult> RequestBlood([FromBody] RequestDto[] request)
         {
             Request[] batchRequest = new Request[request.Length];

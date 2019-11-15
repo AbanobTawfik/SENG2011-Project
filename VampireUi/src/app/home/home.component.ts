@@ -1,78 +1,140 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
+﻿import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Subscription } from "rxjs";
+import { first } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
+import { HttpHeaders } from "@angular/common/http";
+import { User } from "@/_models";
+import { UserService, AuthenticationService } from "@/_services";
+import { Blood } from "../_models/Blood";
+import { environment } from "../../environments/environment";
+import {formatDate } from '@angular/common';
 
-import { User } from '@/_models';
-import { UserService, AuthenticationService } from '@/_services';
-import { Blood } from '../_models/Blood';
-
-@Component({ templateUrl: 'home.component.html' })
+@Component({ templateUrl: "home.component.html" })
 export class HomeComponent implements OnInit, OnDestroy {
-    currentUser: User;
-    currentUserSubscription: Subscription;
-    users: User[] = [];
-    expiringBlood: Array<Blood>;
-    lowLevelBlood: Array<Blood>;
+  currentUser: User;
+  currentUserSubscription: Subscription;
+  users: User[] = [];
+  expiringBlood: Array<Blood>;
+  lowLevelBlood: Array<Blood>;
+  Threshold: Number;
 
-    constructor(
-        private authenticationService: AuthenticationService,
-        private userService: UserService
-    ) {
-        this.currentUserSubscription = this.authenticationService.currentUser.subscribe(user => {
-            this.currentUser = user;
-        });
-    }
+  constructor(
+    private authenticationService: AuthenticationService,
+    private userService: UserService,
+    private http: HttpClient
+  ) {
+    this.currentUserSubscription = this.authenticationService.currentUser.subscribe(
+      user => {
+        this.currentUser = user;
+      }
+    );
+  }
 
-    ngOnInit() {
-        this.loadAllUsers();
+  ngOnInit() {
+    this.loadAllUsers();
+    this.expiringBlood = [];
+    this.lowLevelBlood = [];
+    this.getExpiringBlood();
+    this.getLowLevelBlood();
+  }
+
+  async getExpiringBlood() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "my-auth-token"
+      })
+    };
+    this.http
+      .get(environment.apiBaseUrl + "BloodInventory/GetInventory", httpOptions)
+      .subscribe(result => {
+        console.log("Expiring Blood");
+        console.log(result);
+        this.expiringBlood = Object.assign([], result);
+        var ExpiryDate = new Date();
+        console.log(ExpiryDate.toLocaleDateString());
+        ExpiryDate.setDate(ExpiryDate.getDate()-43); // Filter Days is HERE
+        console.log(ExpiryDate.toLocaleDateString());
+        this.expiringBlood = this.expiringBlood.filter(d => {
+          var dateDonated1 = undefined;
+          dateDonated1 = formatDate(d.dateDonated, 'MM/dd/yyyy', 'en-US');
+          var dateDonated2 = new Date(dateDonated1);
+          console.log(dateDonated2.toLocaleDateString());
+          return (dateDonated2 <= ExpiryDate); // FILTER WORKS
+         });
+      });
+  }
+
+  async getLowLevelBlood() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "my-auth-token"
+      })
+    };
+    this.http
+      .get(environment.apiBaseUrl + "BloodInventory/GetAlerts", httpOptions)
+      .subscribe(result => {
+        console.log("Low Level Blood");
+        this.lowLevelBlood = Object.assign([], result);
+        console.log(result);
+      });
+  }
+
+  getThreshold() {
+    // Get here
+  }
+
+  updateThreshold() {
+    // this.Threshold will be updated by front end.
+
+    // Post here
+  }
+
+  disposeOfExpiringBlood() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "my-auth-token"
+      })
+    };
+    this.http
+      .post(
+        environment.apiBaseUrl + "BloodInventory/RemoveExpired",
+        httpOptions
+      )
+      .subscribe(result => {
+        // Clear this.expiringBlood
         this.expiringBlood = [];
-        this.lowLevelBlood = [];
+        this.expiringBlood = Object.assign([], result[1]); // Assign New Inventory into expiring blood for checks
         this.getExpiringBlood();
         this.getLowLevelBlood();
+        console.log("Dispose Expiring Blood");
+        console.log(result);
 
-    }
+      });
+  }
 
-    getExpiringBlood() {
+  ngOnDestroy() {
+    // unsubscribe to ensure no memory leaks
+    this.currentUserSubscription.unsubscribe();
+  }
 
-        // TO DO
-        // Gets blood from Backend and fits into this.expiringBlood
+  deleteUser(id: number) {
+    this.userService
+      .delete(id)
+      .pipe(first())
+      .subscribe(() => {
+        this.loadAllUsers();
+      });
+  }
 
-    }
-
-    getLowLevelBlood() {
-
-        // TO DO
-        // Gets blood from backend and fits into this.lowLevelBlood
-
-
-    }
-
-    disposeOfExpiringBlood() {
-
-        // TO DO
-        // Send request to Backend to remove all the Blood Objects from this.expiringBlood
-        console.log("Removed Expired Blood");
-        this.getExpiringBlood();
-        this.getLowLevelBlood();
-    }
-
-    
-
-
-    ngOnDestroy() {
-        // unsubscribe to ensure no memory leaks
-        this.currentUserSubscription.unsubscribe();
-    }
-
-    deleteUser(id: number) {
-        this.userService.delete(id).pipe(first()).subscribe(() => {
-            this.loadAllUsers()
-        });
-    }
-
-    private loadAllUsers() {
-        this.userService.getAll().pipe(first()).subscribe(users => {
-            this.users = users;
-        });
-    }
+  private loadAllUsers() {
+    this.userService
+      .getAll()
+      .pipe(first())
+      .subscribe(users => {
+        this.users = users;
+      });
+  }
 }

@@ -39,13 +39,13 @@ namespace VampireBackEnd.Services
         {
             if (_bloodInventory != null)
             {
-                var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
 
                 var alertMessages = new List<string>();
-                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var thresholdValue = threshold.settingValue;
-                
+
                 UpdatedBloodInventoryReturn inventoryUpdate = new UpdatedBloodInventoryReturn()
                 {
                     oldBloodInventory = oldBloodArray,
@@ -67,11 +67,11 @@ namespace VampireBackEnd.Services
                         requestResult = this.AddBloodToArrayResizing(requestResult, addBlood);
                         count = count + 1;
                     }
-
+                    await this._bloodInventory.SaveChangesAsync();
                     // check for alert
                     var bloodType = batchRequest[i].bloodType;
-
-                    var bloodCount = bloodInventory.Where(x => x.bloodType == bloodType).Count();
+                    
+                    var bloodCount = this._bloodInventory.bloodInventory.Where(x => x.bloodType == bloodType).Count();
                     if (bloodCount < thresholdValue)
                     {
                         // same code in request for fixing alert
@@ -91,7 +91,7 @@ namespace VampireBackEnd.Services
                             addCount++;
                         }
                         alertMessages.Add("Vampire Headquarters has fixed the alert on the blood type \"" + bloodType + "\" by adding " +
-                                          (thresholdValue - bloodCount) + " bags of blood to the inventory.\n The threshold is at " +
+                                          (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
                                           thresholdValue + " bags of blood");
                     }
 
@@ -99,9 +99,10 @@ namespace VampireBackEnd.Services
                 }
 
                 return new Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>(
-                    new UpdatedBloodInventoryReturn() {
+                    new UpdatedBloodInventoryReturn()
+                    {
                         oldBloodInventory = oldBloodArray,
-                        newBloodInventory = inventoryUpdate.newBloodInventory
+                        newBloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync()
                     },
                     requestResult,
                     alertMessages
@@ -126,8 +127,8 @@ namespace VampireBackEnd.Services
             if (_bloodInventory != null)
             {
                 // dafny logic
-                var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
-                
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+
                 Blood blood = null;
                 var removedFromInventory = new Blood[oldBloodArray.Length - 1];
                 var i = 0;
@@ -158,7 +159,7 @@ namespace VampireBackEnd.Services
                     }
                     i = i + 1;
                 }
-                
+
                 // if there is no blood of the given type
                 return new Tuple<UpdatedBloodInventoryReturn, Blood>(
                     new UpdatedBloodInventoryReturn()
@@ -172,21 +173,21 @@ namespace VampireBackEnd.Services
             return null;
         }
 
-        public Blood[] GetBloodInventory()
+        public async Task<Blood[]> GetBloodInventory()
         {
             if (_bloodInventory != null)
             {
-                return this._bloodInventory.bloodInventory.ToArray();
+                return await this._bloodInventory.bloodInventory.ToArrayAsync();
             }
             return null;
         }
 
-        public List<KeyValuePair<string, int>> GetAlerts()
+        public async Task<List<KeyValuePair<string, int>>> GetAlerts()
         {
             if (_bloodInventory != null)
             {
                 var result = new List<KeyValuePair<string, int>>();
-                var bloodInventory = this._bloodInventory.bloodInventory.ToList();
+                var bloodInventory = await this._bloodInventory.bloodInventory.ToListAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
                 var thresholdValue = threshold.settingValue;
@@ -202,12 +203,13 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
+
         public async Task<KeyValuePair<UpdatedBloodInventoryReturn, List<string>>> FixAlerts()
         {
             if (_bloodInventory != null)
             {
                 var alertMessages = new List<string>();
-                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var bloodInventory = await  this._bloodInventory.bloodInventory.ToArrayAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
                 var thresholdValue = threshold.settingValue;
@@ -234,7 +236,7 @@ namespace VampireBackEnd.Services
                             count++;
                         }
                         alertMessages.Add("Vampire Headquarters has fixed  the alert on the blood type \"" + bloodType + "\" by adding " +
-                                          (thresholdValue - bloodCount) + " bags of blood to the inventory.\n The threshold is at " +
+                                          (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
                                           thresholdValue + " bags of blood");
                     }
                 }
@@ -247,22 +249,32 @@ namespace VampireBackEnd.Services
                 return new KeyValuePair<UpdatedBloodInventoryReturn, List<string>>(oldAndNewBloodInventory, alertMessages);
             }
             return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
-        } 
+        }
+
         public async Task<UpdatedBloodInventoryReturn> RemoveExpired()
         {
             if (_bloodInventory != null)
             {
-                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
                 var updatedInventory = new Blood[bloodInventory.Length];
                 var i = 0; // index for old array
                 var j = 0; // index for new array
                 while (i < bloodInventory.Length)
                 {
-                    // if the blood is younger than 43 days before expiry, add it
-                    if(!(DateTime.Now.Subtract(DateTime.Parse(bloodInventory[i].dateDonated)).TotalDays >= 43))
+                    DateTime bloodDate;
+                    var check = DateTime.TryParse(bloodInventory[i].dateDonated, out bloodDate);
+                    if (check)
                     {
-                        updatedInventory[j] = bloodInventory[i];
-                        j++;
+                        if (!(DateTime.Now.Subtract(DateTime.Parse(bloodInventory[i].dateDonated)).TotalDays >= 43))
+                        {
+                            updatedInventory[j] = bloodInventory[i];
+                            j++;
+                        }
+                        else
+                        {
+                            // remove from db aswell
+                            this._bloodInventory.bloodInventory.Remove(bloodInventory[i]);
+                        }
                     }
                     else
                     {
@@ -272,10 +284,9 @@ namespace VampireBackEnd.Services
                     i++;
                 }
                 var finalUpdatedInventory = new Blood[j];
-                var k = 0;
-                foreach (var blood in updatedInventory)
+                for (var k = 0; k < j; k++)
                 {
-                    finalUpdatedInventory[k] = blood;
+                    finalUpdatedInventory[k] = updatedInventory[k];
                     k++;
                 }
                 await _bloodInventory.SaveChangesAsync();
