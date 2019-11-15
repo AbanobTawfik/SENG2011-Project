@@ -12,18 +12,21 @@ import { HttpHeaders } from "@angular/common/http";
 import { filterByMinAge, sortByDate, sortByType } from "../Dafny";
 
 interface Entry {
+  bloodId: String,
   bloodType: String,
   bloodStatus: String,
-  dateDonated: String
+  dateDonated: String,
+  bloodAge: number
 }
 
 @Component({ templateUrl: "QueryBlood.component.html" })
 export class QueryBloodComponent implements OnInit {
 
   private cols = [
-    {head: "Blood Type",   key: "bloodType"},
-    {head: "Blood Status", key: "bloodStatus"},
-    {head: "Donated On",   key: "dateDonated"}
+    {head: "Blood type",    key: "bloodType"},
+    {head: "Blood status",  key: "bloodStatus"},
+    {head: "Donated on",    key: "dateDonated"},
+    {head: "Age (days)",       key: "bloodAge"},
   ];
   private inv: any = [];
 
@@ -47,7 +50,12 @@ export class QueryBloodComponent implements OnInit {
       httpOptions
     )
     .subscribe(result => {
+      console.log(result);
       this.inv = result;
+      this.inv.forEach(b => {
+        b.dateDonated = b.dateDonated.split(" ")[0];
+        b.bloodAge = (Date.now() - Date.parse(b.dateDonated)) / (1000*60*60*24) | 0;
+      })
     });
   }
 
@@ -61,8 +69,9 @@ export class QueryBloodComponent implements OnInit {
   get inventory(): Entry[] {
     if (!this.inv) return [];
     return this.inv
-      .map(entry => ["bloodType", "bloodStatus", "dateDonated"]
-        .reduce((e, k) => { e[k] = entry[k]; return e }, {}))
+      .map(entry => this.cols
+        .map(c => c.key) // Get keys of cols
+        .reduce((e, k) => { e[k] = entry[k]; return e }, {})) // Remove unnecessary fields
       .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
   }
 
@@ -79,7 +88,6 @@ export class QueryBloodComponent implements OnInit {
     this.sortInv();
   }
   sortInv() {
-    console.log(this.sortDesc);
     this.sortByField(this.inv, this.sortDesc);
   }
 
