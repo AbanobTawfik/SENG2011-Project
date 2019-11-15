@@ -1,59 +1,35 @@
-﻿<h1>Search Blood Page</h1>
-<form [formGroup]="SearchBloodForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-        <label for="username">Donor Name</label>
-        <input placeholder="First Name, Last Name" type="text" formControlName="DonorName" class="form-control"/>
-        
-    </div>
-    <div class="form-group">
-        <label>Blood Id</label>
-        <input placeholder="Blood Bag Id" type="text" formControlName="BloodId" class="form-control"/>
-    </div>
-
-    <div class="form-group">
-        <label for="BloodType">Select Blood Type</label>
-	    <select class="form-control" formControlName="BloodType">
-	      <option>A+</option>
-	      <option>A-</option>
-	      <option>B+</option>
-	      <option>B-</option>
-	      <option>AB+</option>
-	      <option>AB-</option>
-	      <option>O+</option>
-	      <option>O-</option>
-	    </select>
-    </div>
-    <div class="form-group">
-        <label for="BloodStatus">Blood Status</label>
-	    <select class="form-control" formControlName="Status">
-	      <option>Tested</option>
-	      <option>Untested</option>
-	    </select>
-    </div>
-    <div class="form-group">
-        <label >Date Donated</label>
-        <input type="Date" formControlName="DateDonated" class="form-control"/>
-    </div>
-    <div class="form-group">
-        <label for="Location">Location</label>
-        <input placeholder="Location" type="text" formControlName="Location" class="form-control"/>
-        
-    </div>
-
-    <div class="form-group">
-        <label for="BloodType">Sort By</label>
-        <select class="form-control" formControlName="sortBy">
-          <option>Donor Name</option>
-          <option>Blood Id</option>
-          <option>Blood Type</option>
-          <option>Blood Status</option>
-          <option>Date Donated</option>
-          <option>Location</option>
-        </select>
-    </div>
+﻿<style>
+        table {
+            width: 150%;
+            height: 150%;
+            margin: 0;
+            padding: 0;
+        }
+</style>
     
-    <div class="form-group">
-        <button [disabled]="loading" class="btn btn-success">Search For Blood</button>
-        <img *ngIf="loading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-    </div>
-</form>
+    <h1>Search Blood Page</h1>
+<p>You can introduce custom directives for table headers to sort columns</p>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col" sortable="name" (sort)="onSort($event)">Blood ID</th>
+    <th scope="col" sortable="area" (sort)="onSort($event)">Blood Type</th>
+    <th scope="col" sortable="population" (sort)="onSort($event)">Blood Status</th>
+    <th scope="col" sortable="population" (sort)="onSort($event)">Date Donated</th>
+    <th scope="col" sortable="population" (sort)="onSort($event)">Days Since Donated</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- <tr *ngFor="let country of countries">
+    <th scope="row">{{ country.id }}</th>
+    <td>
+      <img [src]="'https://upload.wikimedia.org/wikipedia/commons/' + country.flag" class="mr-2" style="width: 20px">
+      {{ country.name }}
+    </td>
+    <td>{{ country.area | number }}</td>
+    <td>{{ country.population | number }}</td>
+  </tr> -->
+  </tbody>
+</table>
