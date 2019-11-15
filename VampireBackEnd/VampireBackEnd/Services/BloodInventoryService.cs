@@ -284,10 +284,9 @@ namespace VampireBackEnd.Services
                     i++;
                 }
                 var finalUpdatedInventory = new Blood[j];
-                var k = 0;
-                foreach (var blood in updatedInventory)
+                for (var k = 0; k < j; k++)
                 {
-                    finalUpdatedInventory[k] = blood;
+                    finalUpdatedInventory[k] = updatedInventory[k];
                     k++;
                 }
                 await _bloodInventory.SaveChangesAsync();
