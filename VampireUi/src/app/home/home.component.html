@@ -8,23 +8,59 @@
 <br>
 <br>
 <h2>Blood Expiring Today:</h2>
-<button class="btn btn-success" (click)="disposeOfExpiringBlood($event)">Dispose Expiring Blood</button>
-<ul>
-  <li *ngFor="let blood of expiringBlood">
-    {{blood.destination}} | {{blood.amountRequired}} | {{blood.bloodType}} | {{blood.dateRequired}}
-  </li>
-</ul>
 
+<button class="btn btn-success" (click)="disposeOfExpiringBlood($event)">Dispose Expiring Blood</button>
+<table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col" sortable="name" (sort)="onSort($event)">Blood ID</th>
+      <th scope="col" sortable="name2" (sort)="onSort($event)">Blood Type</th>
+      <th scope="col" sortable="area" (sort)="onSort($event)">Date Donated</th>
+      <th scope="col" sortable="population" (sort)="onSort($event)">Location Acquired</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let blood of expiringBlood">
+      <th scope="row">{{blood.bloodId}}</th>
+      <td>
+          {{blood.bloodType}}
+      </td>
+      <td>{{blood.dateDonated}}</td>
+      <td>{{blood.locationAcquired}}</td>
+    </tr>
+    </tbody>
+  </table>
+<hr>
+<h2>Low Inventory Blood Types:</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col" sortable="name" (sort)="onSort($event)">Blood ID</th>
+      <th scope="col" sortable="name2" (sort)="onSort($event)">Blood Type</th>
+      <th scope="col" sortable="area" (sort)="onSort($event)">Date Donated</th>
+      <th scope="col" sortable="population" (sort)="onSort($event)">Location Acquired</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let blood of lowLevelBlood">
+      <th scope="row">{{blood.bloodId}}</th>
+      <td>
+          {{blood.bloodType}}
+      </td>
+      <td>{{blood.dateDonated}}</td>
+      <td>{{blood.locationAcquired}}</td>
+    </tr>
+    </tbody>
+  </table>
 <hr>
 
-<h2>Low Inventory Blood Types:</h2>
-<ul>
+<!-- <ul>
   <li *ngFor="let blood of lowLevelBlood">
     {{blood.destination}} | {{blood.amountRequired}} | {{blood.bloodType}} | {{blood.dateRequired}}
   </li>
 </ul>
 
-<hr>
+<hr> -->
 
 <h3>All registered users:</h3>
 <ul>

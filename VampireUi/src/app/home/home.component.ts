@@ -7,6 +7,7 @@ import { User } from "@/_models";
 import { UserService, AuthenticationService } from "@/_services";
 import { Blood } from "../_models/Blood";
 import { environment } from "../../environments/environment";
+import {formatDate } from '@angular/common';
 
 @Component({ templateUrl: "home.component.html" })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -15,6 +16,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   users: User[] = [];
   expiringBlood: Array<Blood>;
   lowLevelBlood: Array<Blood>;
+  Threshold: Number;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -45,12 +47,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
     this.http
       .get(environment.apiBaseUrl + "BloodInventory/GetInventory", httpOptions)
-      .subscribe(result => console.log(result));
-    // add the code to filter here
-    // you can do it all inside of the result by applying the filter function to the result
-
-    // TO DO
-    // Gets blood from Backend and fits into this.expiringBlood
+      .subscribe(result => {
+        console.log("Expiring Blood");
+        console.log(result);
+        this.expiringBlood = Object.assign([], result);
+        var ExpiryDate = new Date();
+        console.log(ExpiryDate.toLocaleDateString());
+        ExpiryDate.setDate(ExpiryDate.getDate()-43); // Filter Days is HERE
+        console.log(ExpiryDate.toLocaleDateString());
+        this.expiringBlood = this.expiringBlood.filter(d => {
+          var dateDonated1 = undefined;
+          dateDonated1 = formatDate(d.dateDonated, 'MM/dd/yyyy', 'en-US');
+          var dateDonated2 = new Date(dateDonated1);
+          console.log(dateDonated2.toLocaleDateString());
+          return (dateDonated2 <= ExpiryDate); // FILTER WORKS
+         });
+      });
   }
 
   async getLowLevelBlood() {
@@ -62,7 +74,21 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
     this.http
       .get(environment.apiBaseUrl + "BloodInventory/GetAlerts", httpOptions)
-      .subscribe(result => console.log(result));
+      .subscribe(result => {
+        console.log("Low Level Blood");
+        this.lowLevelBlood = Object.assign([], result);
+        console.log(result);
+      });
+  }
+
+  getThreshold() {
+    // Get here
+  }
+
+  updateThreshold() {
+    // this.Threshold will be updated by front end.
+
+    // Post here
   }
 
   disposeOfExpiringBlood() {
@@ -77,7 +103,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         environment.apiBaseUrl + "BloodInventory/RemoveExpired",
         httpOptions
       )
-      .subscribe(result => console.log(result));
+      .subscribe(result => {
+        // Clear this.expiringBlood
+        this.expiringBlood = [];
+        this.expiringBlood = Object.assign([], result[1]); // Assign New Inventory into expiring blood for checks
+        this.getExpiringBlood();
+        this.getLowLevelBlood();
+        console.log("Dispose Expiring Blood");
+        console.log(result);
+
+      });
   }
 
   ngOnDestroy() {
