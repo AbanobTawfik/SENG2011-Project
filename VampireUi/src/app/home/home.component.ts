@@ -7,7 +7,7 @@ import { User } from "@/_models";
 import { UserService, AuthenticationService } from "@/_services";
 import { Blood } from "../_models/Blood";
 import { environment } from "../../environments/environment";
-import {formatDate } from '@angular/common';
+import { formatDate } from "@angular/common";
 
 @Component({ templateUrl: "home.component.html" })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -53,15 +53,15 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.expiringBlood = Object.assign([], result);
         var ExpiryDate = new Date();
         console.log(ExpiryDate.toLocaleDateString());
-        ExpiryDate.setDate(ExpiryDate.getDate()-43); // Filter Days is HERE
+        ExpiryDate.setDate(ExpiryDate.getDate() - 43); // Filter Days is HERE
         console.log(ExpiryDate.toLocaleDateString());
         this.expiringBlood = this.expiringBlood.filter(d => {
           var dateDonated1 = undefined;
-          dateDonated1 = formatDate(d.dateDonated, 'MM/dd/yyyy', 'en-US');
+          dateDonated1 = formatDate(d.dateDonated, "MM/dd/yyyy", "en-US");
           var dateDonated2 = new Date(dateDonated1);
           console.log(dateDonated2.toLocaleDateString());
-          return (dateDonated2 <= ExpiryDate); // FILTER WORKS
-         });
+          return dateDonated2 <= ExpiryDate; // FILTER WORKS
+        });
       });
   }
 
@@ -82,13 +82,38 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getThreshold() {
-    // Get here
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "my-auth-token"
+      })
+    };
+    this.http
+      .get(environment.apiBaseUrl + "Settings/GetSettingThreshold", httpOptions)
+      .subscribe(result => {
+        console.log(result);
+      });
   }
 
   updateThreshold() {
-    // this.Threshold will be updated by front end.
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "my-auth-token"
+      })
+    };
+    const updateValue: any = {
+      settingType: "Threshold",
+      settingValue: this.Threshold
+    };
 
-    // Post here
+    this.http
+      .put(
+        environment.apiBaseUrl + "Settings/UpdateSetting",
+        updateValue,
+        httpOptions
+      )
+      .subscribe(res => console.log(res));
   }
 
   disposeOfExpiringBlood() {
@@ -111,7 +136,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.getLowLevelBlood();
         console.log("Dispose Expiring Blood");
         console.log(result);
-
       });
   }
 

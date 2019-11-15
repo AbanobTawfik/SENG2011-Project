@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Rason\\Desktop\\SENG2011\\SENG2011-Project\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {}
+    "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Rason\\Desktop\\SENG2011\\SENG2011-Project\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {
+    "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rason\\Desktop\\SENG2011\\SENG2011-Project\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
+        "projectUniqueName": "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
         "projectName": "VampireBackEnd",
-        "projectPath": "C:\\Users\\Rason\\Desktop\\SENG2011\\SENG2011-Project\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
-        "packagesPath": "C:\\Users\\Rason\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rason\\Desktop\\SENG2011\\SENG2011-Project\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\obj\\",
+        "projectPath": "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
+        "packagesPath": "C:\\Users\\pizza\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Rason\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\pizza\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -60,16 +60,10 @@
             }
           },
           "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
+            "net461"
           ],
           "assetTargetFallback": true,
-          "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+          "warn": true
         }
       }
     }
