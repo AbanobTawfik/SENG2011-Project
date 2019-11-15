@@ -85,7 +85,7 @@ method Main()
     assert r.Length == 1;
     assert r[0].GetDonorName() == "Deb";
     
-    assert countBloodByAge(inv, 10, 12) == 2;
+    assert countBloodByDate(inv, 10, 12) == 2;
     assert countBloodByType(inv, "AB+") == 1;
     print "\nQuery successful\n";
 }
