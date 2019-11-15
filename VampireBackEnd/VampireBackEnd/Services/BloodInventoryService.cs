@@ -67,11 +67,11 @@ namespace VampireBackEnd.Services
                         requestResult = this.AddBloodToArrayResizing(requestResult, addBlood);
                         count = count + 1;
                     }
-
+                    await this._bloodInventory.SaveChangesAsync();
                     // check for alert
                     var bloodType = batchRequest[i].bloodType;
-
-                    var bloodCount = bloodInventory.Where(x => x.bloodType == bloodType).Count();
+                    
+                    var bloodCount = this._bloodInventory.bloodInventory.Where(x => x.bloodType == bloodType).Count();
                     if (bloodCount < thresholdValue)
                     {
                         // same code in request for fixing alert
@@ -91,7 +91,7 @@ namespace VampireBackEnd.Services
                             addCount++;
                         }
                         alertMessages.Add("Vampire Headquarters has fixed the alert on the blood type \"" + bloodType + "\" by adding " +
-                                          (thresholdValue - bloodCount) + " bags of blood to the inventory.\n The threshold is at " +
+                                          (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
                                           thresholdValue + " bags of blood");
                     }
 
@@ -102,7 +102,7 @@ namespace VampireBackEnd.Services
                     new UpdatedBloodInventoryReturn()
                     {
                         oldBloodInventory = oldBloodArray,
-                        newBloodInventory = inventoryUpdate.newBloodInventory
+                        newBloodInventory = this._bloodInventory.bloodInventory.ToArray()
                     },
                     requestResult,
                     alertMessages
@@ -236,7 +236,7 @@ namespace VampireBackEnd.Services
                             count++;
                         }
                         alertMessages.Add("Vampire Headquarters has fixed  the alert on the blood type \"" + bloodType + "\" by adding " +
-                                          (thresholdValue - bloodCount) + " bags of blood to the inventory.\n The threshold is at " +
+                                          (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
                                           thresholdValue + " bags of blood");
                     }
                 }

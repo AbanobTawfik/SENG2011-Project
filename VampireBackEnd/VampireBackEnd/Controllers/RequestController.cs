@@ -22,9 +22,9 @@ namespace VampireBackEnd.Controllers
         }
 
         // example of GET api/Vampire
-        [HttpGet]
+        [HttpPost]
         // can change routes 
-        [Route("Request")]
+        [Route("Blood")]
         public async Task<ActionResult> RequestBlood([FromBody] RequestDto[] request)
         {
             Request[] batchRequest = new Request[request.Length];
