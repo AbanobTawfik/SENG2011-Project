@@ -39,10 +39,10 @@ namespace VampireBackEnd.Services
         {
             if (_bloodInventory != null)
             {
-                var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
 
                 var alertMessages = new List<string>();
-                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var thresholdValue = threshold.settingValue;
 
@@ -102,7 +102,7 @@ namespace VampireBackEnd.Services
                     new UpdatedBloodInventoryReturn()
                     {
                         oldBloodInventory = oldBloodArray,
-                        newBloodInventory = this._bloodInventory.bloodInventory.ToArray()
+                        newBloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync()
                     },
                     requestResult,
                     alertMessages
@@ -127,7 +127,7 @@ namespace VampireBackEnd.Services
             if (_bloodInventory != null)
             {
                 // dafny logic
-                var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
 
                 Blood blood = null;
                 var removedFromInventory = new Blood[oldBloodArray.Length - 1];
@@ -173,21 +173,21 @@ namespace VampireBackEnd.Services
             return null;
         }
 
-        public Blood[] GetBloodInventory()
+        public async Task<Blood[]> GetBloodInventory()
         {
             if (_bloodInventory != null)
             {
-                return this._bloodInventory.bloodInventory.ToArray();
+                return await this._bloodInventory.bloodInventory.ToArrayAsync();
             }
             return null;
         }
 
-        public List<KeyValuePair<string, int>> GetAlerts()
+        public async Task<List<KeyValuePair<string, int>>> GetAlerts()
         {
             if (_bloodInventory != null)
             {
                 var result = new List<KeyValuePair<string, int>>();
-                var bloodInventory = this._bloodInventory.bloodInventory.ToList();
+                var bloodInventory = await this._bloodInventory.bloodInventory.ToListAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
                 var thresholdValue = threshold.settingValue;
@@ -209,7 +209,7 @@ namespace VampireBackEnd.Services
             if (_bloodInventory != null)
             {
                 var alertMessages = new List<string>();
-                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var bloodInventory = await  this._bloodInventory.bloodInventory.ToArrayAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
                 var thresholdValue = threshold.settingValue;
@@ -255,7 +255,7 @@ namespace VampireBackEnd.Services
         {
             if (_bloodInventory != null)
             {
-                var bloodInventory = this._bloodInventory.bloodInventory.ToArray();
+                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
                 var updatedInventory = new Blood[bloodInventory.Length];
                 var i = 0; // index for old array
                 var j = 0; // index for new array

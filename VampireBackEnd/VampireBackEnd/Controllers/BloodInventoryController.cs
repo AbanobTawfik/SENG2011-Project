@@ -43,17 +43,17 @@ namespace VampireBackEnd.Controllers
 
         [HttpGet]
         [Route("GetInventory")]
-        public ActionResult GetBloodInventory()
+        public async Task<ActionResult> GetBloodInventory()
         {
-            var bloodInventory = _bloodInventoryService.GetBloodInventory();
+            var bloodInventory = await _bloodInventoryService.GetBloodInventory();
             return Ok(bloodInventory);
         }
        
         [HttpGet]
         [Route("GetAlerts")]
-        public ActionResult GetAlerts()
+        public async Task<ActionResult> GetAlerts()
         {
-            var allAlerts = _bloodInventoryService.GetAlerts();
+            var allAlerts = await _bloodInventoryService.GetAlerts();
             return Ok(allAlerts);
         }
 

@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getLowLevelBlood();
   }
 
-  getExpiringBlood() {
+  async getExpiringBlood() {
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Gets blood from Backend and fits into this.expiringBlood
   }
 
-  getLowLevelBlood() {
+  async getLowLevelBlood() {
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
