@@ -211,7 +211,7 @@ namespace VampireBackEnd.Services
                 var alertMessages = new List<string>();
                 var bloodInventory = await  this._bloodInventory.bloodInventory.ToArrayAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
-                var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
+                var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
                 var thresholdValue = threshold.settingValue;
                 UpdatedBloodInventoryReturn newBloodInventory = null;
                 foreach (var bloodType in bloodTypes)

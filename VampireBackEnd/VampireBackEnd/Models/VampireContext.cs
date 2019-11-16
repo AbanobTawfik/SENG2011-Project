@@ -24,7 +24,7 @@ namespace VampireBackEnd.Models
 
             for (var i = 0; i < 100; i++)
             {
-                int bloodTypeIndex = rnd.Next(7);
+                int bloodTypeIndex = rnd.Next(8);
 
                 initialBloodList.Add(new Blood
                 {

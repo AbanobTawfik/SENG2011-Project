@@ -22,6 +22,7 @@ namespace VampireBackEnd.Controllers
         [Route("UpdateSetting")]
         public ActionResult UpdateThreshold([FromBody] SettingDto settingsChange)
         {
+            DateTime.
             if(settingsChange.settingValue < 0)
             {
                 return Ok("Invalid change value, please enter value over 0");
