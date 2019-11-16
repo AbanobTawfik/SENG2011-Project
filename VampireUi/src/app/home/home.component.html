@@ -1,58 +1,65 @@
-﻿<h1>Hi {{currentUser.firstName}}!</h1>
+﻿<h1>Hi {{ currentUser.firstName }}!</h1>
 <p>You're logged in with Angular 7!!</p>
 
-<hr>
+<hr />
 <h3>Low Blood Threshold (Number of Bags)</h3>
-<input type="Number" ng-model="Threshold"><br>
-<button class="btn btn-primary" (click)="updateThreshold($event)">Update Threshold</button>
-<br>
-<br>
+<input type="Number" [(ngModel)]="Threshold" /><br />
+<button class="btn btn-primary" (click)="updateThreshold($event)">
+  Update Threshold
+</button>
+<br />
+<br />
 <h2>Blood Expiring Today:</h2>
-
-<button class="btn btn-success" (click)="disposeOfExpiringBlood($event)">Dispose Expiring Blood</button>
+<button class="btn btn-success" (click)="disposeOfExpiringBlood($event)">
+  Dispose Expiring Blood
+</button>
 <table class="table table-striped">
-    <thead>
+  <thead>
     <tr>
       <th scope="col" sortable="name" (sort)="onSort($event)">Blood ID</th>
       <th scope="col" sortable="name2" (sort)="onSort($event)">Blood Type</th>
       <th scope="col" sortable="area" (sort)="onSort($event)">Date Donated</th>
-      <th scope="col" sortable="population" (sort)="onSort($event)">Location Acquired</th>
+      <th scope="col" sortable="population" (sort)="onSort($event)">
+        Location Acquired
+      </th>
     </tr>
-    </thead>
-    <tbody>
+  </thead>
+  <tbody>
     <tr *ngFor="let blood of expiringBlood">
-      <th scope="row">{{blood.bloodId}}</th>
+      <th scope="row">{{ blood.bloodId }}</th>
       <td>
-          {{blood.bloodType}}
+        {{ blood.bloodType }}
       </td>
-      <td>{{blood.dateDonated}}</td>
-      <td>{{blood.locationAcquired}}</td>
+      <td>{{ blood.dateDonated }}</td>
+      <td>{{ blood.locationAcquired }}</td>
     </tr>
-    </tbody>
-  </table>
-<hr>
+  </tbody>
+</table>
+<hr />
 <h2>Low Inventory Blood Types:</h2>
 <table class="table table-striped">
-    <thead>
+  <thead>
     <tr>
       <th scope="col" sortable="name" (sort)="onSort($event)">Blood ID</th>
       <th scope="col" sortable="name2" (sort)="onSort($event)">Blood Type</th>
       <th scope="col" sortable="area" (sort)="onSort($event)">Date Donated</th>
-      <th scope="col" sortable="population" (sort)="onSort($event)">Location Acquired</th>
+      <th scope="col" sortable="population" (sort)="onSort($event)">
+        Location Acquired
+      </th>
     </tr>
-    </thead>
-    <tbody>
+  </thead>
+  <tbody>
     <tr *ngFor="let blood of lowLevelBlood">
-      <th scope="row">{{blood.bloodId}}</th>
+      <th scope="row">{{ blood.bloodId }}</th>
       <td>
-          {{blood.bloodType}}
+        {{ blood.bloodType }}
       </td>
-      <td>{{blood.dateDonated}}</td>
-      <td>{{blood.locationAcquired}}</td>
+      <td>{{ blood.dateDonated }}</td>
+      <td>{{ blood.locationAcquired }}</td>
     </tr>
-    </tbody>
-  </table>
-<hr>
+  </tbody>
+</table>
+<hr />
 
 <!-- <ul>
   <li *ngFor="let blood of lowLevelBlood">
@@ -64,8 +71,8 @@
 
 <h3>All registered users:</h3>
 <ul>
-    <li *ngFor="let user of users">
-        {{user.username}} ({{user.firstName}} {{user.lastName}})
-        - <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
-    </li>
+  <li *ngFor="let user of users">
+    {{ user.username }} ({{ user.firstName }} {{ user.lastName }}) -
+    <a (click)="deleteUser(user.id)" class="text-danger">Delete</a>
+  </li>
 </ul>
