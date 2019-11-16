@@ -41,10 +41,24 @@
 </form>
 
 <label>Requests:</label>
-<ul>
-  <li *ngFor="let request of requests">
-    {{request.destination}} | {{request.amountRequired}} | {{request.bloodType}} | {{request.dateRequired}}
-  </li>
-</ul>
+<table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col" sortable="name" (sort)="onSort($event)">Blood Destination</th>
+      <th scope="col" sortable="name2" (sort)="onSort($event)">Blood Type</th>
+      <th scope="col" sortable="area" (sort)="onSort($event)">Quantity Required</th>
+      <!-- <th scope="col" sortable="population" (sort)="onSort($event)"></th> -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let request of requests">
+      <th scope="row">{{request.destination}}</th>
+      <td>
+		{{request.bloodType}}
+      </td>
+      <td>{{request.numBloodBags}}</td>
+    </tr>
+    </tbody>
+  </table>
 
 <button class="btn btn-success" (click)="SubmitAll($event)">Submit Blood Requests</button>

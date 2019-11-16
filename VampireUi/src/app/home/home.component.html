@@ -3,8 +3,8 @@
 
 <hr>
 <h3>Low Blood Threshold (Number of Bags)</h3>
-<input type="Number" name=""><br>
-<button class="btn btn-primary">Update Threshold</button>
+<input type="Number" ng-model="Threshold"><br>
+<button class="btn btn-primary" (click)="updateThreshold($event)">Update Threshold</button>
 <br>
 <br>
 <h2>Blood Expiring Today:</h2>

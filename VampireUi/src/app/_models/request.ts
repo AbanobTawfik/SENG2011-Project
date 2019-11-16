@@ -3,14 +3,15 @@ import { Blood } from '../_models/Blood';
 export class Request {
 
 	destination: String;
-	bloodBags: Array<Blood>;
+	// bloodBags: Array<Blood>;
     numBloodBags: Number;
     bloodType: String;
 
-    constructor(destination: String, BloodBags: Array<Blood>, numBloodBags: Number) {
+    constructor(destination: String, numBloodBags: Number, bloodType: String) {
     
     	this.destination = destination;
-    	this.bloodBags = BloodBags;
-    	this.numBloodBags = numBloodBags;
+    	// this.bloodBags = BloodBags;
+		this.numBloodBags = numBloodBags;
+		this.bloodType = bloodType;
     }
 }

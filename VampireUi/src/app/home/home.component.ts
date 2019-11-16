@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.lowLevelBlood = [];
     this.getExpiringBlood();
     this.getLowLevelBlood();
+    this.getThreshold();
   }
 
   async getExpiringBlood() {
@@ -91,11 +92,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.http
       .get(environment.apiBaseUrl + "Settings/GetSettingThreshold", httpOptions)
       .subscribe(result => {
+        console.log("getting threshold");
         console.log(result);
       });
   }
 
   updateThreshold() {
+    console.log("hello");
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",

@@ -39,7 +39,21 @@ export class RequestBloodComponent {
 
   SubmitAll() {
     alert("Requests Submitted.");
-    console.log(this.requests[0].bloodType);
+    // console.log(this.requests[0].bloodType);
+    // Do Something with it
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "my-auth-token"
+      })
+    };
+    this.http
+      .post(
+        environment.apiBaseUrl + "Request/Blood",
+        this.requests,
+        httpOptions
+      )
+      .subscribe(result => console.log(result));
   }
 
   onSubmit() {
@@ -60,28 +74,17 @@ export class RequestBloodComponent {
       );
 
       this.requests.push(this.newRequest);
-      console.log(this.requests.length);
-      // Do Something with it
-      const httpOptions = {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          Authorization: "my-auth-token"
-        })
-      };
-      this.http
-        .post(
-          environment.apiBaseUrl + "Request/Blood",
-          this.requests,
-          httpOptions
-        )
-        .subscribe(result => console.log(result));
+      console.log(this.newRequest.bloodType);
+
+
+      
+
+
       this.RequestBloodForm = this.formBuilder.group({
         destination: ["", Validators.required],
         amountRequired: ["", Validators.required],
         BloodType: ["", Validators.required]
       });
     }
-
-    // Send this to Rest API
   }
 }
