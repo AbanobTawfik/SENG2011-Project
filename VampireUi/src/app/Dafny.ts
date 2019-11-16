@@ -41,8 +41,6 @@ export function sortByDate(inv: any, desc?: boolean) {
   sortInventory(inv, desc ? SortByDateDesc : SortByDateAsc);
 }
 
-// (Date.now() - Date.parse(item.dateDonated)) / (1000*60*60*24) | 0;
-
 enum BloodType { APlus, AMinus,
       BPlus, BMinus,
       OPlus, OMinus,
@@ -458,9 +456,9 @@ module SortByDateDesc {
 
   function compareBloodItemLt(a: BloodItem, b: BloodItem): boolean
   {
-    if (a.timeProduced < b.timeProduced) return true // using inverted timeProduced!
+    if (a.timeProduced > b.timeProduced) return true // using inverted timeProduced!
     else {
-      if (b.timeProduced < a.timeProduced)
+      if (b.timeProduced > a.timeProduced)
         return false
       else return compareBloodTypeLt(a.bloodType, b.bloodType)
     }
