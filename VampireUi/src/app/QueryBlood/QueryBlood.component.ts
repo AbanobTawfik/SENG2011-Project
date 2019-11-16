@@ -9,7 +9,7 @@ import { UserService, AuthenticationService } from "@/_services";
 import { HttpClient } from "@angular/common/http";
 import { HttpHeaders } from "@angular/common/http";
 
-import { filterByMinAge, sortByDate, sortByType } from "../Dafny";
+import { filterByType, filterByAge, sortByType, sortByDate } from "../Dafny";
 
 interface Entry {
   bloodId: String,
@@ -28,6 +28,7 @@ export class QueryBloodComponent implements OnInit {
     {head: "Donated on",    key: "dateDonated"},
     {head: "Age (days)",       key: "bloodAge"},
   ];
+  private invOrig: any = [];
   private inv: any = [];
 
   constructor(
@@ -50,20 +51,23 @@ export class QueryBloodComponent implements OnInit {
       httpOptions
     )
     .subscribe(result => {
-      console.log(result);
-      this.inv = result;
-      this.inv.forEach(b => {
+      this.invOrig = result;
+      this.invOrig.forEach(b => {
         b.dateDonated = b.dateDonated.split(" ")[0];
         b.bloodAge = (Date.now() - Date.parse(b.dateDonated)) / (1000*60*60*24) | 0;
       })
+      this.filterInv();
     });
   }
 
   page: number = 1;
   pageSize: number = 10;
-  filterAge: boolean = false;
-  sortActive: string = "d";
-  sortByField: any = sortByDate;
+  bloodGroup: string;
+  rhesusFactor: string;
+  minAge: number;
+  maxAge: number;
+  sortActive: string = "None";
+  sortByField: any;
   sortDesc: boolean = false;
 
   get inventory(): Entry[] {
@@ -75,20 +79,37 @@ export class QueryBloodComponent implements OnInit {
       .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
   }
 
-  sortDate() {
-    if (this.sortByField == sortByDate) return;
-    this.sortByField = sortByDate;
-    this.sortActive = "d";
-    this.sortInv();
-  }
   sortType() {
     if (this.sortByField == sortByType) return;
     this.sortByField = sortByType;
-    this.sortActive = "t";
+    this.sortActive = "Type";
+    this.sortInv();
+  }
+  sortAge() {
+    if (this.sortByField == sortByDate) return;
+    this.sortByField = sortByDate;
+    this.sortActive = "Age";
     this.sortInv();
   }
   sortInv() {
+    if (!this.sortByField) return;
     this.sortByField(this.inv, this.sortDesc);
+  }
+
+  filterInv() {
+    if (this.bloodGroup && this.rhesusFactor) {
+      this.inv = filterByType(this.invOrig, this.bloodGroup + this.rhesusFactor);
+      if (this.minAge || this.maxAge) this.inv = filterByAge(this.inv, this.minAge, this.maxAge);
+    } else if (this.minAge || this.maxAge)
+      this.inv = filterByAge(this.invOrig, this.minAge, this.maxAge);
+    else
+      this.inv = this.invOrig.slice();
+    this.sortInv();
+  }
+
+  resetInv() {
+    this.bloodGroup = this.rhesusFactor = this.minAge = this.maxAge = undefined;
+    this.filterInv();
   }
 
 }

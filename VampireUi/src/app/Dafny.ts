@@ -16,19 +16,12 @@ export function filterByDate(inv: any, start: number, end: number): any {
   return Filtering.Filter(inv, b => start <= Date.parse(b.dateDonated) && Date.parse(b.dateDonated) <= end);
 }
 
-// Returns a new array containing only blood objects of age >= `age` (in days).
-export function filterByMinAge(inv: any, min: number): any {
-  return Filtering.Filter(inv, b => (
-    (Date.now() - Date.parse(b.dateDonated)) / (1000*60*60*24) >= min
-  ));
-}
-
-// Returns a new array containing only blood objects of age <= `age` (in days).
-export function filterByMaxAge(inv: any, max: number): any {
-  console.log(inv)
-  return Filtering.Filter(inv, b => (
-    (Date.now() - Date.parse(b.dateDonated)) / (1000*60*60*24) <= max
-  ));
+// Returns a new array containing only blood objects of `min` <= age <= `max` (in days).
+export function filterByAge(inv: any, min: number, max: number): any {
+  return Filtering.Filter(inv, b => {
+    var age = (Date.now() - Date.parse(b.dateDonated)) / (1000*60*60*24) | 0
+    return ((!min || min <= age) && (!max || age <= max))
+  });
 }
 
 // Sort inventory in place by bloodType.
@@ -348,9 +341,9 @@ module SortByDateAsc {
 
   function compareBloodItemLt(a: BloodItem, b: BloodItem): boolean
   {
-    if (a.timeProduced < b.timeProduced) return true // using timeProduced!
+    if (a.timeProduced > b.timeProduced) return true // using timeProduced!
     else {
-      if (b.timeProduced < a.timeProduced)
+      if (b.timeProduced > a.timeProduced)
         return false
       else return compareBloodTypeLt(a.bloodType, b.bloodType)
     }
@@ -456,9 +449,9 @@ module SortByDateDesc {
 
   function compareBloodItemLt(a: BloodItem, b: BloodItem): boolean
   {
-    if (a.timeProduced > b.timeProduced) return true // using inverted timeProduced!
+    if (a.timeProduced < b.timeProduced) return true // using inverted timeProduced!
     else {
-      if (b.timeProduced > a.timeProduced)
+      if (b.timeProduced < a.timeProduced)
         return false
       else return compareBloodTypeLt(a.bloodType, b.bloodType)
     }
