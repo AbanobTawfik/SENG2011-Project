@@ -37,6 +37,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getExpiringBlood();
     this.getLowLevelBlood();
     this.getThreshold();
+    this.Threshold = 40;
   }
 
   async getExpiringBlood() {
