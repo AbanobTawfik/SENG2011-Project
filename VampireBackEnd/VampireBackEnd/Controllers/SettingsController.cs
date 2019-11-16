@@ -22,35 +22,52 @@ namespace VampireBackEnd.Controllers
         [Route("UpdateSetting")]
         public ActionResult UpdateThreshold([FromBody] SettingDto settingsChange)
         {
-            if(settingsChange.settingValue < 0)
+            if (settingsChange.settingValue < 0)
             {
-                return Ok("Invalid change value, please enter value over 0");
+                var ret = new messages()
+                {
+                    content = "Invalid change value, please enter value over 0"
+                };
+                return Ok(ret);
             }
             var settingToModify = _vampireContext.settings.Where(x => x.settingType.ToLower() == settingsChange.settingType.ToLower()).FirstOrDefault();
-            if(settingToModify == null)
+            if (settingToModify == null)
             {
-                return Ok("Setting was not found");
+                var ret = new messages()
+                {
+                    content = "Setting was not found"
+                };
+                return Ok(ret);
             }
             else
             {
                 settingToModify.settingValue = settingsChange.settingValue;
                 _vampireContext.SaveChanges();
-                return Ok("new \""+ settingsChange.settingType+"\" value updated to the value \"" + settingsChange.settingValue+"\"");
+                var ret = new messages()
+                {
+                    content = "new \"" + settingsChange.settingType + "\" value updated to the value \"" + settingsChange.settingValue + "\""
+                };
+
+                return Ok(ret);
             }
         }
 
         [HttpGet]
         [Route("GetSettingThreshold")]
-        public ActionResult  GetThreshold()
+        public ActionResult GetThreshold()
         {
             var setting = _vampireContext.settings.Where(x => x.settingType.ToLower() == "Threshold".ToLower()).FirstOrDefault();
-            if(setting == null)
+            if (setting == null)
             {
-                return Ok("Setting was not found");
+                var ret = new messages()
+                {
+                    content = "Setting was not found"
+                };
+                return Ok(ret);
             }
             else
             {
-                return Ok(setting.settingValue);
+                return Ok(setting);
             }
         }
     }
