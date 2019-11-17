@@ -67,6 +67,8 @@ export class RequestBloodComponent {
         } else {
           alert(r);
         }
+        this.requests = [];
+
       
       
       
