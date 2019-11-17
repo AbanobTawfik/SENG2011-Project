@@ -86,6 +86,13 @@ export class AddBloodComponent implements OnInit {
       //alert("Submitted");
     }
 
-    // Send this to Rest API
+    
+    this.AddBloodForm = this.formBuilder.group({
+      DonorName: ["", Validators.required],
+      Status: ["", Validators.required],
+      BloodType: ["", Validators.required],
+      DateDonated: ["", Validators.required],
+      Location: ["", Validators.required]
+    });
   }
 }
