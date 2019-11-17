@@ -79,7 +79,11 @@ export class AddBloodComponent implements OnInit {
         donorName: this.f.DonorName.value,
         bloodType: this.f.BloodType.value,
         bloodStatus: this.f.Status.value,
+<<<<<<< HEAD
         dateDonated: pickerDate,
+=======
+        dateDonated: dateDonated1,
+>>>>>>> cf289fbf3a0df414e064b96e186a24ed59aeaced
         locationAcquired: this.f.Location.value
       };
 

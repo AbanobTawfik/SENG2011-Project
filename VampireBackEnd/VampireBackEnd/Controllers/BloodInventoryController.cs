@@ -48,7 +48,7 @@ namespace VampireBackEnd.Controllers
             var bloodInventory = await _bloodInventoryService.GetBloodInventory();
             return Ok(bloodInventory);
         }
-       
+
         [HttpGet]
         [Route("GetAlerts")]
         public async Task<ActionResult> GetAlerts()
@@ -71,6 +71,35 @@ namespace VampireBackEnd.Controllers
         {
             var oldAndNewInventory = await _bloodInventoryService.RemoveExpired();
             return Ok(oldAndNewInventory);
+        }
+
+        [HttpPost]
+        [Route("ResetDb")]
+        public async Task<ActionResult> ResetDb()
+        {
+            foreach(var blood in this._vampireContext.bloodInventory)
+            {
+                this._vampireContext.bloodInventory.Remove(blood);
+            }
+            await this._vampireContext.SaveChangesAsync();
+            var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+            var rnd = new Random();
+            for (var i = 0; i < 100; i++)
+            {
+                int bloodTypeIndex = rnd.Next(8);
+
+                this._vampireContext.bloodInventory.Add(new Blood
+                {
+                    bloodId = Guid.NewGuid(),
+                    bloodStatus = "Tested",
+                    bloodType = bloodTypes[bloodTypeIndex],
+                    dateDonated = DateTime.Now.ToString(),
+                    donorName = "initial hospital donor",
+                    locationAcquired = "Hospital"
+                });
+            }
+            await this._vampireContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }
