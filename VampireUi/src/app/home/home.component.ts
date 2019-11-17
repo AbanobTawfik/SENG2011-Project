@@ -31,7 +31,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.Threshold = 50;
     this.loadAllUsers();
     this.expiringBlood = [];
     this.lowLevelBlood = [];
@@ -94,8 +93,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.http
       .get(environment.apiBaseUrl + "Settings/GetSettingThreshold", httpOptions)
       .subscribe(result => {
-        console.log("getting threshold");
-        console.log(result);
+        this.Threshold = result["settingValue"];
       });
   }
 
