@@ -1,8 +1,5 @@
 ﻿import { Component, OnInit } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { first } from "rxjs/operators";
-import { Blood } from "../_models/Blood";
 import { environment } from "../../environments/environment";
 import { User } from "@/_models";
 import { UserService, AuthenticationService } from "@/_services";
@@ -30,9 +27,9 @@ export class QueryBloodComponent implements OnInit {
   ];
   private invOrig: any = [];
   private inv: any = [];
+  private error;
 
   constructor(
-    private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
@@ -53,10 +50,16 @@ export class QueryBloodComponent implements OnInit {
     .subscribe(result => {
       this.invOrig = result;
       this.invOrig.forEach(b => {
-        b.dateDonated = b.dateDonated.split(" ")[0];
+        b.dateDonated = b.dateDonated.split(' ')[0];
+        if (b.dateDonated.charAt(2) == '/') {
+          let split = b.dateDonated.split('/');
+          b.dateDonated = split[2] + '-' + split[0] + '-' + split[1];
+        }
         b.bloodAge = (Date.now() - Date.parse(b.dateDonated)) / (1000*60*60*24) | 0;
       })
       this.filterInv();
+    }, err => {
+      this.error = err;
     });
   }
 
@@ -94,6 +97,7 @@ export class QueryBloodComponent implements OnInit {
   sortInv() {
     if (!this.sortByField) return;
     this.sortByField(this.inv, this.sortDesc);
+    console.log(this.inv.length, this.invOrig.length);
   }
 
   filterInv() {

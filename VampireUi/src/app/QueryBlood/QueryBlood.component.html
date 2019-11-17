@@ -118,7 +118,18 @@ label {
     </table>
   </div>
 
-  <div class="d-flex justify-content-between p-2">
+  <div *ngIf="invOrig.length == 0 && !error" class="d-flex justify-content-center pb-3">
+    <div class="spinner-border text-secondary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  <div *ngIf="invOrig.length == 0 && error" class="d-flex justify-content-center pb-3 text-danger">
+    {{error}}
+  </div>
+  <div *ngIf="inv.length == 0 && invOrig.length > 0" class="d-flex justify-content-center pb-3">
+    No results
+  </div>
+  <div *ngIf="inv.length > 0" class="d-flex justify-content-between px-3">
     <ngb-pagination [collectionSize]="inv.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true">
     </ngb-pagination>
 
