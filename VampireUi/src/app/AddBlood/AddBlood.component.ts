@@ -81,7 +81,6 @@ export class AddBloodComponent implements OnInit {
         locationAcquired: this.f.Location.value
       };
       console.log("Formatted date to " + pickerDate);
-      return;
 
       // Error
       console.log(newBlood);
