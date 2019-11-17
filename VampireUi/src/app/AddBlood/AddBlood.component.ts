@@ -8,6 +8,7 @@ import { User } from "@/_models";
 import { UserService, AuthenticationService } from "@/_services";
 import { HttpClient } from "@angular/common/http";
 import { HttpHeaders } from "@angular/common/http";
+import { formatDate } from "@angular/common";
 
 @Component({ templateUrl: "AddBlood.component.html" })
 export class AddBloodComponent implements OnInit {
@@ -53,6 +54,9 @@ export class AddBloodComponent implements OnInit {
     } else if (this.f.Location.value == "") {
       alert("Donated Location Required");
     } else {
+      var dateDonated1 = undefined;
+      dateDonated1 = formatDate(this.f.DateDonated.value, "MM/dd/yyyy", "en-US");
+      console.log(dateDonated1);
       const httpOptions = {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
@@ -64,7 +68,7 @@ export class AddBloodComponent implements OnInit {
         donorName: this.f.DonorName.value,
         bloodType: this.f.BloodType.value,
         bloodStatus: this.f.Status.value,
-        dateDonated: this.f.DateDonated.value,
+        dateDonated: dateDonated1,
         locationAcquired: this.f.Location.value
       };
 
