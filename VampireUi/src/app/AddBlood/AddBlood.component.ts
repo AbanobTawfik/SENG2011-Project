@@ -54,9 +54,6 @@ export class AddBloodComponent implements OnInit {
     } else if (this.f.Location.value == "") {
       alert("Donated Location Required");
     } else {
-      var dateDonated1 = undefined;
-      dateDonated1 = formatDate(this.f.DateDonated.value, "MM/dd/yyyy", "en-US");
-      console.log(dateDonated1);
       const httpOptions = {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
@@ -66,7 +63,7 @@ export class AddBloodComponent implements OnInit {
       // Try somewhat validate the date format
       let split, pickerDate = this.f.DateDonated.value;
       if (typeof pickerDate === 'string' || pickerDate instanceof String) {
-        if (pickerDate.charAt(2) == '/' && (split = pickerDate.split('/'))[2]) {
+        if ((split = pickerDate.split('/'))[2]) {
           pickerDate = split[2] + '-' + split[1] + '-' + split[0];
         } else {
           alert("Invalid Date Donated"); return;
@@ -74,6 +71,7 @@ export class AddBloodComponent implements OnInit {
       } else {
         pickerDate = pickerDate.year + '-' + pickerDate.month + '-' + pickerDate.day;
       }
+      pickerDate = formatDate(pickerDate, "MM/dd/yyyy", "en-US");
 
       const newBlood: any = {
         donorName: this.f.DonorName.value,
@@ -82,6 +80,8 @@ export class AddBloodComponent implements OnInit {
         dateDonated: pickerDate,
         locationAcquired: this.f.Location.value
       };
+      console.log("Formatted date to " + pickerDate);
+      return;
 
       // Error
       console.log(newBlood);
