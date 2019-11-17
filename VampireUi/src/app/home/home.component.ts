@@ -115,7 +115,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         updateValue,
         httpOptions
       )
-      .subscribe(res => console.log(res));
+      .subscribe(res => {
+        alert(res['content']);
+      });
   }
 
   disposeOfExpiringBlood() {
