@@ -47,12 +47,16 @@ export class RequestBloodComponent {
         Authorization: "my-auth-token"
       })
     };
+    var allrequest: any = [];
+    for (var i = 0; i < this.requests.length; i++) {
+      const real_request = {
+        bloodType: this.requests[i].bloodType,
+        volume: this.requests[i].numBloodBags
+      };
+      allrequest.push(real_request);
+    }
     this.http
-      .post(
-        environment.apiBaseUrl + "Request/Blood",
-        this.requests,
-        httpOptions
-      )
+      .post(environment.apiBaseUrl + "Request/Blood", allrequest, httpOptions)
       .subscribe(result => console.log(result));
   }
 
@@ -75,10 +79,6 @@ export class RequestBloodComponent {
 
       this.requests.push(this.newRequest);
       console.log(this.newRequest.bloodType);
-
-
-      
-
 
       this.RequestBloodForm = this.formBuilder.group({
         destination: ["", Validators.required],
