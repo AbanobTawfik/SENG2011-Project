@@ -34,12 +34,12 @@ export class AddBloodComponent implements OnInit {
     return this.AddBloodForm.controls;
   }
 
-
   alertSubmitted(result) {
     console.log(result);
     alert("Added Blood to Inventory.");
-    
   }
+
+  loading: boolean = false;
 
   onSubmit() {
     if (this.f.DonorName.value == "") {
@@ -59,24 +59,39 @@ export class AddBloodComponent implements OnInit {
           Authorization: "my-auth-token"
         })
       };
+      // Try somewhat validate the date format
+      let split, pickerDate = this.f.DateDonated.value;
+      if (typeof pickerDate === 'string' || pickerDate instanceof String) {
+        if (pickerDate.charAt(2) == '/' && (split = pickerDate.split('/'))[2]) {
+          pickerDate = split[2] + '-' + split[1] + '-' + split[0];
+        } else {
+          alert("Invalid Date Donated"); return;
+        }
+      } else {
+        pickerDate = pickerDate.year + '-' + pickerDate.month + '-' + pickerDate.day;
+      }
 
       const newBlood: any = {
         donorName: this.f.DonorName.value,
         bloodType: this.f.BloodType.value,
         bloodStatus: this.f.Status.value,
-        dateDonated: this.f.DateDonated.value,
+        dateDonated: pickerDate,
         locationAcquired: this.f.Location.value
       };
 
       // Error
       console.log(newBlood);
+      this.loading = true;
       this.http
         .post(
           environment.apiBaseUrl + "BloodInventory/AddBlood",
           newBlood,
           httpOptions
         )
-        .subscribe(result => this.alertSubmitted(result));
+        .subscribe(result => {
+          this.loading = false;
+          this.alertSubmitted(result);
+        });
 
       // Do Something with it
       //alert("Submitted");

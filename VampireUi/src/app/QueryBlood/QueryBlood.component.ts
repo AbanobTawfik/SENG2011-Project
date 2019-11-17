@@ -14,16 +14,18 @@ interface Entry {
   bloodStatus: String,
   dateDonated: String,
   bloodAge: number
+  locationAcquired: String,
 }
 
 @Component({ templateUrl: "QueryBlood.component.html" })
 export class QueryBloodComponent implements OnInit {
 
   private cols = [
-    {head: "Blood type",    key: "bloodType"},
-    {head: "Blood status",  key: "bloodStatus"},
+    {head: "Type",          key: "bloodType"},
+    {head: "Status",        key: "bloodStatus"},
+    {head: "Location",      key: "locationAcquired"},
     {head: "Donated on",    key: "dateDonated"},
-    {head: "Age (days)",       key: "bloodAge"},
+    {head: "Age (days)",    key: "bloodAge"},
   ];
   private invOrig: any = [];
   private inv: any = [];
@@ -48,6 +50,7 @@ export class QueryBloodComponent implements OnInit {
       httpOptions
     )
     .subscribe(result => {
+      console.log(result);
       this.invOrig = result;
       this.invOrig.forEach(b => {
         b.dateDonated = b.dateDonated.split(' ')[0];
