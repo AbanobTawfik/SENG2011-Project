@@ -40,22 +40,13 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th scope="col" sortable="name" (sort)="onSort($event)">Blood ID</th>
-      <th scope="col" sortable="name2" (sort)="onSort($event)">Blood Type</th>
-      <th scope="col" sortable="area" (sort)="onSort($event)">Date Donated</th>
-      <th scope="col" sortable="population" (sort)="onSort($event)">
-        Location Acquired
-      </th>
+      <th scope="col" sortable="name" (sort)="onSort($event)">Blood Type</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let blood of lowLevelBlood">
-      <th scope="row">{{ blood.bloodId }}</th>
-      <td>
-        {{ blood.bloodType }}
-      </td>
-      <td>{{ blood.dateDonated }}</td>
-      <td>{{ blood.locationAcquired }}</td>
+      <th scope="row">{{ blood.key }}</th>
+
     </tr>
   </tbody>
 </table>

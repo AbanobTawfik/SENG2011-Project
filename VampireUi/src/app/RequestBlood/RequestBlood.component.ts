@@ -57,7 +57,23 @@ export class RequestBloodComponent {
     }
     this.http
       .post(environment.apiBaseUrl + "Request/Blood", allrequest, httpOptions)
-      .subscribe(result => console.log(result));
+      .subscribe(result => {
+        console.log(result);
+        var r = result['item3'];
+
+        if (r == "") {
+          // Means that request was successfully filled 
+
+        } else {
+          alert(r);
+        }
+        this.requests = [];
+
+      
+      
+      
+      
+      });
   }
 
   onSubmit() {
