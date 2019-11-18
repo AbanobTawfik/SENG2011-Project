@@ -35,6 +35,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  fixAlert(){
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "my-auth-token"
+      })
+    };
+    this.http
+      .post(
+        environment.apiBaseUrl + "BloodInventory/FixAlerts",
+        httpOptions
+      ).subscribe(res => alert(res["value"]));
+  }
+
   ngOnInit() {
     this.loadAllUsers();
     this.expiringBlood = [];
