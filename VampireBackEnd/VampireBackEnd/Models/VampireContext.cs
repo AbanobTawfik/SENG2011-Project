@@ -25,13 +25,16 @@ namespace VampireBackEnd.Models
             for (var i = 0; i < 100; i++)
             {
                 int bloodTypeIndex = rnd.Next(8);
-
+                var gen = new Random();
+                DateTime start = DateTime.Now.AddDays(-43);
+                int range = (DateTime.Today - start).Days;
+                var day = start.AddDays(gen.Next(range));
                 initialBloodList.Add(new Blood
                 {
                     bloodId = Guid.NewGuid(),
                     bloodStatus = "Tested",
                     bloodType = bloodTypes[bloodTypeIndex],
-                    dateDonated = DateTime.Now.ToString(),
+                    dateDonated = day.ToString(),
                     donorName = "initial hospital donor",
                     locationAcquired = "Hospital"
                 });

@@ -1,30 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {}
+    "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {
+    "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
+        "projectUniqueName": "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj",
         "projectName": "VampireBackEnd",
-        "projectPath": "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
-        "packagesPath": "C:\\Users\\pizza\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pizza\\source\\repos\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\obj\\",
+        "projectPath": "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj",
+        "packagesPath": "/Users/Abs/.nuget/packages/",
+        "outputPath": "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\pizza\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/Abs/.config/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -60,10 +58,16 @@
             }
           },
           "imports": [
-            "net461"
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true
+          "warn": true,
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
         }
       }
     }

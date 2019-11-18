@@ -223,12 +223,16 @@ namespace VampireBackEnd.Services
                         var count = 0;
                         while (count <= thresholdValue - bloodCount)
                         {
+                            var gen = new Random();
+                            DateTime start = DateTime.Now.AddDays(-43);
+                            int range = (DateTime.Today - start).Days;
+                            var day = start.AddDays(gen.Next(range));
                             var emergencyDonor = new Blood()
                             {
                                 bloodId = new Guid(),
                                 bloodStatus = "Tested",
                                 bloodType = bloodType,
-                                dateDonated = DateTime.Now.ToString(),
+                                dateDonated = day.ToString(),
                                 donorName = "EMERGENCY DONOR",
                                 locationAcquired = "Hospital"
                             };
