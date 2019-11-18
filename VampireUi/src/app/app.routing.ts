@@ -10,6 +10,7 @@ import { RequestBloodComponent } from './RequestBlood';
 import { SearchBloodComponent } from './SearchBlood';
 import { DeliveryOrdersComponent } from './DeliveryOrders';
 import { SummaryComponent } from './Summary';
+import { ResetComponent } from './Reset';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -21,6 +22,7 @@ const appRoutes: Routes = [
     { path: 'blood/search', component: SearchBloodComponent, canActivate: [AuthGuard] },
     { path: 'orders', component: DeliveryOrdersComponent, canActivate: [AuthGuard] },
     { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard] },
+    { path: 'reset', component: ResetComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }

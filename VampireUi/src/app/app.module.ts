@@ -22,6 +22,7 @@ import { DeliveryOrdersComponent } from './DeliveryOrders/DeliveryOrders.compone
 import { RequestBloodComponent } from './RequestBlood/RequestBlood.component';
 import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
 import { SummaryComponent } from './Summary/Summary.component';
+import { ResetComponent } from './Reset/Reset.component';
 
 @NgModule({
     imports: [
@@ -44,7 +45,8 @@ import { SummaryComponent } from './Summary/Summary.component';
         QueryBloodComponent,
         RequestBloodComponent,
         SearchBloodComponent,
-        SummaryComponent
+        SummaryComponent,
+        ResetComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
