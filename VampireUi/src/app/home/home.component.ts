@@ -17,6 +17,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   expiringBlood: Array<Blood>;
   lowLevelBlood: Array<Blood>;
   Threshold: Number;
+  
+  fixDate(origDate) {
+	const split = origDate.split('/');
+    return split[2] + '-' + (split[0].length < 2 ? '0' + split[0] : split[0]) + '-' + (split[1].length < 2 ? '0' + split[1] : split[1]);
+  }
 
   constructor(
     private authenticationService: AuthenticationService,

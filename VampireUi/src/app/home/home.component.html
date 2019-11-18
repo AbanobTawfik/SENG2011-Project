@@ -2,9 +2,9 @@
 <p>You're logged in with Angular 7!!</p>
 
 <hr />
-<h3>Low Blood Threshold (Number of Bags)</h3>
+<h3 class="mb-2">Low Blood Threshold (Number of Bags)</h3>
 <input type="Number" [(ngModel)]="Threshold" /><br />
-<button class="btn btn-primary" (click)="updateThreshold($event)">
+<button class="btn btn-primary mt-2" (click)="updateThreshold($event)">
   Update Threshold
 </button>
 <br />
@@ -30,7 +30,7 @@
       <td>
         {{ blood.bloodType }}
       </td>
-      <td>{{ blood.dateDonated }}</td>
+      <td>{{ fixDate(blood.dateDonated.split(' ')[0]) }}</td>
       <td>{{ blood.locationAcquired }}</td>
     </tr>
   </tbody>
