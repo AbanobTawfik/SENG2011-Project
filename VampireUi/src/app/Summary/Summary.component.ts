@@ -6,7 +6,7 @@ import { UserService, AuthenticationService } from "@/_services";
 import { HttpClient } from "@angular/common/http";
 import { HttpHeaders } from "@angular/common/http";
 
-import { filterByType } from "../Dafny";
+import { filterByType, filterByAge } from "../Dafny";
 
 @Component({ templateUrl: "Summary.component.html" })
 export class SummaryComponent implements OnInit {
@@ -18,6 +18,13 @@ export class SummaryComponent implements OnInit {
     private http: HttpClient
   ) {}
 
+  public barChartLabels = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  public barChartType = 'bar';
+  public barChartLegend = true;
+  public barChartData = [
+    {data: [0, 0, 0, 0, 0, 0, 0, 0], label: 'Supply levels', yAxisID: 'A'},
+    {data: [31, 7, 8, 2, 2, 1, 40, 9], label: 'Expected frequency*', yAxisID: 'B'}
+  ];
   public barChartOptions = {
     scales: {
       yAxes: [{
@@ -48,19 +55,37 @@ export class SummaryComponent implements OnInit {
     responsive: true
   };
 
-  private error;
-  private loading;
-
-  public barChartLabels = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-  public barChartType = 'bar';
-  public barChartLegend = true;
-  public barChartData = [
-    {data: [0, 0, 0, 0, 0, 0, 0, 0], label: 'Supply levels', yAxisID: 'A'},
-    {data: [31, 7, 8, 2, 2, 1, 40, 9], label: 'Expected frequency*', yAxisID: 'B'}
+  private lineChartSize = 5;
+  private lineChartMax = 42;
+  public lineChartLabels = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, '42+'];
+  public lineChartType = 'line';
+  public lineChartLegend = true;
+  public lineChartData = [
+    {data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], label: 'Supply levels', yAxisID: 'A'}
   ];
+  public lineChartOptions = {
+    scales: {
+      yAxes: [{
+        id: 'A',
+        type: 'linear',
+        position: 'left',
+        scaleLabel: {
+          display: true,
+          labelString: 'Quantity (bags)'
+        },
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  }
+
+  private error;
+  private loadingBar;
+  private loadingLine;
 
   ngOnInit() {
-    this.loading = true;
+    this.loadingBar = this.loadingLine = true;
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -72,14 +97,21 @@ export class SummaryComponent implements OnInit {
       httpOptions
     )
     .subscribe(result => {
-      let inv = result;
       this.barChartData[0].data = this.barChartLabels.map((type) =>
-        filterByType(inv, type).length
+        filterByType(result, type).length
       )
-      this.loading = false;
+      this.loadingBar = false;
+      setTimeout(() => {
+        this.lineChartData[0].data = this.lineChartLabels.map((age) =>
+          (typeof age === "string") ?
+            filterByAge(result, this.lineChartMax, undefined) :
+            filterByAge(result, age, age + this.lineChartSize - 1).length
+        )
+        this.loadingLine = false;
+      }, 400);
     }, err => {
       this.error = err;
-      this.loading = false;
+      this.loadingBar = this.loadingLine = false;
     });
   }
 }

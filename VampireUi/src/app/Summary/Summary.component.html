@@ -4,13 +4,17 @@
   left: 50%;
   margin-left: -1rem;
   top: 50%;
+  margin-top: -1rem;
 }
 </style>
 
 <h1 class="mb-3">Summary</h1>
-<h5 class="my-3">Blood type supply levels</h5>
 <div>
-  <div class="d-block mb-3">
+  <div *ngIf="error" class="text-danger">
+    {{error}}
+  </div>
+  <h5 class="my-3">Supply levels by blood type</h5>
+  <div class="d-block mb-3 position-relative">
     <canvas baseChart
             [datasets]="barChartData"
             [labels]="barChartLabels"
@@ -18,12 +22,25 @@
             [legend]="barChartLegend"
             [chartType]="barChartType">
     </canvas>
-    <div *ngIf="loading" class="spinner-border text-secondary spinner-center" role="status">
+    <div *ngIf="loadingBar" class="spinner-border text-secondary spinner-center" role="status">
       <span class="sr-only">Loading...</span>
     </div>
   </div>
-  <label class="lb-sm">
+  <label class="lb-sm mb-0">
     * Data from the
     <a href="https://www.donateblood.com.au/learn/about-blood">Australian Red Cross Blood Service</a>
   </label>
+  <h5 class="my-3">Supply levels by blood age</h5>
+  <div class="d-block mb-3 position-relative">
+    <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType">
+    </canvas>
+    <div *ngIf="loadingLine" class="spinner-border text-secondary spinner-center" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
 </div>
