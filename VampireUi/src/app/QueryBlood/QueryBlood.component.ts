@@ -55,7 +55,8 @@ export class QueryBloodComponent implements OnInit {
         b.dateDonated = b.dateDonated.split(' ')[0];
         if (b.dateDonated.charAt(2) == '/') {
           let split = b.dateDonated.split('/');
-          b.dateDonated = split[2] + '-' + split[0] + '-' + split[1];
+          b.dateDonated = split[2] + '-' + (split[0].length < 2 ? '0' + split[0] : split[0]) + '-' + (split[1].length < 2 ? '0' + split[1] : split[1]);
+		  // b.dateDonated = split[2] + '-' + split[0] + '-' + split[1];
         }
         b.bloodAge = (Date.now() - Date.parse(b.dateDonated)) / (1000*60*60*24) | 0;
       })

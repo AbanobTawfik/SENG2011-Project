@@ -189,7 +189,8 @@ namespace VampireBackEnd.Services
                 var result = new List<KeyValuePair<string, int>>();
                 var bloodInventory = await this._bloodInventory.bloodInventory.ToListAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
-                var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
+                var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+                // var bloodTypes = this._bloodInventory.bloodInventory.Select(x => x.bloodType).Distinct();
                 var thresholdValue = threshold.settingValue;
                 foreach (var bloodType in bloodTypes)
                 {

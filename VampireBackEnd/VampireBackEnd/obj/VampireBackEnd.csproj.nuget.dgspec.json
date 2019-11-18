@@ -1,28 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj": {}
+    "C:\\Users\\Kevin\\Documents\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {}
   },
   "projects": {
-    "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj": {
+    "C:\\Users\\Kevin\\Documents\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj",
+        "projectUniqueName": "C:\\Users\\Kevin\\Documents\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
         "projectName": "VampireBackEnd",
-        "projectPath": "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/VampireBackEnd.csproj",
-        "packagesPath": "/Users/Abs/.nuget/packages/",
-        "outputPath": "/Users/Abs/Downloads/SENG2011-Project/VampireBackEnd/VampireBackEnd/obj/",
+        "projectPath": "C:\\Users\\Kevin\\Documents\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\VampireBackEnd.csproj",
+        "packagesPath": "C:\\Users\\Kevin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Kevin\\Documents\\SENG2011-Project\\VampireBackEnd\\VampireBackEnd\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "/Users/Abs/.config/NuGet/NuGet.Config"
+          "C:\\Users\\Kevin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -67,7 +66,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
