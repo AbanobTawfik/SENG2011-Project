@@ -23,7 +23,7 @@ export class QueryBloodComponent implements OnInit {
   private cols = [
     {head: "Type",          key: "bloodType"},
     {head: "Status",        key: "bloodStatus"},
-    {head: "Location",      key: "locationAcquired"},
+    {head: "From",          key: "locationAcquired"},
     {head: "Donated on",    key: "dateDonated"},
     {head: "Age (days)",    key: "bloodAge"},
   ];
@@ -50,7 +50,6 @@ export class QueryBloodComponent implements OnInit {
       httpOptions
     )
     .subscribe(result => {
-      console.log(result);
       this.invOrig = result;
       this.invOrig.forEach(b => {
         b.dateDonated = b.dateDonated.split(' ')[0];
@@ -100,7 +99,6 @@ export class QueryBloodComponent implements OnInit {
   sortInv() {
     if (!this.sortByField) return;
     this.sortByField(this.inv, this.sortDesc);
-    console.log(this.inv.length, this.invOrig.length);
   }
 
   filterInv() {

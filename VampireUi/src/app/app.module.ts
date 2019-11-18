@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ChartsModule } from 'ng2-charts';
 
 // used to create fake backend
 import { fakeBackendProvider } from './_helpers';
@@ -20,6 +21,7 @@ import { QueryBloodComponent } from './QueryBlood/QueryBlood.component';
 import { DeliveryOrdersComponent } from './DeliveryOrders/DeliveryOrders.component';
 import { RequestBloodComponent } from './RequestBlood/RequestBlood.component';
 import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
+import { SummaryComponent } from './Summary/Summary.component';
 
 @NgModule({
     imports: [
@@ -28,6 +30,7 @@ import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
         ReactiveFormsModule,
         HttpClientModule,
         NgbModule,
+        ChartsModule,
         routing
     ],
     declarations: [
@@ -40,7 +43,8 @@ import { SearchBloodComponent } from './SearchBlood/SearchBlood.component';
         DeliveryOrdersComponent,
         QueryBloodComponent,
         RequestBloodComponent,
-        SearchBloodComponent
+        SearchBloodComponent,
+        SummaryComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

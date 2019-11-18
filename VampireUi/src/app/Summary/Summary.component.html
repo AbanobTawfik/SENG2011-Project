@@ -1,0 +1,29 @@
+<style>
+.spinner-center {
+  position: absolute;
+  left: 50%;
+  margin-left: -1rem;
+  top: 50%;
+}
+</style>
+
+<h1 class="mb-3">Summary</h1>
+<h5 class="my-3">Blood type supply levels</h5>
+<div>
+  <div class="d-block mb-3">
+    <canvas baseChart
+            [datasets]="barChartData"
+            [labels]="barChartLabels"
+            [options]="barChartOptions"
+            [legend]="barChartLegend"
+            [chartType]="barChartType">
+    </canvas>
+    <div *ngIf="loading" class="spinner-border text-secondary spinner-center" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  <label class="lb-sm">
+    * Data from the
+    <a href="https://www.donateblood.com.au/learn/about-blood">Australian Red Cross Blood Service</a>
+  </label>
+</div>
