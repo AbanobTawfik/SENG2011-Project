@@ -82,11 +82,20 @@ namespace VampireBackEnd.Controllers
                 this._vampireContext.bloodInventory.Remove(blood);
             }
             await this._vampireContext.SaveChangesAsync();
-            var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+            var bloodTypes = new string[] { "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+",
+                                            "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+",
+                                            "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+",
+                                            "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+", "O+",
+                                            "O-", "O-", "O-", "O-", "O-", "O-", "O-", "O-", "O-", "A+",
+                                            "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+",
+                                            "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+",
+                                            "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+", "A+",
+                                            "A-", "A-", "A-", "A-", "A-", "A-", "A-", "B+", "B+", "B+",
+                                            "B+", "B+", "B+", "B+", "B+", "B-", "B-", "AB+", "AB+", "AB-" };
             var rnd = new Random();
             for (var i = 0; i < 100; i++)
             {
-                int bloodTypeIndex = rnd.Next(8);
+                int bloodTypeIndex = rnd.Next(100);
                 var gen = new Random();
                 DateTime start = DateTime.Now.AddDays(-43);
                 int range = (DateTime.Today - start).Days;
