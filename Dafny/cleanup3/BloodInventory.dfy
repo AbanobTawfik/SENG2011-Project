@@ -1,6 +1,7 @@
 
 include "Blood.dfy"
 include "Query.dfy"
+include "Request.dfy"
 
 class BloodInventory
 {
@@ -87,7 +88,18 @@ class BloodInventory
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Modify Threshold
+    // Getters
+
+    method GetThreshold() returns (threshold: int)
+        requires Valid();
+        ensures  Valid();
+        ensures  threshold == this.threshold;
+    {
+        threshold := this.threshold;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Setters
 
     method ModifyThreshold(threshold: int)
         modifies this`threshold;
@@ -100,6 +112,34 @@ class BloodInventory
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    // Printing - because there's a little C in all of us
+
+    method Show()
+        requires Valid();
+        ensures  Valid();
+    {
+        print "==========================\n";
+        print "         Inventory        \n";
+        print "==========================\n";
+
+        var ts := [AP, BP, OP, ABP, AM, BM, OM, ABM];
+        var i := 0;
+        while i < |ts|
+        {
+            print ts[i], "\n";
+            var j := 0;
+            while j < inv[ts[i]].Length
+            {
+                print "\n";
+                inv[ts[i]][j].PrettyPrint();
+                j := j + 1;
+            }
+            print "--------------------------\n";
+            i := i + 1;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     // GetBloodTypeCount
 
     method GetBloodTypeCount(bloodType: BloodType) returns (count: int)
@@ -109,6 +149,33 @@ class BloodInventory
         ensures  count == inv[bloodType].Length;
     {
         return inv[bloodType].Length;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Adding Blood
+
+    method AddBlood(blood: Blood)
+        modifies this`inv;
+        requires Valid();
+        requires blood != null;
+        requires blood.Valid();
+        ensures  Valid();
+        ensures  inv[blood.GetBloodType()][..] == old(inv[blood.GetBloodType()][..]) + [blood];
+        ensures  fresh(inv[blood.GetBloodType()]);
+        // ensure other blood buckets are unchanged
+        ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t] == old(inv[t]);
+        ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t].Length == old(inv[t].Length);
+        ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t][..] == old(inv[t][..]);
+    {
+        var t := blood.GetBloodType();
+
+        var newBucket := new Blood[inv[t].Length + 1];
+        forall i | 0 <= i < inv[t].Length
+        {
+            newBucket[i] := inv[t][i];
+        }
+        newBucket[inv[t].Length] := blood;
+        inv := inv[t := newBucket];
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -156,33 +223,6 @@ class BloodInventory
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Adding Blood
-
-    method AddBlood(blood: Blood)
-        modifies this`inv;
-        requires Valid();
-        requires blood != null;
-        requires blood.Valid();
-        ensures  Valid();
-        ensures  inv[blood.GetBloodType()][..] == old(inv[blood.GetBloodType()][..]) + [blood];
-        ensures  fresh(inv[blood.GetBloodType()]);
-        // ensure other blood buckets are unchanged
-        ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t] == old(inv[t]);
-        ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t].Length == old(inv[t].Length);
-        ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t][..] == old(inv[t][..]);
-    {
-        var t := blood.GetBloodType();
-
-        var newBucket := new Blood[inv[t].Length + 1];
-        forall i | 0 <= i < inv[t].Length
-        {
-            newBucket[i] := inv[t][i];
-        }
-        newBucket[inv[t].Length] := blood;
-        inv := inv[t := newBucket];
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
     // Remove Blood
 
     method RemoveBlood(bloodType: BloodType) returns (blood: Blood)
@@ -211,6 +251,64 @@ class BloodInventory
         }
         inv := inv[t := newBucket];
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Request Fulfilment
+
+    // NOTE:    It is assumed that Vampire staff will remove expired blood daily
+    //          from the inventory. So, the inventory will never contain expired
+    //          blood.
+    method RequestBloodType(req: Request) returns (blood: array<Blood>)
+        modifies this`inv;
+        requires Valid();
+        requires validBloodType(req.bloodType);
+        requires 0 < req.volume <= inv[req.bloodType].Length;
+        ensures  Valid();
+        ensures  blood != null;
+        ensures  fresh(blood);
+        ensures  blood[..] == old(inv[req.bloodType][..req.volume]);
+        ensures  inv[req.bloodType][..] == old(inv[req.bloodType][req.volume..]);
+        ensures  fresh(inv[req.bloodType]);
+        // ensure other blood buckets are unchanged
+        ensures  forall t | validBloodType(t) && t != req.bloodType ::
+                     inv[t] == old(inv[t]) &&
+                     inv[t].Length == old(inv[t].Length) &&
+                     inv[t][..] == old(inv[t][..]);
+    {
+        var t := req.bloodType;
+
+        blood := new Blood[req.volume];
+        var newBucket := new Blood[inv[t].Length - req.volume];
+        forall i | 0 <= i < req.volume
+        {
+            blood[i] := inv[t][i];
+        }
+        forall i | req.volume <= i < inv[t].Length
+        {
+            newBucket[i - req.volume] := inv[t][i];
+        }
+        inv := inv[t := newBucket];
+    }
+
+    // method Request(request: array<Request>)
+    //     // modifies this`inv;
+    //     requires Valid();
+    //     requires request != null;
+    //     ensures  Valid();
+    // {
+    //     var i := 0;
+    //     while i < request.Length
+    //         invariant 0 <= i <= request.Length;
+    //     {
+    //         var count := 0;
+    //         while count < request[i].volume
+    //             invariant 0 <= count <= request[i].volume;
+    //         {
+    //             count := count + 1;
+    //         }
+    //         i := i + 1;
+    //     }
+    // }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

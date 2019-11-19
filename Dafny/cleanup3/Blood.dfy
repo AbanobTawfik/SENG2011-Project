@@ -71,9 +71,9 @@ class Blood
         requires Valid();
         ensures  Valid();
     {
-        print "Blood from:  ", donorName,   "\n",
-              "Received on: ", dateDonated, "\n",
-              "Blood type:  ", bloodType,   "\n";
+        print "Blood from:  ",     donorName,   "\n",
+              "Received on: Day ", dateDonated, "\n",
+              "Blood type:  ",     bloodType,   "\n";
     }
 
 } // end of Blood class
