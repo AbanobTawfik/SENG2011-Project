@@ -164,16 +164,16 @@ class BloodInventory
         requires blood != null;
         requires blood.Valid();
         ensures  Valid();
-        // ensure only one blood bucket is changed
         ensures  inv[blood.GetBloodType()][..] == old(inv[blood.GetBloodType()][..]) + [blood];
         ensures  fresh(inv[blood.GetBloodType()]);
+        // ensure other blood buckets are unchanged
         ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t] == old(inv[t]);
         ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t].Length == old(inv[t].Length);
         ensures  forall t | validBloodType(t) && t != blood.GetBloodType() :: inv[t][..] == old(inv[t][..]);
     {
         var t := blood.GetBloodType();
 
-        var newBucket: array<Blood> := new Blood[inv[t].Length + 1];
+        var newBucket := new Blood[inv[t].Length + 1];
         forall i | 0 <= i < inv[t].Length
         {
             newBucket[i] := inv[t][i];
@@ -185,7 +185,32 @@ class BloodInventory
     ////////////////////////////////////////////////////////////////////////////
     // Remove Blood
 
+    method RemoveBlood(bloodType: BloodType) returns (blood: Blood)
+        modifies this`inv;
+        requires Valid();
+        requires inv[bloodType].Length > 0;
+        ensures  Valid();
+        ensures  blood != null;
+        ensures  blood.Valid();
+        ensures  blood.GetBloodType() == bloodType;
+        ensures  inv[bloodType][..] == old(inv[bloodType][1..]);
+        ensures  fresh(inv[bloodType]);
+        // ensure other blood buckets are unchanged
+        ensures  forall t | validBloodType(t) && t != blood.GetBloodType() ::
+                     inv[t] == old(inv[t]) &&
+                     inv[t].Length == old(inv[t].Length) &&
+                     inv[t][..] == old(inv[t][..]);
+    {
+        var t := bloodType;
+        blood := inv[t][0];
 
+        var newBucket := new Blood[inv[t].Length - 1];
+        forall i | 1 <= i < inv[t].Length
+        {
+            newBucket[i - 1] := inv[t][i];
+        }
+        inv := inv[t := newBucket];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -232,103 +257,3 @@ lemma LemmaA2(a: multiset<Blood>, b: multiset<Blood>, t: BloodType)
 {
 
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-method TestRemoveExpiredBlood1()
-{
-    var inv := new BloodInventory();
-    var amt;
-
-    var blood1 := new Blood(AP, "Bob",      0, "Hospital A");
-    inv.AddBlood(blood1);
-    var blood2 := new Blood(AP, "Rason",   12, "Hospital B");
-    inv.AddBlood(blood2);
-    var blood3 := new Blood(AP, "Michael", 24, "Hospital C");
-    inv.AddBlood(blood3);
-
-    amt := inv.GetBloodTypeCount(AP);
-    assert amt == 3;
-
-    inv.RemoveExpiredBlood(60);
-    amt := inv.GetBloodTypeCount(AP);
-    assert amt == 1;
-}
-
-// method TestRemoveExpiredBlood2()
-// {
-//     var inv := new BloodInventory();
-//     var amt;
-
-//     var blood1 := new Blood(AP, "Bob",     0, "Hospital A");
-//     inv.AddBlood(blood1);
-//     var blood2 := new Blood(AP, "Rason",   1, "Hospital B");
-//     inv.AddBlood(blood2);
-//     var blood3 := new Blood(AP, "Michael", 2, "Hospital C");
-//     inv.AddBlood(blood3);
-
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 3;
-
-//     inv.RemoveExpiredBlood(50);
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 0;
-// }
-
-// method TestRemoveExpiredBlood3()
-// {
-//     var inv := new BloodInventory();
-//     var amt;
-
-//     var blood1 := new Blood(AP, "Bob",     0, "Hospital A");
-//     inv.AddBlood(blood1);
-//     var blood2 := new Blood(AP, "Rason",   1, "Hospital B");
-//     inv.AddBlood(blood2);
-//     var blood3 := new Blood(AP, "Michael", 2, "Hospital C");
-//     inv.AddBlood(blood3);
-
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 3;
-
-//     inv.RemoveExpiredBlood(3);
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 3;
-// }
-
-////////////////////////////////////////////////////////////////////////////////
-
-// method TestAddBlood()
-// {
-//     var inv := new BloodInventory();
-//     var amt;
-    
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 0;
-//     amt := inv.GetBloodTypeCount(AM);
-//     assert amt == 0;
-
-//     var blood1 := new Blood(AP, "Bob",  5, "Prince of Wales Hospital");
-//     inv.AddBlood(blood1);
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(AM);
-//     assert amt == 0;
-
-//     var blood2 := new Blood(BP, "Michael", 2, "Royal North Shore Hospital");
-//     inv.AddBlood(blood2);
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(BP);
-//     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(AM);
-//     assert amt == 0;
-
-//     var blood3 := new Blood(AP, "Lucas", 10, "Westmead Hospital");
-//     inv.AddBlood(blood3);
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 2;
-//     amt := inv.GetBloodTypeCount(BP);
-//     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(AM);
-//     assert amt == 0;
-// }
