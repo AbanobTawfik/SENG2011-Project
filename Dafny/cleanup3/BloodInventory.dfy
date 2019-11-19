@@ -112,7 +112,7 @@ class BloodInventory
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Printing - because there's a little C in all of us
+    // Printing - because there's a little bit of C in all of us
 
     method Show()
         requires Valid();
@@ -290,22 +290,59 @@ class BloodInventory
         inv := inv[t := newBucket];
     }
 
-    // method Request(request: array<Request>)
-    //     // modifies this`inv;
+    // not quite working yet...
+    // method DoRequest(req: array<Request>) returns (res: map<BloodType, array<Blood>>)
+    //     modifies this`inv;
     //     requires Valid();
-    //     requires request != null;
+    //     requires req != null;
+    //     requires forall i | 0 <= i < req.Length ::
+    //                  validBloodType(req[i].bloodType) &&
+    //                  0 < req[i].volume <= inv[req[i].bloodType].Length;
+    //     requires forall i, j | 0 <= i < j < req.Length :: req[i].bloodType != req[j].bloodType;
     //     ensures  Valid();
+    //     ensures  forall i | 0 <= i < req.Length ::
+    //                  req[i].bloodType in res &&
+    //                  res[req[i].bloodType] != null &&
+    //                  fresh(inv[req[i].bloodType]) &&
+    //                  res[req[i].bloodType][..] == old(inv[req[i].bloodType][..req[i].volume]) &&
+    //                  inv[req[i].bloodType][..] == old(inv[req[i].bloodType][req[i].volume..]) &&
+    //                  fresh(res[req[i].bloodType]);
+    //     // ensure other blood buckets are unchanged
+    //     ensures  forall t | validBloodType(t) && (forall i | 0 <= i < req.Length :: req[i].bloodType != t) ::
+    //                  inv[t] == old(inv[t]) &&
+    //                  inv[t].Length == old(inv[t].Length) &&
+    //                  inv[t][..] == old(inv[t][..]);
     // {
+    //     res := map[];
+
     //     var i := 0;
-    //     while i < request.Length
-    //         invariant 0 <= i <= request.Length;
+    //     while i < req.Length
+    //         invariant 0 <= i <= req.Length;
+    //         invariant Valid(); 
+    //         invariant req != null;
+    //         invariant req[..] == old(req[..]);
+    //         invariant forall j | 0 <= j < req.Length ::
+    //                       validBloodType(req[j].bloodType) &&
+    //                       0 < req[j].volume <= old(inv[req[j].bloodType].Length);
+    //         invariant forall j, k | 0 <= j < k < req.Length :: req[j].bloodType != req[k].bloodType;
+    //         invariant forall j | 0 <= j < i ::
+    //                       req[j].bloodType in res &&
+    //                       res[req[j].bloodType] != null &&
+    //                       fresh(inv[req[j].bloodType]) &&
+    //                       res[req[j].bloodType][..] == old(inv[req[j].bloodType][..req[j].volume]) &&
+    //                       inv[req[j].bloodType][..] == old(inv[req[j].bloodType][req[j].volume..]) &&
+    //                       fresh(res[req[j].bloodType]);
+    //         invariant forall j | i <= j < req.Length ::
+    //                       0 < req[j].volume <= inv[req[j].bloodType].Length;
+    //         // ensure other blood buckets are unchanged
+    //         invariant forall t | validBloodType(t) && (forall j | 0 <= j < req.Length :: req[j].bloodType != t) ::
+    //                       inv[t] == old(inv[t]) &&
+    //                       inv[t].Length == old(inv[t].Length) &&
+    //                       inv[t][..] == old(inv[t][..]);
     //     {
-    //         var count := 0;
-    //         while count < request[i].volume
-    //             invariant 0 <= count <= request[i].volume;
-    //         {
-    //             count := count + 1;
-    //         }
+    //         var blood := RequestBloodType(req[i]);
+    //         assert blood[..] == old(inv[req[i].bloodType][..req[i].volume]);
+    //         res := res[req[i].bloodType := blood];
     //         i := i + 1;
     //     }
     // }
