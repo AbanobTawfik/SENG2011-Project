@@ -1,6 +1,8 @@
 
+include "Array.dfy"
 include "Blood.dfy"
 include "Query.dfy"
+include "Request.dfy"
 include "Search.dfy"
 
 class BloodInventory
@@ -19,8 +21,8 @@ class BloodInventory
     {
         threshold >= 0    &&
         inventory != null &&
-        forall i :: 0 <= i < inventory.Length ==> (inventory[i] != null &&
-                                                   inventory[i].Valid())
+        forall i | 0 <= i < inventory.Length :: (inventory[i] != null &&
+                                                 inventory[i].Valid())
     }
 
     constructor()
@@ -132,7 +134,57 @@ class BloodInventory
         blood := RemoveBloodAtIndex(index);
     }
 
+    // method RemoveBloodBatch(bloodType: string, amount: int) returns (batch: array<Blood>)
+    //     modifies this`inventory;
+    //     requires Valid();
+    //     requires validBloodType(bloodType);
+    //     requires amount > 0;
+    //     requires countBloodByType(inventory, bloodType) > amount;
+    //     ensures  Valid();
+    //     ensures  batch != null;
+    //     ensures  forall i | 0 <= i < batch.Length :: batch[i] != null;
+    //     ensures  forall i | 0 <= i < batch.Length :: batch[i].GetBloodType() == bloodType;
+    //     ensures  multiset(inventory[..] + batch[..]) == multiset(old(inventory[..]));
+    // {
+    //     batch := new Blood[amount];
 
+    //     var i := 0;
+    //     while i < amount
+    //         invariant 0 <= i <= amount;
+    //         invariant batch != null;
+    //         invariant Valid();
+    //         invariant forall j | 0 <= j < i :: batch[j] != null;
+    //         invariant forall j | 0 <= j < i :: batch[j].GetBloodType() == bloodType;
+    //         invariant multiset(inventory[..] + batch[..i]) == multiset(old(inventory[..]));
+    //     {
+    //         batch[i] := RemoveBlood(bloodType);
+    //         i := i + 1;
+    //     }
+    // }
+
+    // method Request(batchRequest: array<request>) returns (blood: array<Blood>)
+    //     // modifies this`inventory;
+    //     requires Valid();
+    //     requires batchRequest != null;
+    //     requires batchRequest.Length > 0;
+    //     requires forall i | 0 <= i < batchRequest.Length :: validBloodType(batchRequest[i].bloodType) && batchRequest[i].volume > 0;
+    //     ensures  Valid();
+    // {
+    //     var i := 0;
+    //     while i < batchRequest.Length
+    //         invariant 0 <= i <= batchRequest.Length;
+    //     {
+    //         var count := 0;
+    //         while count < batchRequest[i].volume
+    //             invariant 0 <= count <= batchRequest[i].volume
+    //         {
+    //             count := count + 1;
+    //         }
+    //         i := i + 1;
+    //     }
+    // }
+
+    
 } // end of BloodInventory class
 
 ////////////////////////////////////////////////////////////////////////////////

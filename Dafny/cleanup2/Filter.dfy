@@ -14,6 +14,8 @@ method Filter<T>(a: array<T>, test: T -> bool) returns (b: array<T>)
     requires a != null;
     requires forall i | 0 <= i < a.Length :: test.requires(a[i]);
     ensures  b != null;
+    ensures  b != a;
+    ensures  fresh(b);
     ensures  b.Length == Matches(a, a.Length, test); // (unnecessary; for performance)
     ensures  b[..] == VerifyFilter(a, a.Length, test);
     ensures  multiset(b[..]) <= multiset(a[..]);
@@ -53,12 +55,7 @@ method Filter<T>(a: array<T>, test: T -> bool) returns (b: array<T>)
         i := i + 1;
     }
 
-    assert multiset(b[..j]) <= multiset(a[..a.Length]);
     assert a[..a.Length] == a[..];
-    assert multiset(b[..j]) <= multiset(a[..]);
-    assert j == count;
-    assert b[..count] == b[..];
-    assert multiset(b[..]) <= multiset(a[..]);
 }
 
 // Verifies the number of matches given a specified test and array [0..end).
