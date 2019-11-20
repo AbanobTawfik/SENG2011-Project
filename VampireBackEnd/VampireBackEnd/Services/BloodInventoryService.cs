@@ -355,7 +355,68 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
+
+        public async Task<UpdatedBloodInventoryReturn> RemoveExpiredWithMap()
+        {
+
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        public Blood[] GetNonExpiredBlood(Blood[] inventory)
+        {
+            return Filter(inventory, IsExpired);
+        }
+
+        public Blood[] Filter(Blood[] inventory, Func<Blood, bool> test)
+        {
+            var i = 0;
+            var count = 0;
+            while (i < inventory.Length)
+            {
+                if (test(inventory[i]))
+                {
+                    count++;
+                }
+                i++;
+            }
+            var ret = new Blood[count];
+            i = 0;
+            var j = 0;
+            while(i < inventory.Length)
+            {
+                if (test(inventory[i]))
+                {
+                    ret[j] = inventory[i];
+                    j++;
+                }
+                i++;
+            }
+            return ret;
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // Helpers //
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        public void RemoveExpiredBloodByType(string bloodType)
+        {
+
+        }
+
+        public bool IsExpired(Blood blood)
+        {
+            DateTime bloodDate;
+            var check = DateTime.TryParse(blood.dateDonated, out bloodDate);
+            if (check)
+            {
+                if (!(DateTime.Now.Subtract(DateTime.Parse(blood.dateDonated)).TotalDays >= 43))
+                {
+                    return false;
+                }
+                return true;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
 
         public Blood[] ConvertDictionaryToArray(Dictionary<string, Blood[]> inventory)
