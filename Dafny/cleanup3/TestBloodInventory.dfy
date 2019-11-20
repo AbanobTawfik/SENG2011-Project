@@ -163,7 +163,7 @@ include "BloodInventory.dfy"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Blackbox tests for RequestOneType
-// Note: This test may take a while to verify.
+// Note: This test took 8-9 minutes to verify on CSE Dafny 1.9.7.
 
 // method TestRequestOneType()
 // {
