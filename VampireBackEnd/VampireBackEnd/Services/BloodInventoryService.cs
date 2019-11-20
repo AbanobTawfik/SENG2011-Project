@@ -308,5 +308,117 @@ namespace VampireBackEnd.Services
         {
             this._bloodInventory = bloodInventory;
         }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+                                             // NEW MAP CODE //
+        public async Task<int> GetBloodTypeCount(string bloodType)
+        {
+            if(_bloodInventory != null)
+            {
+                var bloodInventoryAsArray = await _bloodInventory.bloodInventory.ToArrayAsync();
+                var bloodInventoryAsMap = convertArrayToDictionary(bloodInventoryAsArray);
+                if (bloodInventoryAsMap.ContainsKey(bloodType))
+                {
+                    return bloodInventoryAsMap[bloodType].Length;
+                }
+                else
+                {
+                    return -1;
+                }
+
+            }
+            return -1;
+        }
+
+        public async Task<UpdatedBloodInventoryReturn> AddBloodWithMap(Blood blood)
+        {
+            if (_bloodInventory != null)
+            {
+                // dafny logic
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+                var bloodInventoryAsMap = convertArrayToDictionary(oldBloodArray);
+                var bloodType = blood.bloodType;
+                var newBucket = new Blood[bloodInventoryAsMap[bloodType].Length + 1];
+                for(var i = 0; i < bloodInventoryAsMap[bloodType].Length; i++)
+                {
+                    newBucket[i] = bloodInventoryAsMap[bloodType][i];
+                }
+                newBucket[bloodInventoryAsMap[bloodType].Length] = blood;
+                bloodInventoryAsMap[bloodType] = newBucket;
+                var addedToInventory = ConvertDictionaryToArray(bloodInventoryAsMap);
+                await this._bloodInventory.bloodInventory.AddAsync(blood);
+                await this._bloodInventory.SaveChangesAsync();
+                return new UpdatedBloodInventoryReturn()
+                {
+                    oldBloodInventory = oldBloodArray,
+                    newBloodInventory = addedToInventory
+                };
+            }
+            return null;
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        public Blood[] ConvertDictionaryToArray(Dictionary<string, Blood[]> inventory)
+        {
+            if(inventory == null)
+            {
+                return null;
+            }
+            else
+            {
+                var returnInventory = new Blood[0];
+                foreach(var entry in inventory)
+                {
+                    foreach(var blood in entry.Value)
+                    {
+                        returnInventory = AddBloodToArray(returnInventory, blood);
+                    }
+                }
+                return returnInventory;
+            }
+        }
+
+        public Dictionary<string, Blood[]> convertArrayToDictionary(Blood[] inventory)
+        {
+            if(inventory == null)
+            {
+                return null;
+            }
+            else
+            {
+                Dictionary<string, Blood[]> inventoryReturn = new Dictionary<string, Blood[]>();
+                var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+                foreach(var bloodType in bloodTypes)
+                {
+                    inventoryReturn.Add(bloodType, new Blood[0]);
+                }
+                foreach (var blood in inventory)
+                {
+                    if (inventoryReturn.ContainsKey(blood.bloodType))
+                    {
+                        inventoryReturn[blood.bloodType] = AddBloodToArray(inventoryReturn[blood.bloodType], blood);
+                    }
+                }
+                return inventoryReturn;
+            }
+        }
+
+        public Blood[] AddBloodToArray(Blood[] old, Blood adding)
+        {
+            if(adding == null)
+            {
+                return old;
+            }
+            else
+            {
+                var newBlood = new Blood[old.Length + 1];
+                for(var i = 0; i < old.Length; i++)
+                {
+                    newBlood[i] = old[i];
+                }
+                newBlood[old.Length] = adding;
+                return newBlood;
+            }
+        }
     }
 }
