@@ -70,7 +70,7 @@ namespace VampireBackEnd.Services
                     await this._bloodInventory.SaveChangesAsync();
                     // check for alert
                     var bloodType = batchRequest[i].bloodType;
-                    
+
                     var bloodCount = this._bloodInventory.bloodInventory.Where(x => x.bloodType == bloodType).Count();
                     if (bloodCount < thresholdValue)
                     {
@@ -209,7 +209,7 @@ namespace VampireBackEnd.Services
             if (_bloodInventory != null)
             {
                 var alertMessages = new List<string>();
-                var bloodInventory = await  this._bloodInventory.bloodInventory.ToArrayAsync();
+                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
                 var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
                 var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
                 var thresholdValue = threshold.settingValue;
@@ -309,10 +309,10 @@ namespace VampireBackEnd.Services
             this._bloodInventory = bloodInventory;
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////
-                                             // NEW MAP CODE //
+        // NEW MAP CODE //
         public async Task<int> GetBloodTypeCount(string bloodType)
         {
-            if(_bloodInventory != null)
+            if (_bloodInventory != null)
             {
                 var bloodInventoryAsArray = await _bloodInventory.bloodInventory.ToArrayAsync();
                 var bloodInventoryAsMap = convertArrayToDictionary(bloodInventoryAsArray);
@@ -338,7 +338,7 @@ namespace VampireBackEnd.Services
                 var bloodInventoryAsMap = convertArrayToDictionary(oldBloodArray);
                 var bloodType = blood.bloodType;
                 var newBucket = new Blood[bloodInventoryAsMap[bloodType].Length + 1];
-                for(var i = 0; i < bloodInventoryAsMap[bloodType].Length; i++)
+                for (var i = 0; i < bloodInventoryAsMap[bloodType].Length; i++)
                 {
                     newBucket[i] = bloodInventoryAsMap[bloodType][i];
                 }
@@ -358,7 +358,33 @@ namespace VampireBackEnd.Services
 
         public async Task<UpdatedBloodInventoryReturn> RemoveExpiredWithMap()
         {
-
+            if (_bloodInventory != null)
+            {
+                var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+                var bloodInventoryAsMap = convertArrayToDictionary(oldBloodArray);
+                foreach (var bloodType in bloodTypes)
+                {
+                    bloodInventoryAsMap[bloodType] = GetNonExpiredBlood(bloodInventoryAsMap[bloodType]);
+                }
+                var newInventory = ConvertDictionaryToArray(bloodInventoryAsMap);
+                // very reckless to do would never reccommend dropping db and repopulating in a commonly used end-point
+                foreach(var blood in this._bloodInventory.bloodInventory)
+                {
+                    this._bloodInventory.bloodInventory.Remove(blood);
+                }
+                foreach(var blood in newInventory)
+                {
+                    await this._bloodInventory.bloodInventory.AddAsync(blood);
+                }
+                await this._bloodInventory.SaveChangesAsync();
+                return new UpdatedBloodInventoryReturn()
+                {
+                    oldBloodInventory = oldBloodArray,
+                    newBloodInventory = newInventory
+                };
+            }
+            return null;
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////
         public Blood[] GetNonExpiredBlood(Blood[] inventory)
@@ -381,7 +407,7 @@ namespace VampireBackEnd.Services
             var ret = new Blood[count];
             i = 0;
             var j = 0;
-            while(i < inventory.Length)
+            while (i < inventory.Length)
             {
                 if (test(inventory[i]))
                 {
@@ -395,9 +421,9 @@ namespace VampireBackEnd.Services
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Helpers //
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        public void RemoveExpiredBloodByType(string bloodType)
+        public Blood[] RemoveExpiredBloodByType(Blood[] inventory)
         {
-
+            return GetNonExpiredBlood(inventory);
         }
 
         public bool IsExpired(Blood blood)
@@ -421,16 +447,16 @@ namespace VampireBackEnd.Services
 
         public Blood[] ConvertDictionaryToArray(Dictionary<string, Blood[]> inventory)
         {
-            if(inventory == null)
+            if (inventory == null)
             {
                 return null;
             }
             else
             {
                 var returnInventory = new Blood[0];
-                foreach(var entry in inventory)
+                foreach (var entry in inventory)
                 {
-                    foreach(var blood in entry.Value)
+                    foreach (var blood in entry.Value)
                     {
                         returnInventory = AddBloodToArray(returnInventory, blood);
                     }
@@ -441,7 +467,7 @@ namespace VampireBackEnd.Services
 
         public Dictionary<string, Blood[]> convertArrayToDictionary(Blood[] inventory)
         {
-            if(inventory == null)
+            if (inventory == null)
             {
                 return null;
             }
@@ -449,7 +475,7 @@ namespace VampireBackEnd.Services
             {
                 Dictionary<string, Blood[]> inventoryReturn = new Dictionary<string, Blood[]>();
                 var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
-                foreach(var bloodType in bloodTypes)
+                foreach (var bloodType in bloodTypes)
                 {
                     inventoryReturn.Add(bloodType, new Blood[0]);
                 }
@@ -466,14 +492,14 @@ namespace VampireBackEnd.Services
 
         public Blood[] AddBloodToArray(Blood[] old, Blood adding)
         {
-            if(adding == null)
+            if (adding == null)
             {
                 return old;
             }
             else
             {
                 var newBlood = new Blood[old.Length + 1];
-                for(var i = 0; i < old.Length; i++)
+                for (var i = 0; i < old.Length; i++)
                 {
                     newBlood[i] = old[i];
                 }
