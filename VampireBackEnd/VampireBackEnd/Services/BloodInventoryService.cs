@@ -11,29 +11,29 @@ namespace VampireBackEnd.Services
     {
         private VampireContext _bloodInventory = null;
 
-        public async Task<UpdatedBloodInventoryReturn> AddBlood(Blood blood)
-        {
-            if (_bloodInventory != null)
-            {
-                // dafny logic
-                var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
-                // check the method its the same as the dafny logic
-                var addedToInventory = new Blood[oldBloodArray.Length + 1];
-                for (var i = 0; i < oldBloodArray.Length; i++)
-                {
-                    addedToInventory[i] = oldBloodArray[i];
-                }
-                addedToInventory[oldBloodArray.Length] = blood;
-                this._bloodInventory.bloodInventory.Add(blood);
-                await this._bloodInventory.SaveChangesAsync();
-                return new UpdatedBloodInventoryReturn()
-                {
-                    oldBloodInventory = oldBloodArray,
-                    newBloodInventory = addedToInventory
-                };
-            }
-            return null;
-        }
+        //public async Task<UpdatedBloodInventoryReturn> AddBlood(Blood blood)
+        //{
+        //    if (_bloodInventory != null)
+        //    {
+        //        // dafny logic
+        //        var oldBloodArray = this._bloodInventory.bloodInventory.ToArray();
+        //        // check the method its the same as the dafny logic
+        //        var addedToInventory = new Blood[oldBloodArray.Length + 1];
+        //        for (var i = 0; i < oldBloodArray.Length; i++)
+        //        {
+        //            addedToInventory[i] = oldBloodArray[i];
+        //        }
+        //        addedToInventory[oldBloodArray.Length] = blood;
+        //        this._bloodInventory.bloodInventory.Add(blood);
+        //        await this._bloodInventory.SaveChangesAsync();
+        //        return new UpdatedBloodInventoryReturn()
+        //        {
+        //            oldBloodInventory = oldBloodArray,
+        //            newBloodInventory = addedToInventory
+        //        };
+        //    }
+        //    return null;
+        //}
 
         public async Task<Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>> Request(Request[] batchRequest)
         {
@@ -255,54 +255,54 @@ namespace VampireBackEnd.Services
             return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
         }
 
-        public async Task<UpdatedBloodInventoryReturn> RemoveExpired()
-        {
-            if (_bloodInventory != null)
-            {
-                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
-                var updatedInventory = new Blood[bloodInventory.Length];
-                var i = 0; // index for old array
-                var j = 0; // index for new array
-                while (i < bloodInventory.Length)
-                {
-                    DateTime bloodDate;
-                    var check = DateTime.TryParse(bloodInventory[i].dateDonated, out bloodDate);
-                    if (check)
-                    {
-                        if (!(DateTime.Now.Subtract(DateTime.Parse(bloodInventory[i].dateDonated)).TotalDays >= 43))
-                        {
-                            updatedInventory[j] = bloodInventory[i];
-                            j++;
-                        }
-                        else
-                        {
-                            // remove from db aswell
-                            this._bloodInventory.bloodInventory.Remove(bloodInventory[i]);
-                        }
-                    }
-                    else
-                    {
-                        // remove from db aswell
-                        this._bloodInventory.bloodInventory.Remove(bloodInventory[i]);
-                    }
-                    i++;
-                }
-                var finalUpdatedInventory = new Blood[j];
-                for (var k = 0; k < j; k++)
-                {
-                    finalUpdatedInventory[k] = updatedInventory[k];
-                    k++;
-                }
-                await _bloodInventory.SaveChangesAsync();
-                var oldAndNewBloodInventory = new UpdatedBloodInventoryReturn()
-                {
-                    oldBloodInventory = bloodInventory,
-                    newBloodInventory = finalUpdatedInventory
-                };
-                return oldAndNewBloodInventory;
-            }
-            return null;
-        }
+        //public async Task<UpdatedBloodInventoryReturn> RemoveExpired()
+        //{
+        //    if (_bloodInventory != null)
+        //    {
+        //        var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
+        //        var updatedInventory = new Blood[bloodInventory.Length];
+        //        var i = 0; // index for old array
+        //        var j = 0; // index for new array
+        //        while (i < bloodInventory.Length)
+        //        {
+        //            DateTime bloodDate;
+        //            var check = DateTime.TryParse(bloodInventory[i].dateDonated, out bloodDate);
+        //            if (check)
+        //            {
+        //                if (!(DateTime.Now.Subtract(DateTime.Parse(bloodInventory[i].dateDonated)).TotalDays >= 43))
+        //                {
+        //                    updatedInventory[j] = bloodInventory[i];
+        //                    j++;
+        //                }
+        //                else
+        //                {
+        //                    // remove from db aswell
+        //                    this._bloodInventory.bloodInventory.Remove(bloodInventory[i]);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                // remove from db aswell
+        //                this._bloodInventory.bloodInventory.Remove(bloodInventory[i]);
+        //            }
+        //            i++;
+        //        }
+        //        var finalUpdatedInventory = new Blood[j];
+        //        for (var k = 0; k < j; k++)
+        //        {
+        //            finalUpdatedInventory[k] = updatedInventory[k];
+        //            k++;
+        //        }
+        //        await _bloodInventory.SaveChangesAsync();
+        //        var oldAndNewBloodInventory = new UpdatedBloodInventoryReturn()
+        //        {
+        //            oldBloodInventory = bloodInventory,
+        //            newBloodInventory = finalUpdatedInventory
+        //        };
+        //        return oldAndNewBloodInventory;
+        //    }
+        //    return null;
+        //}
 
         public void setDbContext(VampireContext bloodInventory)
         {
@@ -329,7 +329,7 @@ namespace VampireBackEnd.Services
             return -1;
         }
 
-        public async Task<UpdatedBloodInventoryReturn> AddBloodWithMap(Blood blood)
+        public async Task<UpdatedBloodInventoryReturn> AddBlood(Blood blood)
         {
             if (_bloodInventory != null)
             {
@@ -356,7 +356,7 @@ namespace VampireBackEnd.Services
             return null;
         }
 
-        public async Task<UpdatedBloodInventoryReturn> RemoveExpiredWithMap()
+        public async Task<UpdatedBloodInventoryReturn> RemoveExpired()
         {
             if (_bloodInventory != null)
             {
@@ -371,11 +371,10 @@ namespace VampireBackEnd.Services
                 // very reckless to do would never reccommend dropping db and repopulating in a commonly used end-point
                 foreach(var blood in this._bloodInventory.bloodInventory)
                 {
-                    this._bloodInventory.bloodInventory.Remove(blood);
-                }
-                foreach(var blood in newInventory)
-                {
-                    await this._bloodInventory.bloodInventory.AddAsync(blood);
+                    if (!IsExpired(blood))
+                    {
+                        this._bloodInventory.bloodInventory.Remove(blood);
+                    }
                 }
                 await this._bloodInventory.SaveChangesAsync();
                 return new UpdatedBloodInventoryReturn()
@@ -434,13 +433,13 @@ namespace VampireBackEnd.Services
             {
                 if (!(DateTime.Now.Subtract(DateTime.Parse(blood.dateDonated)).TotalDays >= 43))
                 {
-                    return false;
+                    return true;
                 }
-                return true;
+                return false;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
