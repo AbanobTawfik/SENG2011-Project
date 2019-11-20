@@ -162,9 +162,10 @@ include "BloodInventory.dfy"
 // }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Blackbox tests for RequestBloodType
+// Blackbox tests for RequestOneType
+// Note: This test may take a while to verify.
 
-// method TestRequestBloodType()
+// method TestRequestOneType()
 // {
 //     var inv := new BloodInventory();
 //     var amt;
@@ -185,7 +186,7 @@ include "BloodInventory.dfy"
 //     inv.AddBlood(blood7);
 
 //     var req1 := Request(AP, 2);
-//     var res1 := inv.RequestBloodType(req1);
+//     var res1 := inv.RequestOneType(req1);
 //     assert res1[..] == [blood1, blood2];
 
 //     amt := inv.GetBloodTypeCount(AP);
@@ -196,7 +197,7 @@ include "BloodInventory.dfy"
 //     assert amt == 0;
 
 //     var req2 := Request(BP, 1);
-//     var res2 := inv.RequestBloodType(req2);
+//     var res2 := inv.RequestOneType(req2);
 //     assert res2[..] == [blood4];
 
 //     amt := inv.GetBloodTypeCount(AP);
@@ -207,7 +208,7 @@ include "BloodInventory.dfy"
 //     assert amt == 0;
 
 //     var req3 := Request(BP, 3);
-//     var res3 := inv.RequestBloodType(req3);
+//     var res3 := inv.RequestOneType(req3);
 //     assert res3[..] == [blood5, blood6, blood7];
 
 //     amt := inv.GetBloodTypeCount(AP);
@@ -219,5 +220,5 @@ include "BloodInventory.dfy"
 // }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Blackbox tests for Request
+// Blackbox tests for RequestBatch
 
