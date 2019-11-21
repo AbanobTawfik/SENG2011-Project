@@ -61,7 +61,7 @@ namespace VampireBackEnd.Controllers
         [Route("FixAlerts")]
         public async Task<ActionResult> FixAlerts()
         {
-            var updatedInventoryAndMessages = await _bloodInventoryService.FixAlerts();
+            var updatedInventoryAndMessages = await _bloodInventoryService.FixLowSupply();
             return Ok(updatedInventoryAndMessages);
         }
 
