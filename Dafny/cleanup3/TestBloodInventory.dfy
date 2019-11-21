@@ -322,7 +322,7 @@ include "BloodInventory.dfy"
 //     assert invblood[..] == [];
 //     invblood := inv.GetBloodOfType(OP);
 //     assert invblood[..] == [];
-}
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Blackbox tests for RequestManyTypes                                        //
