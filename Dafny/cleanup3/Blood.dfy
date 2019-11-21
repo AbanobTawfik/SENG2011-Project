@@ -14,12 +14,9 @@ class Blood
         validBloodType(bloodType)
     }
 
-    constructor(bloodType:        BloodType,
-                donorName:        string,
-                dateDonated:      int,
-                locationAcquired: string)
+    constructor(bloodType: BloodType, donorName: string, dateDonated: int, locationAcquired: string)
         modifies this;
-        // requires validBloodType(bloodType);
+        requires validBloodType(bloodType);
         ensures  Valid();
         ensures  this.bloodType == bloodType;
         ensures  this.donorName == donorName;
@@ -75,7 +72,7 @@ class Blood
 
 method TestBlood()
 {
-    var bobsBlood := new Blood(AM, "Bob", 12, "Prince Wales Hospital");
+    var bobsBlood := new Blood(AM, "Bob", 12, "Prince of Wales Hospital");
     
     assert bobsBlood.GetBloodType() == AM;
     assert bobsBlood.GetDonorName() == "Bob";
