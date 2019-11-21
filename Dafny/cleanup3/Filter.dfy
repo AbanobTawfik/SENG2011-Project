@@ -44,11 +44,64 @@ method Filter<T>(a: array<T>, test: T -> bool) returns (b: array<T>)
         invariant multiset(b[..j]) <= multiset(a[..i]);
     {
         // Help prove that j remains within bounds, using proof by contradiction
-        assert forall x, y | 0 <= x <= a.Length && 0 <= y <= a.Length ::
-            Matches(a, y, test) > Matches(a, x, test) ==> y > x;
-        assert Matches(a, i + 1, test) > Matches(a, a.Length, test) ==> i + 1 > a.Length;
+        //assert forall x, y | 0 <= x <= a.Length && 0 <= y <= a.Length ::
+        //    Matches(a, y, test) > Matches(a, x, test) ==> y > x;
+        //assert Matches(a, i + 1, test) > Matches(a, a.Length, test) ==> i + 1 > a.Length;
+
+        // Prove that j == count never occurs here.
+        // General flow of proof:
+        // j == count
+        //     ==> j == Matches(a, a.Length, test)
+        //     ==> Matches(a, i, test) == Matches(a, a.Length, test)
+        // but i < a.Length
+        //     ==> Matches(a, i, test) < Matches(a, a.Length, test)
+        // therefore contradiction and false.
+        // The key lies in proving the theorem for the contradiction.
+
+        // Given from invariant
+        assert i < a.Length;
+
+        // Make the argument that an increase of an additive inductive function
+        // must have been caused by more induction.
+        assert forall x: nat, y: nat | x <= a.Length && y <= a.Length
+           :: Matches(a, x, test) < Matches(a, y, test) ==> x < y;
+
+        // However, the converse cannot establish a strict inequality
+        // as the differences in elements may evaluate to zero.
+        assert forall x: nat, y: nat | x <= a.Length && y <= a.Length
+           :: x < y ==> Matches(a, x, test) <= Matches(a, y, test);
+        // Example of what the above theorem implies
+        assert Matches(a, i, test) <= Matches(a, a.Length, test);
+
+        // In order to prove the strict inequality of the converse,
+        // we will make use of the inductive property of Matches,
+        // and use it to infer a result about a previous element.
+        //
+        // The statement below is a direct derivation of the theorem we've
+        // already proven above. As this results in a contradiction,
+        // the antecedent must be false.
+        assert Matches(a, a.Length, test) < Matches(a, i + 1, test)
+            ==> a.Length < i + 1;
+        // Inverse of the above antecedent
+        assert Matches(a, i + 1, test) <= Matches(a, a.Length, test);
+
+        // Once we know that test(a[i]) is true, we have observed
+        // a witness that at least one forward element evaluates to 1.
+        //
+        // Using this difference, we can establish this strict inequality.
+        assert test(a[i]) ==> Matches(a, i, test) < Matches(a, i + 1, test);
+        // We can extend the RHS.
+        assert test(a[i]) ==> Matches(a, i, test) < Matches(a, a.Length, test);
+        // RTP.
+
         if test(a[i])
         {
+            // N.B. Proof obligation PO-1
+            assert Matches(a, i, test) < Matches(a, a.Length, test);
+            assert j < Matches(a, a.Length, test);
+            assert j < count;
+            assert j < b.Length;
+
             b[j] := a[i];
             j := j + 1;
         }
