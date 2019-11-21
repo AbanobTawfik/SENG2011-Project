@@ -165,59 +165,59 @@ include "BloodInventory.dfy"
 // Blackbox tests for RequestOneType
 // Note: This test took 8-9 minutes to verify on CSE Dafny 1.9.7.
 
-// method TestRequestOneType()
-// {
-//     var inv := new BloodInventory();
-//     var amt;
+method TestRequestOneType()
+{
+    var inv := new BloodInventory();
+    var amt;
 
-//     var blood1 := new Blood(AP, "Bob",     1, "Hospital A");
-//     inv.AddBlood(blood1);
-//     var blood2 := new Blood(AP, "Rason",   1, "Hospital A");
-//     inv.AddBlood(blood2);
-//     var blood3 := new Blood(AP, "Michael", 1, "Hospital A");
-//     inv.AddBlood(blood3);
-//     var blood4 := new Blood(BP, "Lucas",   1, "Hospital A");
-//     inv.AddBlood(blood4);
-//     var blood5 := new Blood(BP, "Kevin",   1, "Hospital A");
-//     inv.AddBlood(blood5);
-//     var blood6 := new Blood(BP, "John",    1, "Hospital A");
-//     inv.AddBlood(blood6);
-//     var blood7 := new Blood(BP, "Andrew",  1, "Hospital A");
-//     inv.AddBlood(blood7);
+    var blood1 := new Blood(AP, "Bob",     1, "Hospital A");
+    inv.AddBlood(blood1);
+    var blood2 := new Blood(AP, "Rason",   1, "Hospital A");
+    inv.AddBlood(blood2);
+    var blood3 := new Blood(AP, "Michael", 1, "Hospital A");
+    inv.AddBlood(blood3);
+    var blood4 := new Blood(BP, "Lucas",   1, "Hospital A");
+    inv.AddBlood(blood4);
+    var blood5 := new Blood(BP, "Kevin",   1, "Hospital A");
+    inv.AddBlood(blood5);
+    var blood6 := new Blood(BP, "John",    1, "Hospital A");
+    inv.AddBlood(blood6);
+    var blood7 := new Blood(BP, "Andrew",  1, "Hospital A");
+    inv.AddBlood(blood7);
 
-//     var req1 := Request(AP, 2);
-//     var res1 := inv.RequestOneType(req1);
-//     assert res1[..] == [blood1, blood2];
+    var req1 := Request(AP, 2);
+    var res1 := inv.RequestOneType(req1);
+    assert res1[..] == [blood1, blood2];
 
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(BP);
-//     assert amt == 4;
-//     amt := inv.GetBloodTypeCount(OP);
-//     assert amt == 0;
+    amt := inv.GetBloodTypeCount(AP);
+    assert amt == 1;
+    amt := inv.GetBloodTypeCount(BP);
+    assert amt == 4;
+    amt := inv.GetBloodTypeCount(OP);
+    assert amt == 0;
 
-//     var req2 := Request(BP, 1);
-//     var res2 := inv.RequestOneType(req2);
-//     assert res2[..] == [blood4];
+    var req2 := Request(BP, 1);
+    var res2 := inv.RequestOneType(req2);
+    assert res2[..] == [blood4];
 
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(BP);
-//     assert amt == 3;
-//     amt := inv.GetBloodTypeCount(OP);
-//     assert amt == 0;
+    amt := inv.GetBloodTypeCount(AP);
+    assert amt == 1;
+    amt := inv.GetBloodTypeCount(BP);
+    assert amt == 3;
+    amt := inv.GetBloodTypeCount(OP);
+    assert amt == 0;
 
-//     var req3 := Request(BP, 3);
-//     var res3 := inv.RequestOneType(req3);
-//     assert res3[..] == [blood5, blood6, blood7];
+    var req3 := Request(BP, 3);
+    var res3 := inv.RequestOneType(req3);
+    assert res3[..] == [blood5, blood6, blood7];
 
-//     amt := inv.GetBloodTypeCount(AP);
-//     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(BP);
-//     assert amt == 0;
-//     amt := inv.GetBloodTypeCount(OP);
-//     assert amt == 0;
-// }
+    amt := inv.GetBloodTypeCount(AP);
+    assert amt == 1;
+    amt := inv.GetBloodTypeCount(BP);
+    assert amt == 0;
+    amt := inv.GetBloodTypeCount(OP);
+    assert amt == 0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Blackbox tests for RequestBatch

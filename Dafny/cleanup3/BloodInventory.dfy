@@ -1,4 +1,5 @@
 
+include "Array.dfy"
 include "Blood.dfy"
 include "Query.dfy"
 include "Request.dfy"
@@ -34,14 +35,12 @@ class BloodInventory
         // no extraneous blood buckets in the inventory
         (forall t | t in inv :: validBloodType(t)) &&
 
-        // all blood is non-null
-        (forall t, i | t in inv && 0 <= i < inv[t].Length :: inv[t][i] != null) &&
-
-        // all blood is valid
-        (forall t, i | t in inv && 0 <= i < inv[t].Length :: inv[t][i].Valid()) &&
-
-        // all blood is of the correct type
-        (forall t, i | t in inv && 0 <= i < inv[t].Length :: inv[t][i].GetBloodType() == t) &&
+        // all blood is non-null, valid, tested (clean), and of the correct type
+        (forall t, i | t in inv && 0 <= i < inv[t].Length ::
+                       inv[t][i] != null &&
+                       inv[t][i].Valid() &&
+                       inv[t][i].HasBeenTested() &&
+                       inv[t][i].GetBloodType() == t) &&
 
         // blood 'buckets' are all different
         (forall t, u | t in inv && u in inv :: t != u ==> inv[t] != inv[u]) &&
@@ -146,9 +145,13 @@ class BloodInventory
                 inv[ts[i]][j].PrettyPrint();
                 j := j + 1;
             }
-            print "--------------------------\n";
+            if i < |ts| - 1
+            {
+                print "--------------------------\n";
+            }
             i := i + 1;
         }
+        print "==========================\n";
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -197,7 +200,7 @@ class BloodInventory
         modifies this`inv;
         requires Valid();
         requires blood != null;
-        requires blood.Valid();
+        requires blood.Valid() && blood.HasBeenTested();
         ensures  Valid();
         ensures  inv[blood.GetBloodType()][..] == old(inv[blood.GetBloodType()][..]) + [blood];
         ensures  fresh(inv[blood.GetBloodType()]);
@@ -293,6 +296,29 @@ class BloodInventory
     ////////////////////////////////////////////////////////////////////////////
     // Request Fulfilment
 
+    predicate method RequestCanBeFulfilled(req: array<Request>)
+        reads this;
+        reads if BucketsExist() then
+                  set t | validBloodType(t) :: inv[t]
+              else
+                  {};
+        reads if BucketsExist() then
+                  set t, i | validBloodType(t) && 0 <= i < inv[t].Length :: inv[t][i]
+              else
+                  {};
+        reads req;
+        requires Valid();
+        requires req != null;
+        requires req.Length > 0;
+        requires forall i | 0 <= i < req.Length ::
+                            validBloodType(req[i].bloodType) &&
+                            req[i].volume > 0;
+        requires forall i, j | 0 <= i < j < req.Length ::
+                               req[i].bloodType != req[j].bloodType;
+    {
+        forall i | 0 <= i < req.Length :: req[i].volume <= inv[req[i].bloodType].Length
+    }
+
     // NOTE:    It  is assumed that Vampire staff will remove expired blood from
     //          the inventory daily. So the inventory will never contain expired
     //          blood.
@@ -307,6 +333,7 @@ class BloodInventory
         ensures  blood[..] == old(inv[req.bloodType][..req.volume]);
         ensures  forall i | 0 <= i < blood.Length :: blood[i] != null && blood[i].Valid();
         ensures  fresh(inv[req.bloodType]);
+        ensures  forall t | t in inv :: inv[req.bloodType] != old(inv[t]);
         ensures  inv[req.bloodType][..] == old(inv[req.bloodType][req.volume..]);
         ensures  forall t | t in inv :: blood != inv[t];
 
@@ -334,6 +361,7 @@ class BloodInventory
         modifies this`inv;
         requires Valid();
         requires req != null;
+        requires req.Length > 0;
         requires forall i | 0 <= i < req.Length ::
                             validBloodType(req[i].bloodType) &&
                             0 < req[i].volume <= inv[req[i].bloodType].Length;
@@ -344,11 +372,11 @@ class BloodInventory
                             res[req[i].bloodType] != null &&
                             fresh(res[req[i].bloodType]) &&
                             res[req[i].bloodType][..] == old(inv[req[i].bloodType][..req[i].volume]) &&
-                            res[req[i].bloodType].Length == req[i].volume &&
                             fresh(inv[req[i].bloodType]) &&
                             inv[req[i].bloodType][..] == old(inv[req[i].bloodType][req[i].volume..]) &&
-                            forall t | t in inv :: res[req[i].bloodType] != inv[t];
-        
+                            forall t | t in inv :: res[req[i].bloodType] != inv[t] &&
+                            forall t | t in inv :: inv[req[i].bloodType] != old(inv[t]);
+                
         ensures  forall t | t in res :: exists i | 0 <= i < req.Length :: t == req[i].bloodType;
 
         // ensure other blood buckets are unchanged
@@ -373,7 +401,8 @@ class BloodInventory
                                  res[req[j].bloodType][..] == old(inv[req[j].bloodType][..req[j].volume]) &&
                                  fresh(inv[req[j].bloodType]) &&
                                  inv[req[j].bloodType][..] == old(inv[req[j].bloodType][req[j].volume..]) &&
-                                 forall t | t in inv :: res[req[j].bloodType] != inv[t];
+                                 forall t | t in inv :: res[req[j].bloodType] != inv[t] &&
+                                 forall t | t in inv :: inv[req[j].bloodType] != old(inv[t]);
 
             invariant forall t | t in res :: exists i | 0 <= i < req.Length :: t == req[i].bloodType;
 
@@ -410,7 +439,7 @@ class BloodInventory
                      inv[bloodType][..] == old(inv[bloodType][..])
                  );
         ensures  forall t | t in inv && t != bloodType ::
-                            inv[t] == old(inv[t]) && inv[t][..] == old(inv[t][..]);
+                            inv[    t] == old(inv[t]) && inv[t][..] == old(inv[t][..]);
     {
         if inv[bloodType].Length < threshold
         {
@@ -433,14 +462,15 @@ class BloodInventory
                 invariant forall j | 0 <= j < i ::
                                      newBucket[j] != null &&
                                      newBucket[j].Valid() &&
-                                     newBucket[j].GetBloodType() == bloodType;
+                                     newBucket[j].GetBloodType() == bloodType &&
+                                     newBucket[j].HasBeenTested();
                 invariant forall j | inv[bloodType].Length <= j < i ::
                                      newBucket[j].GetDonorName() == "Emergency Donor" &&
                                      newBucket[j].GetDateDonated() == 999 &&
                                      newBucket[j].GetLocationAcquired() == "Emergency Hospital";
                 invariant forall t | t in inv && t != bloodType :: inv[t] == old(inv[t]) && inv[t][..] == old(inv[t][..]);
             {
-                newBucket[i] := new Blood(bloodType, "Emergency Donor", 999, "Emergency Hospital");
+                newBucket[i] := new Blood(bloodType, "Emergency Donor", 999, "Emergency Hospital", true);
                 i := i + 1;
             }
 
@@ -541,6 +571,7 @@ class BloodInventory
         modifies this`inv;
         requires Valid();
         requires req != null;
+        requires req.Length > 0;
         requires forall i | 0 <= i < req.Length ::
                             validBloodType(req[i].bloodType) &&
                             0 < req[i].volume <= inv[req[i].bloodType].Length;
@@ -623,6 +654,24 @@ class BloodInventory
 } // end of BloodInventory class
 
 ////////////////////////////////////////////////////////////////////////////////
+// Request
+
+function ConcatSeq(a: array<Request>, res: map<BloodType, array<Blood>>, upTo: int): seq<Blood>
+    reads a;
+    reads set t | t in res :: res[t];
+    requires a != null;
+    requires 0 <= upTo <= a.Length;
+    requires forall i | 0 <= i < a.Length ::
+                        a[i].bloodType in res &&
+                        res[a[i].bloodType] != null;
+{
+    if upTo == 0 then
+        []
+    else
+        ConcatSeq(a, res, upTo - 1) + res[a[upTo - 1].bloodType][..]
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Lemma A
 
 // Prove that if A is a subset of B and all elements of B satisfy some property,
@@ -632,24 +681,32 @@ lemma LemmaA(a: array<Blood>, b: array<Blood>, t: BloodType)
     requires a != null;
     requires b != null;
     requires multiset(a[..]) <= multiset(b[..]);
-    requires forall i | 0 <= i < b.Length :: b[i] != null;
-    requires forall i | 0 <= i < b.Length :: b[i].Valid();
-    requires forall i | 0 <= i < b.Length :: b[i].GetBloodType() == t;
-    ensures  forall i | 0 <= i < a.Length :: a[i] != null;
-    ensures  forall i | 0 <= i < a.Length :: a[i].Valid();
-    ensures  forall i | 0 <= i < a.Length :: a[i].GetBloodType() == t;
+    requires forall i | 0 <= i < b.Length ::
+                        b[i] != null &&
+                        b[i].Valid() &&
+                        b[i].HasBeenTested() &&
+                        b[i].GetBloodType() == t;
+    ensures  forall i | 0 <= i < a.Length ::
+                        a[i] != null &&
+                        a[i].Valid() &&
+                        a[i].HasBeenTested() &&
+                        a[i].GetBloodType() == t;
 {
     LemmaA1(a[..], b[..], t);
 }
 
 lemma LemmaA1(a: seq<Blood>, b: seq<Blood>, t: BloodType)
     requires multiset(a) <= multiset(b);
-    requires forall i | 0 <= i < |b| :: b[i] != null;
-    requires forall i | 0 <= i < |b| :: b[i].Valid();
-    requires forall i | 0 <= i < |b| :: b[i].GetBloodType() == t;
-    ensures  forall i | 0 <= i < |a| :: a[i] != null;
-    ensures  forall i | 0 <= i < |a| :: a[i].Valid();
-    ensures  forall i | 0 <= i < |a| :: a[i].GetBloodType() == t;
+    requires forall i | 0 <= i < |b| ::
+                        b[i] != null &&
+                        b[i].Valid() &&
+                        b[i].HasBeenTested() &&
+                        b[i].GetBloodType() == t;
+    ensures  forall i | 0 <= i < |a| ::
+                        a[i] != null &&
+                        a[i].Valid() &&
+                        a[i].HasBeenTested() &&
+                        a[i].GetBloodType() == t;
 {
     LemmaA2(multiset(a), multiset(b), t);
     assert forall i | i in multiset(a) :: i != null;
@@ -657,12 +714,16 @@ lemma LemmaA1(a: seq<Blood>, b: seq<Blood>, t: BloodType)
 
 lemma LemmaA2(a: multiset<Blood>, b: multiset<Blood>, t: BloodType)
     requires a <= b;
-    requires forall i | i in b :: i != null;
-    requires forall i | i in b :: i.Valid();
-    requires forall i | i in b :: i.GetBloodType() == t;
-    ensures  forall i | i in a :: i != null;
-    ensures  forall i | i in a :: i.Valid();
-    ensures  forall i | i in a :: i.GetBloodType() == t;
+    requires forall i | i in b ::
+                        i != null &&
+                        i.Valid() &&
+                        i.HasBeenTested() &&
+                        i.GetBloodType() == t;
+    ensures  forall i | i in a ::
+                        i != null &&
+                        i.Valid() &&
+                        i.HasBeenTested() &&
+                        i.GetBloodType() == t;
 {
 
 }
