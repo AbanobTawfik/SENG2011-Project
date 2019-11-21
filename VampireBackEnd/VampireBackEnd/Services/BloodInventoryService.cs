@@ -204,56 +204,56 @@ namespace VampireBackEnd.Services
             return null;
         }
 
-        public async Task<KeyValuePair<UpdatedBloodInventoryReturn, List<string>>> FixAlerts()
-        {
-            if (_bloodInventory != null)
-            {
-                var alertMessages = new List<string>();
-                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
-                var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
-                var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
-                var thresholdValue = threshold.settingValue;
-                UpdatedBloodInventoryReturn newBloodInventory = null;
-                foreach (var bloodType in bloodTypes)
-                {
-                    var bloodCount = bloodInventory.Where(x => x.bloodType == bloodType).Count();
-                    if (bloodCount < thresholdValue)
-                    {
-                        // same code  in request for fixing alert
-                        var count = 0;
-                        while (count <= thresholdValue - bloodCount)
-                        {
-                            var gen = new Random();
-                            DateTime start = DateTime.Now.AddDays(-43);
-                            int range = (DateTime.Today - start).Days;
-                            var day = start.AddDays(gen.Next(range));
-                            var emergencyDonor = new Blood()
-                            {
-                                bloodId = new Guid(),
-                                bloodStatus = "Tested",
-                                bloodType = bloodType,
-                                dateDonated = day.ToString(),
-                                donorName = "EMERGENCY DONOR",
-                                locationAcquired = "Hospital"
-                            };
-                            newBloodInventory = await AddBlood(emergencyDonor);
-                            count++;
-                        }
-                        alertMessages.Add("Vampire Headquarters has fixed  the alert on the blood type \"" + bloodType + "\" by adding " +
-                                          (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
-                                          thresholdValue + " bags of blood");
-                    }
-                }
-                var updatedBloodInventory = newBloodInventory == null ? bloodInventory : newBloodInventory.newBloodInventory;
-                var oldAndNewBloodInventory = new UpdatedBloodInventoryReturn()
-                {
-                    oldBloodInventory = bloodInventory,
-                    newBloodInventory = updatedBloodInventory
-                };
-                return new KeyValuePair<UpdatedBloodInventoryReturn, List<string>>(oldAndNewBloodInventory, alertMessages);
-            }
-            return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
-        }
+        //public async Task<KeyValuePair<UpdatedBloodInventoryReturn, List<string>>> FixAlerts()
+        //{
+        //    if (_bloodInventory != null)
+        //    {
+        //        var alertMessages = new List<string>();
+        //        var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
+        //        var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
+        //        var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+        //        var thresholdValue = threshold.settingValue;
+        //        UpdatedBloodInventoryReturn newBloodInventory = null;
+        //        foreach (var bloodType in bloodTypes)
+        //        {
+        //            var bloodCount = bloodInventory.Where(x => x.bloodType == bloodType).Count();
+        //            if (bloodCount < thresholdValue)
+        //            {
+        //                // same code  in request for fixing alert
+        //                var count = 0;
+        //                while (count <= thresholdValue - bloodCount)
+        //                {
+        //                    var gen = new Random();
+        //                    DateTime start = DateTime.Now.AddDays(-43);
+        //                    int range = (DateTime.Today - start).Days;
+        //                    var day = start.AddDays(gen.Next(range));
+        //                    var emergencyDonor = new Blood()
+        //                    {
+        //                        bloodId = new Guid(),
+        //                        bloodStatus = "Tested",
+        //                        bloodType = bloodType,
+        //                        dateDonated = day.ToString(),
+        //                        donorName = "EMERGENCY DONOR",
+        //                        locationAcquired = "Hospital"
+        //                    };
+        //                    newBloodInventory = await AddBlood(emergencyDonor);
+        //                    count++;
+        //                }
+        //                alertMessages.Add("Vampire Headquarters has fixed  the alert on the blood type \"" + bloodType + "\" by adding " +
+        //                                  (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
+        //                                  thresholdValue + " bags of blood");
+        //            }
+        //        }
+        //        var updatedBloodInventory = newBloodInventory == null ? bloodInventory : newBloodInventory.newBloodInventory;
+        //        var oldAndNewBloodInventory = new UpdatedBloodInventoryReturn()
+        //        {
+        //            oldBloodInventory = bloodInventory,
+        //            newBloodInventory = updatedBloodInventory
+        //        };
+        //        return new KeyValuePair<UpdatedBloodInventoryReturn, List<string>>(oldAndNewBloodInventory, alertMessages);
+        //    }
+        //    return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
+        //}
 
         //public async Task<UpdatedBloodInventoryReturn> RemoveExpired()
         //{
@@ -369,7 +369,7 @@ namespace VampireBackEnd.Services
                 }
                 var newInventory = ConvertDictionaryToArray(bloodInventoryAsMap);
                 // very reckless to do would never reccommend dropping db and repopulating in a commonly used end-point
-                foreach(var blood in this._bloodInventory.bloodInventory)
+                foreach (var blood in this._bloodInventory.bloodInventory)
                 {
                     if (!IsExpired(blood))
                     {
@@ -385,7 +385,77 @@ namespace VampireBackEnd.Services
             }
             return null;
         }
+
+        public async Task<KeyValuePair<UpdatedBloodInventoryReturn, List<string>>> FixLowSupply()
+        {
+            var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+            if (_bloodInventory != null)
+            {
+                var bloodTypes = new string[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" };
+                var alertMessages = new List<string>();
+                var newBloodArray = new Blood[0];
+                foreach (var bloodType in bloodTypes)
+                {
+                    var res = await FixLowSupplyForType(bloodType);
+                    newBloodArray = res.Key;
+                    if (res.Value != "null")
+                    {
+                        alertMessages.Add(res.Value);
+                    }
+                }
+                newBloodArray = newBloodArray == new Blood[0]? oldBloodArray : newBloodArray;
+                var oldAndNewBloodInventory = new UpdatedBloodInventoryReturn()
+                {
+                    oldBloodInventory = oldBloodArray,
+                    newBloodInventory = newBloodArray
+                };
+                return new KeyValuePair<UpdatedBloodInventoryReturn, List<string>>(oldAndNewBloodInventory, alertMessages);
+            }
+            return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        public async Task<KeyValuePair<Blood[], string>> FixLowSupplyForType(string bloodType)
+        {
+            if (_bloodInventory.bloodInventory != null)
+            {
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+                var bloodInventoryAsMap = convertArrayToDictionary(oldBloodArray);
+                var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
+                var thresholdValue = threshold.settingValue;
+                if ((bloodInventoryAsMap.ContainsKey(bloodType)) && (bloodInventoryAsMap[bloodType].Length < thresholdValue))
+                {
+                    var newBucket = new Blood[thresholdValue];
+                    for (var i = 0; i < bloodInventoryAsMap[bloodType].Length; i++)
+                    {
+                        newBucket[i] = bloodInventoryAsMap[bloodType][i];
+                    }
+                    var count = bloodInventoryAsMap[bloodType].Length;
+                    var messageFromHq = "Vampire Headquarters has fixed  the alert on the blood type \"" + bloodType + "\" by adding " +
+                                          (thresholdValue - count) + " bags of blood to the inventory.\n The threshold is at " +
+                                          thresholdValue + " bags of blood\n";
+                    while (count < thresholdValue)
+                    {
+                        var emergencyDonor = new Blood()
+                        {
+                            bloodId = new Guid(),
+                            bloodStatus = "Tested",
+                            bloodType = bloodType,
+                            dateDonated = DateTime.Now.ToString(),
+                            donorName = "EMERGENCY DONOR",
+                            locationAcquired = "Hospital"
+                        };
+                        newBucket[count] = emergencyDonor;
+                        await AddBlood(emergencyDonor);
+                        count++;
+                    }
+                    bloodInventoryAsMap[bloodType] = newBucket;
+                    var newBloodArray = ConvertDictionaryToArray(bloodInventoryAsMap);
+                    return new KeyValuePair<Blood[], string>(newBloodArray, messageFromHq);
+                }
+                return new KeyValuePair<Blood[], string>(oldBloodArray, "null");
+            }
+            return new KeyValuePair<Blood[], string>(null, "null");
+        }
         public Blood[] GetNonExpiredBlood(Blood[] inventory)
         {
             return Filter(inventory, IsExpired);
