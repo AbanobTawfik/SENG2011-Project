@@ -1,0 +1,11 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.exclude": {
+        "**/*.dll": true,
+        "**/*.dll.mdb": true,
+        "**/*.exe": true,
+        "**/*.exe.mdb": true,
+        "**/*.pdb": true,
+    },
+}
