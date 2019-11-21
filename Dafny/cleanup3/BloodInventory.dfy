@@ -389,7 +389,7 @@ class BloodInventory
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // FixLowSupply
+    // Fix Low Supply
 
     method FixLowSupplyForType(bloodType: BloodType)
         modifies this`inv;
@@ -495,6 +495,129 @@ class BloodInventory
             var t :| t in typesLeft;
             FixLowSupplyForType(t);
             typesLeft := typesLeft - {t};
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Request with Low Supply Fix
+
+    method RequestOneTypeWithLowSupplyFix(req: Request) returns (blood: array<Blood>)
+        modifies this`inv;
+        requires Valid();
+        requires validBloodType(req.bloodType);
+        requires 0 < req.volume <= inv[req.bloodType].Length;
+        ensures  Valid();
+        ensures  blood != null;
+        ensures  fresh(blood);
+        ensures  blood[..] == old(inv[req.bloodType][..req.volume]);
+        ensures  forall i | 0 <= i < blood.Length :: blood[i] != null && blood[i].Valid();
+        ensures  fresh(inv[req.bloodType]);
+        
+        ensures  old(inv[req.bloodType].Length) - req.volume < threshold ==> (
+                     inv[req.bloodType].Length == threshold &&
+                     inv[req.bloodType][..old(inv[req.bloodType].Length) - req.volume] ==
+                         old(inv[req.bloodType][req.volume..]) &&
+                     forall i | old(inv[req.bloodType].Length) - req.volume <= i < threshold ::
+                                inv[req.bloodType][i].GetDonorName() == "Emergency Donor" &&
+                                inv[req.bloodType][i].GetDateDonated() == 999 &&
+                                inv[req.bloodType][i].GetLocationAcquired() == "Emergency Hospital"
+                 );
+        ensures  old(inv[req.bloodType].Length) - req.volume >= threshold ==> (
+                     inv[req.bloodType][..] == old(inv[req.bloodType][req.volume..])
+                 );
+        
+        ensures  forall t | t in inv :: blood != inv[t];
+
+        // ensure other blood buckets are unchanged
+        ensures  forall t | t in inv && t != req.bloodType ::
+                            inv[t] == old(inv[t]) &&
+                            inv[t][..] == old(inv[t][..]);
+    {
+        blood := RequestOneType(req);
+        FixLowSupplyForType(req.bloodType);
+    }
+
+    method RequestManyTypesWithLowSupplyFix(req: array<Request>) returns (res: map<BloodType, array<Blood>>)
+        modifies this`inv;
+        requires Valid();
+        requires req != null;
+        requires forall i | 0 <= i < req.Length ::
+                            validBloodType(req[i].bloodType) &&
+                            0 < req[i].volume <= inv[req[i].bloodType].Length;
+        requires forall i, j | 0 <= i < j < req.Length :: req[i].bloodType != req[j].bloodType;
+        ensures  Valid();
+        ensures  forall i | 0 <= i < req.Length ::
+                            req[i].bloodType in res &&
+                            res[req[i].bloodType] != null &&
+                            fresh(res[req[i].bloodType]) &&
+                            res[req[i].bloodType][..] == old(inv[req[i].bloodType][..req[i].volume]) &&
+                            fresh(inv[req[i].bloodType]) &&
+                            forall t | t in inv :: res[req[i].bloodType] != inv[t];
+        
+        ensures  forall i | 0 <= i < req.Length ::
+                            old(inv[req[i].bloodType].Length) - req[i].volume <  threshold ==> (
+                                inv[req[i].bloodType].Length == threshold &&
+                                inv[req[i].bloodType][..old(inv[req[i].bloodType].Length) - req[i].volume] ==
+                                    old(inv[req[i].bloodType][req[i].volume..]) &&
+                                forall j | old(inv[req[i].bloodType].Length) - req[i].volume <= j < threshold ::
+                                            inv[req[i].bloodType][j].GetDonorName() == "Emergency Donor" &&
+                                            inv[req[i].bloodType][j].GetDateDonated() == 999 &&
+                                            inv[req[i].bloodType][j].GetLocationAcquired() == "Emergency Hospital"
+                            );
+        ensures  forall i | 0 <= i < req.Length ::
+                            old(inv[req[i].bloodType].Length) - req[i].volume >= threshold ==> (
+                                inv[req[i].bloodType][..] == old(inv[req[i].bloodType][req[i].volume..])
+                            );
+        
+        // no extraneous blood types in result
+        ensures  forall t | t in res :: exists i | 0 <= i < req.Length :: t == req[i].bloodType;
+        // ensure other blood buckets are unchanged
+        ensures  forall t | t in inv && (forall i | 0 <= i < req.Length :: req[i].bloodType != t) ::
+                            inv[t] == old(inv[t]) &&
+                            inv[t][..] == old(inv[t][..]);
+    {
+        res := map[];
+
+        var i := 0;
+        while i < req.Length
+            invariant 0 <= i <= req.Length;
+            invariant Valid();
+            invariant req[..] == old(req[..]);
+            invariant forall j | i <= j < req.Length ::
+                                 0 < req[j].volume <= inv[req[j].bloodType].Length &&
+                                 inv[req[j].bloodType][..] == old(inv[req[j].bloodType][..]);
+            invariant forall j | 0 <= j < i ::
+                                 req[j].bloodType in res &&
+                                 res[req[j].bloodType] != null &&
+                                 fresh(res[req[j].bloodType]) &&
+                                 res[req[j].bloodType][..] == old(inv[req[j].bloodType][..req[j].volume]) &&
+                                 fresh(inv[req[j].bloodType]) &&
+                                 forall t | t in inv :: res[req[j].bloodType] != inv[t];
+            invariant forall j | 0 <= j < i ::
+                                 old(inv[req[j].bloodType].Length) - req[j].volume <  threshold ==> (
+                                     inv[req[j].bloodType].Length == threshold &&
+                                     inv[req[j].bloodType][..old(inv[req[j].bloodType].Length) - req[j].volume] ==
+                                         old(inv[req[j].bloodType][req[j].volume..]) &&
+                                     forall k | old(inv[req[j].bloodType].Length) - req[j].volume <= k < threshold ::
+                                                inv[req[j].bloodType][k].GetDonorName() == "Emergency Donor" &&
+                                                inv[req[j].bloodType][k].GetDateDonated() == 999 &&
+                                                inv[req[j].bloodType][k].GetLocationAcquired() == "Emergency Hospital"
+                                 );
+            invariant forall j | 0 <= j < i ::
+                                 old(inv[req[j].bloodType].Length) - req[j].volume >= threshold ==> (
+                                     inv[req[j].bloodType][..] == old(inv[req[j].bloodType][req[j].volume..])
+                                 );
+ 
+            invariant forall t | t in res :: exists j | 0 <= j < req.Length :: t == req[j].bloodType;
+
+            // ensure other blood buckets are unchanged
+            invariant forall t | t in inv && (forall i | 0 <= i < req.Length :: req[i].bloodType != t) ::
+                                 inv[t] == old(inv[t]) &&
+                                 inv[t][..] == old(inv[t][..]);
+        {
+            var blood := RequestOneTypeWithLowSupplyFix(req[i]);
+            res := res[req[i].bloodType := blood];
+            i := i + 1;
         }
     }
 } // end of BloodInventory class
