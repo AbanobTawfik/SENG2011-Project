@@ -35,92 +35,92 @@ namespace VampireBackEnd.Services
         //    return null;
         //}
 
-        public async Task<Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>> Request(Request[] batchRequest)
-        {
-            if (_bloodInventory != null)
-            {
-                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+        //public async Task<Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>> Request(Request[] batchRequest)
+        //{
+        //    if (_bloodInventory != null)
+        //    {
+        //        var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
 
-                var alertMessages = new List<string>();
-                var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
-                var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
-                var thresholdValue = threshold.settingValue;
+        //        var alertMessages = new List<string>();
+        //        var bloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync();
+        //        var threshold = this._bloodInventory.settings.Where(x => x.settingType.ToLower() == "threshold").FirstOrDefault();
+        //        var thresholdValue = threshold.settingValue;
 
-                UpdatedBloodInventoryReturn inventoryUpdate = new UpdatedBloodInventoryReturn()
-                {
-                    oldBloodInventory = oldBloodArray,
-                    newBloodInventory = oldBloodArray,
-                };
+        //        UpdatedBloodInventoryReturn inventoryUpdate = new UpdatedBloodInventoryReturn()
+        //        {
+        //            oldBloodInventory = oldBloodArray,
+        //            newBloodInventory = oldBloodArray,
+        //        };
 
-                var i = 0;
-                var requestResult = new Blood[0];
-                // for each request for a blood type
-                while (i < batchRequest.Length)
-                {
-                    var count = 0;
-                    // for each unit of blood of that blood type requested
-                    while (count < batchRequest[i].volume)
-                    {
-                        var removeResult = await this.RemoveBlood(batchRequest[i].bloodType);
-                        _ = removeResult.Item1;
-                        var addBlood = removeResult.Item2;
-                        requestResult = this.AddBloodToArrayResizing(requestResult, addBlood);
-                        count = count + 1;
-                    }
-                    await this._bloodInventory.SaveChangesAsync();
-                    // check for alert
-                    var bloodType = batchRequest[i].bloodType;
+        //        var i = 0;
+        //        var requestResult = new Blood[0];
+        //        // for each request for a blood type
+        //        while (i < batchRequest.Length)
+        //        {
+        //            var count = 0;
+        //            // for each unit of blood of that blood type requested
+        //            while (count < batchRequest[i].volume)
+        //            {
+        //                var removeResult = await this.RemoveBlood(batchRequest[i].bloodType);
+        //                _ = removeResult.Item1;
+        //                var addBlood = removeResult.Item2;
+        //                requestResult = this.AddBloodToArrayResizing(requestResult, addBlood);
+        //                count = count + 1;
+        //            }
+        //            await this._bloodInventory.SaveChangesAsync();
+        //            // check for alert
+        //            var bloodType = batchRequest[i].bloodType;
 
-                    var bloodCount = this._bloodInventory.bloodInventory.Where(x => x.bloodType == bloodType).Count();
-                    if (bloodCount < thresholdValue)
-                    {
-                        // same code in request for fixing alert
-                        var addCount = 0;
-                        while (addCount <= thresholdValue - bloodCount)
-                        {
-                            var emergencyDonor = new Blood()
-                            {
-                                bloodId = new Guid(),
-                                bloodStatus = "Tested",
-                                bloodType = bloodType,
-                                dateDonated = DateTime.Now.ToString(),
-                                donorName = "EMERGENCY DONOR",
-                                locationAcquired = "Hospital"
-                            };
-                            inventoryUpdate = await AddBlood(emergencyDonor);
-                            addCount++;
-                        }
-                        alertMessages.Add("Vampire Headquarters has fixed the alert on the blood type \"" + bloodType + "\" by adding " +
-                                          (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
-                                          thresholdValue + " bags of blood");
-                    }
+        //            var bloodCount = this._bloodInventory.bloodInventory.Where(x => x.bloodType == bloodType).Count();
+        //            if (bloodCount < thresholdValue)
+        //            {
+        //                // same code in request for fixing alert
+        //                var addCount = 0;
+        //                while (addCount <= thresholdValue - bloodCount)
+        //                {
+        //                    var emergencyDonor = new Blood()
+        //                    {
+        //                        bloodId = new Guid(),
+        //                        bloodStatus = "Tested",
+        //                        bloodType = bloodType,
+        //                        dateDonated = DateTime.Now.ToString(),
+        //                        donorName = "EMERGENCY DONOR",
+        //                        locationAcquired = "Hospital"
+        //                    };
+        //                    inventoryUpdate = await AddBlood(emergencyDonor);
+        //                    addCount++;
+        //                }
+        //                alertMessages.Add("Vampire Headquarters has fixed the alert on the blood type \"" + bloodType + "\" by adding " +
+        //                                  (thresholdValue - bloodCount + 1) + " bags of blood to the inventory.\n The threshold is at " +
+        //                                  thresholdValue + " bags of blood");
+        //            }
 
-                    i = i + 1;
-                }
+        //            i = i + 1;
+        //        }
 
-                return new Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>(
-                    new UpdatedBloodInventoryReturn()
-                    {
-                        oldBloodInventory = oldBloodArray,
-                        newBloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync()
-                    },
-                    requestResult,
-                    alertMessages
-                );
-            }
-            return null;
-        }
+        //        return new Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>(
+        //            new UpdatedBloodInventoryReturn()
+        //            {
+        //                oldBloodInventory = oldBloodArray,
+        //                newBloodInventory = await this._bloodInventory.bloodInventory.ToArrayAsync()
+        //            },
+        //            requestResult,
+        //            alertMessages
+        //        );
+        //    }
+        //    return null;
+        //}
 
-        public Blood[] AddBloodToArrayResizing(Blood[] arr, Blood blood)
-        {
-            var newResizedArray = new Blood[arr.Length + 1];
-            for (var i = 0; i < arr.Length; i++)
-            {
-                newResizedArray[i] = arr[i];
-            }
-            newResizedArray[arr.Length] = blood;
-            return newResizedArray;
-        }
+        //public Blood[] AddBloodToArrayResizing(Blood[] arr, Blood blood)
+        //{
+        //    var newResizedArray = new Blood[arr.Length + 1];
+        //    for (var i = 0; i < arr.Length; i++)
+        //    {
+        //        newResizedArray[i] = arr[i];
+        //    }
+        //    newResizedArray[arr.Length] = blood;
+        //    return newResizedArray;
+        //}
 
         public async Task<Tuple<UpdatedBloodInventoryReturn, Blood>> RemoveBlood(string bloodType)
         {
@@ -413,7 +413,57 @@ namespace VampireBackEnd.Services
             }
             return default(KeyValuePair<UpdatedBloodInventoryReturn, List<string>>);
         }
+
+        public async Task<Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>> Request(Request[] batchRequest)
+        {
+            if(_bloodInventory != null)
+            {
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+                var bloodInventoryAsMap = convertArrayToDictionary(oldBloodArray);
+                // just for return
+                var bloodReturn = new List<Blood>();
+                var i = 0;
+                var alertList = new List<string>();
+                while(i < batchRequest.Length)
+                {
+                    var res = await RequestOneTypeWithFix(batchRequest[i]);
+                    if(res.Item3 != "null")
+                    {
+                        alertList.Add(res.Item3);
+                    }
+                    if(res.Item2.Length >= 0)
+                    {
+                        bloodInventoryAsMap = convertArrayToDictionary(res.Item1);
+                        foreach(var blood in res.Item2)
+                        {
+                            bloodReturn.Add(blood);
+                        }
+                    }
+                    i++;
+                }
+                var newInventory = ConvertDictionaryToArray(bloodInventoryAsMap);
+                var RequestResult = bloodReturn.ToArray();
+                var changeInventory = new UpdatedBloodInventoryReturn()
+                {
+                    oldBloodInventory = oldBloodArray,
+                    newBloodInventory = newInventory
+                };
+                return new Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>(changeInventory, RequestResult, alertList);
+            }
+            return new Tuple<UpdatedBloodInventoryReturn, Blood[], List<string>>(null, new Blood[0], null);
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        public async Task<Tuple<Blood[], Blood[], string>> RequestOneTypeWithFix(Request singleRequest)
+        {
+            if(_bloodInventory != null)
+            {
+                var resRequest = await HandleOneRequest(singleRequest);
+                var resFix = await FixLowSupplyForType(singleRequest.bloodType);
+                return new Tuple<Blood[], Blood[], string>(resRequest.Key, resRequest.Value, resFix.Value);
+            }
+            return new Tuple<Blood[], Blood[], string>(new Blood[0], new Blood[0], "null");
+        }
+
         public async Task<KeyValuePair<Blood[], string>> FixLowSupplyForType(string bloodType)
         {
             if (_bloodInventory.bloodInventory != null)
@@ -456,6 +506,7 @@ namespace VampireBackEnd.Services
             }
             return new KeyValuePair<Blood[], string>(null, "null");
         }
+
         public Blood[] GetNonExpiredBlood(Blood[] inventory)
         {
             return Filter(inventory, IsExpired);
@@ -490,6 +541,36 @@ namespace VampireBackEnd.Services
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Helpers //
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        public async Task<KeyValuePair<Blood[], Blood[]>> HandleOneRequest(Request singleRequest)
+        {
+            if(_bloodInventory != null)
+            {
+                var oldBloodArray = await this._bloodInventory.bloodInventory.ToArrayAsync();
+                var bloodInventoryAsMap = convertArrayToDictionary(oldBloodArray);
+                var bloodType = singleRequest.bloodType;
+                var ret = new Blood[singleRequest.volume];
+                var newBucket = new Blood[bloodInventoryAsMap[bloodType].Length - singleRequest.volume];
+                for(var i = 0; i < singleRequest.volume; i++)
+                {
+                    ret[i] = bloodInventoryAsMap[bloodType][i];
+                }
+                for(var i = singleRequest.volume; i < bloodInventoryAsMap[bloodType].Length; i++)
+                {
+                    newBucket[i - singleRequest.volume] = bloodInventoryAsMap[bloodType][i];
+                }
+                // remove from db too
+                for(var i = 0; i < singleRequest.volume; i++)
+                {
+                    _bloodInventory.bloodInventory.Remove(bloodInventoryAsMap[bloodType][i]);
+                }
+                await _bloodInventory.SaveChangesAsync();
+                bloodInventoryAsMap[bloodType] = newBucket;
+                var newInventory = ConvertDictionaryToArray(bloodInventoryAsMap);
+                return new KeyValuePair<Blood[], Blood[]>(ret, newInventory);
+            }
+            return new KeyValuePair<Blood[], Blood[]>(new Blood[0], new Blood[0]);
+        }
+
         public Blood[] RemoveExpiredBloodByType(Blood[] inventory)
         {
             return GetNonExpiredBlood(inventory);
