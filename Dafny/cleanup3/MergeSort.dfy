@@ -15,8 +15,8 @@
 // }
 
 method MergeSort(a: array<int>)
-    requires a != null;
     modifies a;
+    requires a != null;
     ensures  sorted(a);
     ensures  permutation(a[..], old(a[..]));
 {
@@ -60,8 +60,8 @@ method DoMergeSort(a: array<int>, l: int, r: int)
 }
 
 method Merge(a: array<int>, l: int, m: int, r: int)
-    requires a != null;
     modifies a;
+    requires a != null;
     requires 0 <= l < m < r <= a.Length;
     requires sortedFromTo(a, l, m);
     requires sortedFromTo(a, m, r);
