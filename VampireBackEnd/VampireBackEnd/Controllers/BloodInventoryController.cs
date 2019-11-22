@@ -105,7 +105,7 @@ namespace VampireBackEnd.Controllers
                     bloodId = Guid.NewGuid(),
                     bloodStatus = "Tested",
                     bloodType = bloodTypes[bloodTypeIndex],
-                    dateDonated = day.ToString(),
+                    dateDonated = day.ToString("MM/dd/yyyy"),
                     donorName = "initial hospital donor",
                     locationAcquired = "Hospital"
                 });

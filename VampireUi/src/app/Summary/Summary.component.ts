@@ -104,7 +104,7 @@ export class SummaryComponent implements OnInit {
       setTimeout(() => {
         this.lineChartData[0].data = this.lineChartLabels.map((age) =>
           (typeof age === "string") ?
-            filterByAge(result, this.lineChartMax, undefined) :
+            filterByAge(result, this.lineChartMax, undefined).length :
             filterByAge(result, age, age + this.lineChartSize - 1).length
         )
         this.loadingLine = false;
