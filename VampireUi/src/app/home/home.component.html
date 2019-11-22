@@ -1,15 +1,15 @@
 ﻿<h1>Hi {{ currentUser.firstName }}!</h1>
-<p>You're logged in with Angular 7!!</p>
+<p>Welcome back!</p>
 
 <hr />
-<h3 class="mb-2">Low Blood Threshold (Number of Bags)</h3>
+<h3 class="mb-2">Low blood threshold (number of bags)</h3>
 <input type="Number" [(ngModel)]="Threshold" /><br />
 <button class="btn btn-primary mt-2" (click)="updateThreshold($event)">
   Update Threshold
 </button>
 <br />
 <br />
-<h2>Blood Expiring Today:</h2>
+<h3>Blood expiring today</h3>
 <button class="btn btn-success" (click)="disposeOfExpiringBlood($event)">
   Dispose Expiring Blood
 </button>
@@ -36,9 +36,9 @@
   </tbody>
 </table>
 <hr />
-<h2>Low Inventory Blood Types:</h2>
-<button class="btn btn-success" (click)="fixAlert($event)">
-  fixAlert
+<h3>Low inventory blood types</h3>
+<button class="btn btn-primary" (click)="fixAlert($event)">
+  Fix Alert 
 </button>
 <table class="table table-striped">
   <thead>
