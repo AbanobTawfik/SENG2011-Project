@@ -176,7 +176,7 @@ include "BloodInventory.dfy"
 
 /**
  * Two blood objects of different types - both expired
- * Verification time: < 12 minutes
+ * Verification time: < 3 minutes
  */
 // method TestRemoveExpiredBlood5()
 // {
@@ -209,7 +209,7 @@ include "BloodInventory.dfy"
 
 /**
  * Two blood objects of different types - none expired
- * Verification time: < 1 minute
+ * Verification time: ~30 seconds
  */
 // method TestRemoveExpiredBlood6()
 // {
