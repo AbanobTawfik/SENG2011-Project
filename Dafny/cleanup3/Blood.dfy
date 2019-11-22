@@ -1,3 +1,8 @@
+/*
+ * Blood class
+ * Verification time: < 2 seconds
+ * Verified on CSE Dafny 1.9.7
+ */
 
 include "BloodType.dfy"
 

@@ -1,3 +1,8 @@
+/* 
+ * Tests for Query
+ * Verification time: < 3 seconds 
+ * Verified on CSE Dafny 1.9.7
+ */
 
 include "Query.dfy"
 

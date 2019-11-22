@@ -1,6 +1,10 @@
-/* TestBloodInventory.dfy
- *
- * Black-box tests for TestBloodInventory.dfy
+/* 
+ * Black-box tests for Blood Inventory
+ * Some of these tests take a *long* time to verify, even with very little data.
+ * This  is  likely due to the fact that they are testing a fully-fledged class.
+ * The time taken to verify each test method is included in a comment above  the
+ * method.
+ * All methods were verified on CSE Dafny 1.9.7
  */
 
 include "BloodInventory.dfy"
@@ -10,7 +14,7 @@ include "BloodInventory.dfy"
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Verification time: <  2 minutes
+ * Verification time: ~90 seconds
  */
 // method TestAddBlood() 
 // {
@@ -21,16 +25,12 @@ include "BloodInventory.dfy"
 //     assert amt == 0;
 //     amt := inv.GetBloodTypeCount(BP);
 //     assert amt == 0;
-//     amt := inv.GetBloodTypeCount(AM);
-//     assert amt == 0;
 
 //     var blood1 := new Blood(AP, "Amy", 2, "Hospital A", true);
 //     inv.AddBlood(blood1);
 //     amt := inv.GetBloodTypeCount(AP);
 //     assert amt == 1;
 //     amt := inv.GetBloodTypeCount(BP);
-//     assert amt == 0;
-//     amt := inv.GetBloodTypeCount(AM);
 //     assert amt == 0;
 
 //     var blood2 := new Blood(BP, "Bob", 5, "Hospital B", true);
@@ -39,8 +39,6 @@ include "BloodInventory.dfy"
 //     assert amt == 1;
 //     amt := inv.GetBloodTypeCount(BP);
 //     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(AM);
-//     assert amt == 0;
 
 //     var blood3 := new Blood(AP, "Cal", 7, "Hospital C", true);
 //     inv.AddBlood(blood3);
@@ -48,11 +46,9 @@ include "BloodInventory.dfy"
 //     assert amt == 2;
 //     amt := inv.GetBloodTypeCount(BP);
 //     assert amt == 1;
-//     amt := inv.GetBloodTypeCount(AM);
-//     assert amt == 0;
 
 //     var blood;
-    
+
 //     blood := inv.GetBloodOfType(AP);
 //     assert blood[..] == [blood1, blood3];
 
@@ -69,7 +65,7 @@ include "BloodInventory.dfy"
 
 /**
  * Two blood objects - one expired
- * Verification time: <  4 minutes
+ * Verification time: < 4 minutes
  */
 // method TestRemoveExpiredBlood1()
 // {
@@ -121,7 +117,7 @@ include "BloodInventory.dfy"
 
 /**
  * Two blood objects - none expired
- * Verification time: <  3 minutes
+ * Verification time: < 3 minutes
  */
 // method TestRemoveExpiredBlood3()
 // {
@@ -147,7 +143,7 @@ include "BloodInventory.dfy"
 
 /**
  * Two blood objects of different types - one expired
- * Verification time: <  7 minutes
+ * Verification time: < 7 minutes
  */
 // method TestRemoveExpiredBlood4()
 // {
@@ -213,7 +209,7 @@ include "BloodInventory.dfy"
 
 /**
  * Two blood objects of different types - none expired
- * Verification time: <  1 minutes
+ * Verification time: < 1 minute
  */
 // method TestRemoveExpiredBlood6()
 // {
@@ -247,7 +243,7 @@ include "BloodInventory.dfy"
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Verification time: <  1 minutes
+ * Verification time: < 1 minute
  */
 // method TestRemoveBlood()
 // {
@@ -298,6 +294,7 @@ include "BloodInventory.dfy"
 
 /**
  * Verification time: ~105 minutes
+ * You can go out for lunch while waiting for this to verify
  */
 // method TestRequestOneType()
 // {
@@ -379,6 +376,9 @@ include "BloodInventory.dfy"
 // Blackbox tests for RequestManyTypes                                        //
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Verification time: > 1 hour
+ */
 // method TestRequestManyTypes()
 // {
 //     var inv := new BloodInventory();
@@ -387,28 +387,16 @@ include "BloodInventory.dfy"
 //     inv.AddBlood(blood1);
 //     var blood2 := new Blood(AP, "Bob", 2, "Hospital A", true);
 //     inv.AddBlood(blood2);
-//     var blood3 := new Blood(AP, "Cal", 3, "Hospital A", true);
+//     var blood3 := new Blood(BP, "Cal", 3, "Hospital A", true);
 //     inv.AddBlood(blood3);
-//     var blood4 := new Blood(BP, "Deb", 1, "Hospital A", true);
-//     inv.AddBlood(blood4);
-//     var blood5 := new Blood(BP, "Eva", 2, "Hospital A", true);
-//     inv.AddBlood(blood5);
 
-//     var req1 := new Request[2];
-//     req1[0]  := Request(AP, 2);
-//     req1[1]  := Request(BP, 1);
+//     var req := new Request[2];
+//     req[0]  := Request(AP, 1);
+//     req[1]  := Request(BP, 1);
 
-//     var res1 := inv.RequestManyTypes(req1);
-//     assert res1[AP][..] == [blood1, blood2];
-//     assert res1[BP][..] == [blood4];
-
-//     var req2 := new Request[2];
-//     req2[0]  := Request(AP, 1);
-//     req2[0]  := Request(BP, 1);
-
-//     var res2 := inv.RequestManyTypes(req2);
-//     assert res2[AP][..] == [blood3];
-//     assert res2[BP][..] == [blood5];
+//     var res := inv.RequestManyTypes(req);
+//     assert res[AP][..] == [blood1];
+//     assert res[BP][..] == [blood3];
 // }
 
 ////////////////////////////////////////////////////////////////////////////////

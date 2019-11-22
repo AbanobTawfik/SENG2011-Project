@@ -1,18 +1,20 @@
-/* MergeSort.dfy
- *
+/*
+ * Merge sort
  * Merge sorts an array of integers
+ * Verification time: ~10 seconds
+ * Verified on CSE Dafny 1.9.7
  */
 
-// method Main()
-// {
-//     var a := new int[5];
-//     a[0], a[1], a[2], a[3], a[4] := 3, 4, 2, 5, 1;
-//     assert a[..] == [3, 4, 2, 5, 1];
-//     print "original: ", a[..], "\n";
-//     MergeSort(a);
-//     assert a[..] == [1, 2, 3, 4, 5];
-//     print "sorted  : ", a[..], "\n";
-// }
+method Main()
+{
+    var a := new int[5];
+    a[0], a[1], a[2], a[3], a[4] := 3, 4, 2, 5, 1;
+    assert a[..] == [3, 4, 2, 5, 1];
+    print "original: ", a[..], "\n";
+    MergeSort(a);
+    assert a[..] == [1, 2, 3, 4, 5];
+    print "sorted  : ", a[..], "\n";
+}
 
 method MergeSort(a: array<int>)
     modifies a;

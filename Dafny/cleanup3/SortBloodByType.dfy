@@ -1,26 +1,27 @@
-/* SortBloodByType.dfy
- *
+/* 
  * Merge sorts an array of Blood objects by type
+ * Verification time: ~35 seconds 
+ * Verified on CSE Dafny 1.9.7
  */
 
 include "Blood.dfy"
 
-// method Main()
-// {
-//     var a := new Blood[3];
-//     var b1 := new Blood(AP, "Amy", 21, "Hospital", true);
-//     var b2 := new Blood(OM, "Bob",  8, "Hospital", true);
-//     var b3 := new Blood(AM, "Cal", 13, "Hospital", true);
+method Main()
+{
+    var a := new Blood[3];
+    var b1 := new Blood(AP, "Amy", 21, "Hospital", true);
+    var b2 := new Blood(OM, "Bob",  8, "Hospital", true);
+    var b3 := new Blood(AM, "Cal", 13, "Hospital", true);
     
-//     a[0], a[1], a[2] := b1, b2, b3;
-//     assert a[..] == [b1, b2, b3];
-//     print "Original:\n";
-//     PrintBloodArray(a);
-//     SortBloodByType(a);
-//     print "Sorted:\n";
-//     assert a[..] == [b1, b3, b2];
-//     PrintBloodArray(a);
-// }
+    a[0], a[1], a[2] := b1, b2, b3;
+    assert a[..] == [b1, b2, b3];
+    print "Original:\n";
+    PrintBloodArray(a);
+    SortBloodByType(a);
+    print "Sorted:\n";
+    assert a[..] == [b1, b3, b2];
+    PrintBloodArray(a);
+}
 
 method SortBloodByType(a: array<Blood>)
     modifies a;

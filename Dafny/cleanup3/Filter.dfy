@@ -1,7 +1,8 @@
-/* Filtering
- * Lucas and Rason
- *
+/* 
+ * Filtering
  * Filters an array of any type, given a specified test.
+ * Verification time: < 3 seconds
+ * Verified on CSE Dafny 1.9.7
  */
 
 // Some test filters with integers

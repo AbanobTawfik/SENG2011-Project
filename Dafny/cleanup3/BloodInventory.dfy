@@ -1,3 +1,8 @@
+/*
+ * Blood inventory class
+ * Verification time: ~30 seconds
+ * Verified on CSE Dafny 1.9.7
+ */
 
 include "Blood.dfy"
 include "Query.dfy"

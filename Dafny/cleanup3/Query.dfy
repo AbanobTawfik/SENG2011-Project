@@ -1,6 +1,8 @@
-/* Querying
- *
+/* 
+ * Querying
  * Queries an array of blood objects by attribute.
+ * Verification time: < 3 seconds
+ * Verified on CSE Dafny 1.9.7
  */
 
 include "Blood.dfy"
