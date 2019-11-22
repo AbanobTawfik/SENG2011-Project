@@ -1,4 +1,5 @@
-/*
+/* TestBloodInventory.dfy
+ *
  * Black-box tests for TestBloodInventory.dfy
  */
 
@@ -94,7 +95,7 @@ include "BloodInventory.dfy"
 
 /**
  * Two blood objects - both expired
- * Verification time: < ?? minutes
+ * Verification time: < 15 minutes
  */
 // method TestRemoveExpiredBlood2()
 // {
@@ -242,11 +243,61 @@ include "BloodInventory.dfy"
 // }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Black-box tests for RemoveBlood                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Verification time: <  1 minutes
+ */
+// method TestRemoveBlood()
+// {
+//     var inv := new BloodInventory();
+//     var blood;
+//     var invblood;
+
+//     var blood1 := new Blood(AP, "Amy", 1, "Hospital A", true);
+//     inv.AddBlood(blood1);
+//     var blood2 := new Blood(AP, "Bob", 2, "Hospital A", true);
+//     inv.AddBlood(blood2);
+//     var blood3 := new Blood(BP, "Deb", 1, "Hospital A", true);
+//     inv.AddBlood(blood3);
+//     var blood4 := new Blood(BP, "Eva", 2, "Hospital A", true);
+//     inv.AddBlood(blood4);
+//     var blood5 := new Blood(BP, "Fin", 3, "Hospital A", true);
+//     inv.AddBlood(blood5);
+
+//     blood := inv.RemoveBlood(AP);
+//     assert blood == blood1;
+//     invblood := inv.GetBloodOfType(AP);
+//     assert invblood[..] == [blood2];
+
+//     blood := inv.RemoveBlood(AP);
+//     assert blood == blood2;
+//     invblood := inv.GetBloodOfType(AP);
+//     assert invblood[..] == [];
+
+//     blood := inv.RemoveBlood(BP);
+//     assert blood == blood3;
+//     invblood := inv.GetBloodOfType(BP);
+//     assert invblood[..] == [blood4, blood5];
+
+//     blood := inv.RemoveBlood(BP);
+//     assert blood == blood4;
+//     invblood := inv.GetBloodOfType(BP);
+//     assert invblood[..] == [blood5];
+
+//     blood := inv.RemoveBlood(BP);
+//     assert blood == blood5;
+//     invblood := inv.GetBloodOfType(BP);
+//     assert invblood[..] == [];
+// }
+
+////////////////////////////////////////////////////////////////////////////////
 // Black-box tests for RequestOneType                                         //
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Verification time: < ?? minutes
+ * Verification time: ~105 minutes
  */
 // method TestRequestOneType()
 // {
@@ -328,6 +379,36 @@ include "BloodInventory.dfy"
 // Blackbox tests for RequestManyTypes                                        //
 ////////////////////////////////////////////////////////////////////////////////
 
+// method TestRequestManyTypes()
+// {
+//     var inv := new BloodInventory();
 
+//     var blood1 := new Blood(AP, "Amy", 1, "Hospital A", true);
+//     inv.AddBlood(blood1);
+//     var blood2 := new Blood(AP, "Bob", 2, "Hospital A", true);
+//     inv.AddBlood(blood2);
+//     var blood3 := new Blood(AP, "Cal", 3, "Hospital A", true);
+//     inv.AddBlood(blood3);
+//     var blood4 := new Blood(BP, "Deb", 1, "Hospital A", true);
+//     inv.AddBlood(blood4);
+//     var blood5 := new Blood(BP, "Eva", 2, "Hospital A", true);
+//     inv.AddBlood(blood5);
+
+//     var req1 := new Request[2];
+//     req1[0]  := Request(AP, 2);
+//     req1[1]  := Request(BP, 1);
+
+//     var res1 := inv.RequestManyTypes(req1);
+//     assert res1[AP][..] == [blood1, blood2];
+//     assert res1[BP][..] == [blood4];
+
+//     var req2 := new Request[2];
+//     req2[0]  := Request(AP, 1);
+//     req2[0]  := Request(BP, 1);
+
+//     var res2 := inv.RequestManyTypes(req2);
+//     assert res2[AP][..] == [blood3];
+//     assert res2[BP][..] == [blood5];
+// }
 
 ////////////////////////////////////////////////////////////////////////////////

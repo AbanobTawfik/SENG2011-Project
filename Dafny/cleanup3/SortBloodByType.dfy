@@ -1,6 +1,6 @@
-/* SortBloodByDate.dfy
+/* SortBloodByType.dfy
  *
- * Merge sorts an array of Blood objects by date donated
+ * Merge sorts an array of Blood objects by type
  */
 
 include "Blood.dfy"
@@ -16,13 +16,13 @@ include "Blood.dfy"
 //     assert a[..] == [b1, b2, b3];
 //     print "Original:\n";
 //     PrintBloodArray(a);
-//     SortBloodByDate(a);
+//     SortBloodByType(a);
 //     print "Sorted:\n";
-//     assert a[..] == [b2, b3, b1];
+//     assert a[..] == [b1, b3, b2];
 //     PrintBloodArray(a);
 // }
 
-method SortBloodByDate(a: array<Blood>)
+method SortBloodByType(a: array<Blood>)
     modifies a;
     requires a != null;
     requires forall i | 0 <= i < a.Length ::
@@ -128,8 +128,8 @@ method Merge(a: array<Blood>, l: int, m: int, r: int)
                              b[x] != null &&
                              b[x].Valid();
         invariant sortedFromTo(b, l, k);
-        invariant k > l && i < m ==> dateDonatedLe(b[k - 1], a[i]);
-        invariant k > l && j < r ==> dateDonatedLe(b[k - 1], a[j]);
+        invariant k > l && i < m ==> bloodTypeLeq(b[k - 1], a[i]);
+        invariant k > l && j < r ==> bloodTypeLeq(b[k - 1], a[j]);
         invariant permutation(b[l..k], a[l..i] + a[m..j]);
     {
         if i == m {
@@ -138,7 +138,7 @@ method Merge(a: array<Blood>, l: int, m: int, r: int)
         } else if j == r {
             b[k] := a[i];
             i := i + 1;
-        } else if dateDonatedLe(a[i], a[j]) {
+        } else if bloodTypeLeq(a[i], a[j]) {
             b[k] := a[i];
             i := i + 1;
         } else {
@@ -178,16 +178,30 @@ predicate sortedFromTo(a: array<Blood>, l: int, r: int)
                         a[i] != null &&
                         a[i].Valid();
 {
-    forall i, j :: l <= i < j < r ==> dateDonatedLe(a[i], a[j])
+    forall i, j :: l <= i < j < r ==> bloodTypeLeq(a[i], a[j])
 }
 
-predicate method dateDonatedLe(a: Blood, b: Blood)
+predicate method bloodTypeLeq(a: Blood, b: Blood)
     reads a;
     reads b;
     requires a != null && a.Valid();
     requires b != null && b.Valid();
 {
-    a.GetDateDonated() <= b.GetDateDonated()
+    bloodTypeToValue(a.GetBloodType()) <= bloodTypeToValue(b.GetBloodType())
+}
+
+function method bloodTypeToValue(t: BloodType): int
+{
+    match t {
+        case AP  => 1
+        case AM  => 2
+        case ABP => 3
+        case ABM => 4
+        case BP  => 5
+        case BM  => 6
+        case OP  => 7
+        case OM  => 8
+    }
 }
 
 predicate permutation(a: seq<Blood>, b: seq<Blood>)

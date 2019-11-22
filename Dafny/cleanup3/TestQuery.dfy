@@ -1,3 +1,4 @@
+
 include "Query.dfy"
 
 method TestQueryBloodByTypeBase1()
@@ -16,10 +17,10 @@ method TestQueryBloodByTypeBase1()
 method TestQueryBloodByType1()
 {
     var a1 := new Blood[4];
-    a1[0] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital");
-    a1[1] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital");
-    a1[2] := new Blood(BM, "John Smith", 1234567, "Sentry Blood");
-    a1[3] := new Blood(ABP, "John Smith", 1234567, "UNSW Hospital");
+    a1[0] := new Blood(AP,  "John Smith", 1234567, "UNSW Hospital", true);
+    a1[1] := new Blood(AP,  "John Smith", 1234567, "UNSW Hospital", true);
+    a1[2] := new Blood(BM,  "John Smith", 1234567, "Sentry Blood",  true);
+    a1[3] := new Blood(ABP, "John Smith", 1234567, "UNSW Hospital", true);
     assert a1[0].GetBloodType() == AP;
     assert a1[1].GetBloodType() == AP;
     assert a1[2].GetBloodType() == BM;
@@ -35,10 +36,10 @@ method TestQueryBloodByType1()
 method TestQueryBloodByType2()
 {
     var a1 := new Blood[4];
-    a1[0] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital");
-    a1[1] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital");
-    a1[2] := new Blood(AP, "John Smith", 1234567, "Sentry Blood");
-    a1[3] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital");
+    a1[0] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital", true);
+    a1[1] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital", true);
+    a1[2] := new Blood(AP, "John Smith", 1234567, "Sentry Blood",  true);
+    a1[3] := new Blood(AP, "John Smith", 1234567, "UNSW Hospital", true);
     assert a1[0].GetBloodType() == AP;
     assert a1[1].GetBloodType() == AP;
     assert a1[2].GetBloodType() == AP;
@@ -65,10 +66,10 @@ method TestQueryBloodByDateBase1()
 method TestQueryBloodByDate1()
 {
     var a1 := new Blood[4];
-    a1[0] := new Blood(AP, "John Smith", 222, "UNSW Hospital");
-    a1[1] := new Blood(AP, "John Smith", 111, "UNSW Hospital");
-    a1[2] := new Blood(BM, "John Smith", 444, "Sentry Blood");
-    a1[3] := new Blood(ABP, "John Smith", 333, "UNSW Hospital");
+    a1[0] := new Blood(AP,  "John Smith", 222, "UNSW Hospital", true);
+    a1[1] := new Blood(AP,  "John Smith", 111, "UNSW Hospital", true);
+    a1[2] := new Blood(BM,  "John Smith", 444, "Sentry Blood",  true);
+    a1[3] := new Blood(ABP, "John Smith", 333, "UNSW Hospital", true);
     assert a1[0].GetBloodType() == AP;
     assert a1[1].GetBloodType() == AP;
     assert a1[2].GetBloodType() == BM;

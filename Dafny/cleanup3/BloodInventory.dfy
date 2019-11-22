@@ -1,5 +1,4 @@
 
-include "Array.dfy"
 include "Blood.dfy"
 include "Query.dfy"
 include "Request.dfy"
@@ -100,6 +99,7 @@ class BloodInventory
         threshold := this.threshold;
     }
 
+    // Gets all blood of a specified type
     method GetBloodOfType(bloodType: BloodType) returns (blood: array<Blood>)
         requires Valid();
         requires validBloodType(bloodType);
@@ -157,6 +157,7 @@ class BloodInventory
     ////////////////////////////////////////////////////////////////////////////
     // Getting Blood Type Counts
 
+    // Returns the amount of blood of a given type
     method GetBloodTypeCount(bloodType: BloodType) returns (count: int)
         requires validBloodType(bloodType);
         requires Valid();
@@ -166,19 +167,23 @@ class BloodInventory
         return inv[bloodType].Length;
     }
 
+    // Returns the amount of blood of each type in a map
     method GetAllBloodTypeCounts() returns (counts: map<BloodType, int>)
         requires Valid();
         ensures  Valid();
         ensures  forall t | validBloodType(t) ::
                             t in counts && counts[t] == inv[t].Length;
-        // no extraneous blood types
+        
+        // no extraneous blood types in the returned map
         ensures  forall t | t in counts :: validBloodType(t);
     {
         counts := map[];
 
-        var types := set t | t in inv;
+        var types := set t | validBloodType(t);
         var typesLeft := types;
 
+        // on  each  iteration, remove one blood type from typesLeft and add its
+        // count to the map
         while typesLeft != {}
             decreases typesLeft;
             invariant Valid();
@@ -202,16 +207,23 @@ class BloodInventory
         requires blood != null;
         requires blood.Valid() && blood.HasBeenTested();
         ensures  Valid();
+
+        // the  new blood object is added to the end of the bucket corresponding
+        // to its blood type
         ensures  inv[blood.GetBloodType()][..] == old(inv[blood.GetBloodType()][..]) + [blood];
         ensures  fresh(inv[blood.GetBloodType()]);
+
         // ensure other blood buckets are unchanged
-        ensures  forall t | t in inv && t != blood.GetBloodType() :: inv[t] == old(inv[t]);
-        ensures  forall t | t in inv && t != blood.GetBloodType() :: inv[t].Length == old(inv[t].Length);
-        ensures  forall t | t in inv && t != blood.GetBloodType() :: inv[t][..] == old(inv[t][..]);
+        ensures  forall t | t in inv && t != blood.GetBloodType() ::
+                            inv[t] == old(inv[t]) &&
+                            inv[t][..] == old(inv[t][..]);
     {
         var t := blood.GetBloodType();
 
+        // create a new bucket to make room for the new blood
         var newBucket := new Blood[inv[t].Length + 1];
+
+        // copy the original blood objects into the new bucket
         forall i | 0 <= i < inv[t].Length
         {
             newBucket[i] := inv[t][i];
@@ -223,7 +235,7 @@ class BloodInventory
     ////////////////////////////////////////////////////////////////////////////
     // Removing Expired Blood
 
-    method RemoveExpiredBloodForType(bloodType: BloodType, currentDate: int)
+    method RemoveExpiredBloodOfType(bloodType: BloodType, currentDate: int)
         modifies this`inv;
         requires validBloodType(bloodType);
         requires Valid();
@@ -231,33 +243,45 @@ class BloodInventory
         ensures  inv[bloodType] != old(inv[bloodType]);
         ensures  fresh(inv[bloodType]);
         ensures  inv[bloodType][..] == getNonExpiredBloodSeq(old(inv[bloodType]), currentDate);
+        // ensure other blood buckets are unchanged
         ensures  forall t | validBloodType(t) && t != bloodType ::
                             inv[t] == old(inv[t]) && inv[t][..] == old(inv[t][..]);
     {
+        // getNonExpiredBlood is in Query.dfy, and uses filter
         var nonExpired := getNonExpiredBlood(inv[bloodType], currentDate);
         inv := inv[bloodType := nonExpired];
 
+        // prove that the filtered blood objects are still valid
         LemmaA(inv[bloodType], old(inv[bloodType]), bloodType);
     }
 
+    // We  assume  that the system will call this method daily (at midnight), so
+    // the inventory will never contain expired blood when requests are made.
     method RemoveExpiredBlood(currentDate: int)
         modifies this`inv;
         requires Valid();
         ensures  Valid();
-        ensures  forall t | t in inv :: inv[t][..] == getNonExpiredBloodSeq(old(inv[t]), currentDate)
+        ensures  forall t | t in inv ::
+                            fresh(inv[t]) &&
+                            inv[t][..] == getNonExpiredBloodSeq(old(inv[t]), currentDate)
     {
         var types := set t | t in inv;
         var typesLeft := types;
 
+        // on  each  iteration,  remove one blood type from typesLeft and remove
+        // all expired blood of that type
         while typesLeft != {}
             decreases typesLeft;
             invariant Valid();
-            invariant forall t | t in inv && t !in typesLeft :: inv[t][..] == getNonExpiredBloodSeq(old(inv[t]), currentDate);
-            invariant forall t | t in inv && t  in typesLeft :: inv[t] == old(inv[t]);
-            invariant forall t | t in inv && t  in typesLeft :: inv[t][..] == old(inv[t][..]);
+            invariant forall t | t in inv && t !in typesLeft ::
+                                 fresh(inv[t]) &&
+                                 inv[t][..] == getNonExpiredBloodSeq(old(inv[t]), currentDate);
+            invariant forall t | t in inv && t  in typesLeft ::
+                                 inv[t] == old(inv[t]) &&
+                                 inv[t][..] == old(inv[t][..]);
         {
             var t :| t in typesLeft;
-            RemoveExpiredBloodForType(t, currentDate);
+            RemoveExpiredBloodOfType(t, currentDate);
             typesLeft := typesLeft - {t};
         }
     }
@@ -270,9 +294,13 @@ class BloodInventory
         requires Valid();
         requires inv[bloodType].Length > 0;
         ensures  Valid();
-        ensures  blood != null;
-        ensures  blood.Valid();
+
+        // we  choose  to  remove the first blood object from the bucket for the
+        // requested type
+        ensures  blood == old(inv[bloodType][0]);
         ensures  blood.GetBloodType() == bloodType;
+
+        // ensure the other blood objects remain in the inventory
         ensures  inv[bloodType][..] == old(inv[bloodType][1..]);
         ensures  fresh(inv[bloodType]);
 
@@ -283,9 +311,13 @@ class BloodInventory
                             inv[t][..] == old(inv[t][..]);
     {
         var t := bloodType;
+        // grab first blood object
         blood := inv[t][0];
 
+        // create a new bucket with one less room
         var newBucket := new Blood[inv[t].Length - 1];
+
+        // copy the remaining blood objects into the new bucket
         forall i | 1 <= i < inv[t].Length
         {
             newBucket[i - 1] := inv[t][i];
@@ -319,19 +351,26 @@ class BloodInventory
         forall i | 0 <= i < req.Length :: req[i].volume <= inv[req[i].bloodType].Length
     }
 
-    // NOTE:    It  is assumed that Vampire staff will remove expired blood from
-    //          the inventory daily. So the inventory will never contain expired
-    //          blood.
+    // NOTE: It is assumed that Vampire staff will remove expired blood from the
+    //       inventory daily (at midnight).  So the inventory will never contain
+    //       expired blood.
     method RequestOneType(req: Request) returns (blood: array<Blood>)
         modifies this`inv;
         requires Valid();
         requires validBloodType(req.bloodType);
+
+        // the inventory must have enough blood to fulfill the request. requests
+        // for 0 volume of blood are useless.
         requires 0 < req.volume <= inv[req.bloodType].Length;
         ensures  Valid();
+
+        // we  remove the first req.volume blood objects from the bucket for the
+        // requested blood type
         ensures  blood != null;
         ensures  fresh(blood);
         ensures  blood[..] == old(inv[req.bloodType][..req.volume]);
-        ensures  forall i | 0 <= i < blood.Length :: blood[i] != null && blood[i].Valid();
+
+        // check that whatever is left in the inventory makes sense
         ensures  fresh(inv[req.bloodType]);
         ensures  forall t | t in inv :: inv[req.bloodType] != old(inv[t]);
         ensures  inv[req.bloodType][..] == old(inv[req.bloodType][req.volume..]);
@@ -344,8 +383,11 @@ class BloodInventory
     {
         var t := req.bloodType;
 
+        // create a new array to store the requested blood, and another array to
+        // store the remaining blood
         blood := new Blood[req.volume];
         var newBucket := new Blood[inv[t].Length - req.volume];
+        
         forall i | 0 <= i < req.volume
         {
             blood[i] := inv[t][i];
@@ -369,14 +411,19 @@ class BloodInventory
         ensures  Valid();
         ensures  forall i | 0 <= i < req.Length ::
                             req[i].bloodType in res &&
+
+                            // check result
                             res[req[i].bloodType] != null &&
                             fresh(res[req[i].bloodType]) &&
                             res[req[i].bloodType][..] == old(inv[req[i].bloodType][..req[i].volume]) &&
+                            forall t | t in inv :: res[req[i].bloodType] != inv[t] &&
+                            
+                            // check remaining blood
                             fresh(inv[req[i].bloodType]) &&
                             inv[req[i].bloodType][..] == old(inv[req[i].bloodType][req[i].volume..]) &&
-                            forall t | t in inv :: res[req[i].bloodType] != inv[t] &&
                             forall t | t in inv :: inv[req[i].bloodType] != old(inv[t]);
-                
+        
+        // no extraneous blood types in returned map
         ensures  forall t | t in res :: exists i | 0 <= i < req.Length :: t == req[i].bloodType;
 
         // ensure other blood buckets are unchanged
@@ -391,6 +438,8 @@ class BloodInventory
             invariant 0 <= i <= req.Length;
             invariant Valid();
             invariant req[..] == old(req[..]);
+
+            // watered down versions of the postconditions
             invariant forall j | i <= j < req.Length ::
                                  0 < req[j].volume <= inv[req[j].bloodType].Length &&
                                  inv[req[j].bloodType][..] == old(inv[req[j].bloodType][..]);
@@ -404,9 +453,8 @@ class BloodInventory
                                  forall t | t in inv :: res[req[j].bloodType] != inv[t] &&
                                  forall t | t in inv :: inv[req[j].bloodType] != old(inv[t]);
 
+            // same as the postconditions
             invariant forall t | t in res :: exists i | 0 <= i < req.Length :: t == req[i].bloodType;
-
-            // ensure other blood buckets are unchanged
             invariant forall t | t in inv && (forall i | 0 <= i < req.Length :: req[i].bloodType != t) ::
                                  inv[t] == old(inv[t]) &&
                                  inv[t][..] == old(inv[t][..]);
@@ -425,6 +473,10 @@ class BloodInventory
         requires Valid();
         requires validBloodType(bloodType);
         ensures  Valid();
+
+        // if  there  is a low supply of the specified blood type, add emergency
+        // blood objects to the corresponding bucket until there is  'threshold'
+        // amount of blood
         ensures  old(inv[bloodType].Length) <  threshold ==> (
                      fresh(inv[bloodType]) &&
                      inv[bloodType].Length == threshold &&
@@ -434,12 +486,17 @@ class BloodInventory
                                 inv[bloodType][i].GetDateDonated() == 999 &&
                                 inv[bloodType][i].GetLocationAcquired() == "Emergency Hospital"
                  );
+        
+        // if the specified blood type is *not* in low supply, don't do anything
         ensures  old(inv[bloodType].Length) >= threshold ==> (
                      inv[bloodType] == old(inv[bloodType]) &&
                      inv[bloodType][..] == old(inv[bloodType][..])
                  );
+        
+        // ensure other blood buckets are unchanged
         ensures  forall t | t in inv && t != bloodType ::
-                            inv[    t] == old(inv[t]) && inv[t][..] == old(inv[t][..]);
+                            inv[t] == old(inv[t]) &&
+                            inv[t][..] == old(inv[t][..]);
     {
         if inv[bloodType].Length < threshold
         {
@@ -449,6 +506,7 @@ class BloodInventory
                 newBucket[i] := inv[bloodType][i];
             }
 
+            // can't create new objects in a forall statement, so we need a loop
             var i := inv[bloodType].Length;
             while i < threshold
                 invariant inv == old(inv);
@@ -530,6 +588,9 @@ class BloodInventory
 
     ////////////////////////////////////////////////////////////////////////////
     // Request with Low Supply Fix
+
+    // NOTE: these  methods  basically  combine  the  request  and fix low blood
+    //       supply methods
 
     method RequestOneTypeWithLowSupplyFix(req: Request) returns (blood: array<Blood>)
         modifies this`inv;
@@ -652,24 +713,6 @@ class BloodInventory
         }
     }
 } // end of BloodInventory class
-
-////////////////////////////////////////////////////////////////////////////////
-// Request
-
-function ConcatSeq(a: array<Request>, res: map<BloodType, array<Blood>>, upTo: int): seq<Blood>
-    reads a;
-    reads set t | t in res :: res[t];
-    requires a != null;
-    requires 0 <= upTo <= a.Length;
-    requires forall i | 0 <= i < a.Length ::
-                        a[i].bloodType in res &&
-                        res[a[i].bloodType] != null;
-{
-    if upTo == 0 then
-        []
-    else
-        ConcatSeq(a, res, upTo - 1) + res[a[upTo - 1].bloodType][..]
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Lemma A

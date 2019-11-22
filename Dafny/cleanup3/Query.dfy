@@ -31,8 +31,8 @@ method queryBloodByDate(inv: array<Blood>, start: int, end: int) returns (result
 method getNonExpiredBlood(inv: array<Blood>, currentDate: int) returns (res: array<Blood>)
     requires inv != null;
     requires forall i | 0 <= i < inv.Length ::
-                 inv[i] != null &&
-                 inv[i].Valid();
+                        inv[i] != null &&
+                        inv[i].Valid();
     ensures  res != null;
     ensures  res != inv;
     ensures  fresh(res);
