@@ -1,6 +1,6 @@
 Project Vampire
 ===============
-### READ Guide.pdf to setup on windows machine
+### IMPORTANT >> READ Guide.pdf to setup on windows machine <<
 
 ## Project Setup
 
